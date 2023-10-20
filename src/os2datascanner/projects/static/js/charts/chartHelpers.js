@@ -1,4 +1,4 @@
-/* exported colorFunction, stepSizeFunction, avoidZero */
+/* exported colorFunction, stepSizeFunction, resetZoomHighest, resetZoomDevelopment, avoidZero */
 
 // Color function
 // reads colors from :root
@@ -35,11 +35,13 @@ function drawCharts() {
 
   const matchData = JSON.parse(document.getElementById('match_data').textContent);
 
-  let matchStatusByOrgUnit = JSON.parse(document.getElementById('match_status_by_org_unit').textContent);
+  const matchesByOrgUnitUnhandled = JSON.parse(document.getElementById('matches_by_org_unit_unhandled').textContent);
+  const matchesByOrgUnitHandled = JSON.parse(document.getElementById('matches_by_org_unit_handled').textContent);
+  const matchesByOrgUnitTotal = JSON.parse(document.getElementById('matches_by_org_unit_total').textContent);
 
-  let newMatchesByMonth = JSON.parse(document.getElementById('new_matches_by_month').textContent);
+  const newMatchesByMonth = JSON.parse(document.getElementById('new_matches_by_month').textContent);
 
-  let unhandledMatchesByMonth = JSON.parse(document.getElementById('unhandled_matches_by_month').textContent);
+  const unhandledMatchesByMonth = JSON.parse(document.getElementById('unhandled_matches_by_month').textContent);
 
   // Finds the total number matches in the array
   totalArrayValue = function (array, index) {
@@ -62,7 +64,7 @@ function drawCharts() {
   drawPie(
     sourceTypes,
     'datasources',
-    ['#fed149', '#5ca4cd', '#21759c', '#00496e']
+    ['#fed149', '#5ca4cd', '#21759c', '#00496e', '#bfe474', '#e47483']
   );
   drawPie(
     // Change the order of the data structure
@@ -71,12 +73,32 @@ function drawCharts() {
     ['#80ab82', '#a2e774', '#35bd57', '#1b512d', '#7e4672']
   );
 
-  // Department distribution
-  drawBar(matchStatusByOrgUnit, 'department_distribution', ["Handled matches", "Total matches"], true, true);
+  if (matchesByOrgUnitHandled && matchesByOrgUnitUnhandled && matchesByOrgUnitTotal) {
+    // Org unit distribution
+    drawBar(matchesByOrgUnitUnhandled, 'org_unit_highest_unhandled', ["Handled matches", "Total matches"], true, true);
+    drawBar(matchesByOrgUnitHandled, 'org_unit_highest_handled', [], true);
+    drawBar(matchesByOrgUnitTotal, 'org_unit_highest_total', [], true);
+  }
 
   // New and unhandled matches by month
   drawBar(newMatchesByMonth, 'new_matches_by_month');
   drawBar(unhandledMatchesByMonth, 'unhandled_matches');
+}
+
+
+function resetZoomHighest() {
+  let highestUnhandled = Chart.getChart('bar_chart_org_unit_highest_unhandled');
+  let highestHandled = Chart.getChart('bar_chart_org_unit_highest_handled');
+  let highestTotal = Chart.getChart('bar_chart_org_unit_highest_total');
+  highestUnhandled.resetZoom();
+  highestHandled.resetZoom();
+  highestTotal.resetZoom();
+}
+function resetZoomDevelopment() {
+  let unhandledMatches = Chart.getChart('bar_chart_unhandled_matches');
+  let newMatches = Chart.getChart('bar_chart_new_matches_by_month');
+  unhandledMatches.resetZoom();
+  newMatches.resetZoom();
 }
 
 function setStatDropdownEvent() {

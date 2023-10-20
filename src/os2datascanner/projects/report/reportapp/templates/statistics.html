@@ -16,11 +16,14 @@
 </body>
 
 {% block scripts %}
+  <script src="{% url 'jsi18n' %}"></script>
   <script src="{% static "3rdparty/htmx.min.js" %}"></script>
   <script src="{% static "js/filters/options.js" %}"></script>
   <script src="{% static "3rdparty/jquery-3.6.0.min.js" %} "></script>
   <script src="{% static "3rdparty/chart-4.0.1.min.js" %}"></script>
   <script src="{% static "3rdparty/chartjs-plugin-datalabels.min.js" %}"></script>
+  <script src="{% static "3rdparty/hammerjs.min.js" %}"></script>
+  <script src="{% static "3rdparty/chartjs-plugin-zoom.min.js" %}"></script>
   <script src="{% static "js/tables/tableBehavior.js" %}"></script>
   {% if request.path == "/statistics/dpo/" %}
     <script src="{% static "js/charts/chartHelpers.js" %}"></script>

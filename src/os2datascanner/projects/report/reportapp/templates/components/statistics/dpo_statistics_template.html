@@ -3,10 +3,7 @@
 {% load l10n %}
 {% load static %}
 
-{% comment %} {% setvar matches_by_source_and_handled_status.mailscan.count|subtract:matches_by_source_since_last_month.mailscan.count as total_email_matches %}
-{% setvar matches_by_source_and_handled_status.filescan.count|subtract:matches_by_source_since_last_month.filescan.count as total_file_matches %}
-{% setvar matches_by_source_and_handled_status.webscan.count|subtract:matches_by_source_since_last_month.webscan.count as total_web_matches %}
-{% setvar matches_by_source_and_handled_status.other.count|subtract:matches_by_source_since_last_month.other.count as total_other_matches %} {% endcomment %}
+<script></script>
 
 <div class="content" hx-push-url="true">
   <div class="content-header">
@@ -45,6 +42,7 @@
           {% endfor %}
         </select>
       </div>
+      <!-- Org unit chart data selection -->
       <div class="dropdown stats_dropdown">
         <label for="orgunits">{% trans "organizational unit"|capfirst %}</label>
         <select name="orgunit" id="orgunits" data-compareto="all" autocomplete="off">
@@ -58,6 +56,7 @@
           {% endfor %}
         </select>
       </div>
+      <!-- Clear button -->
       <div>
         <button type="button"
                 class="match_filtering_clear_button clear_button_dpo"
@@ -76,234 +75,398 @@
  
   <div class="statistics_wrapper">
     <div class="statistic_total_container">
-      <!-- Total matches - mail drive -->
+
+      <!-- Total matches - mail results -->
       <div class="statistic_total_element">
         <div>
           <div class="statistic data_box small data_box small">
             <div class="statistic_header_total">
               <div>
-                <h1 class="page-title__sub">
-                  {% trans "Mail drive" %}<i class="material-icons"
-   aria-hidden="true"
-   title="Number of matches from mail drive. Updated daily">help</i>
-                </h1>
-                <p class="chart_description">{% trans "Number of matches in mail drive today" %}</p>
+                <h1 class="page-title__sub">{% trans "Mail results" %}</h1>
+                <button class="total_box_info expand">
+                  <i class="material-icons" aria-hidden="true">help</i>
+                </button>
+                <div class="dropdown-container">
+                  <div class="total-box-info-dropdown">{% trans "Current total number of unhandled matches from mails" %}</div>
+                </div>
+                <p class="chart_description">{% trans "Total number of unhandled matches from mails" %}</p>
               </div>
             </div>
             <div class="statistic_total_count">{{ matches_by_source_and_handled_status.mailscan.count }}</div>
             <div>
-              <p {% if total_mailscan_count < 0 %} style="color: green;">
-              {% elif total_mailscan_count > 0 %}
-                style="color: red;">+
-              {% else %}
-                >
+              {% if total_mailscan_count < 0 %}
+                <p style="color:green;">
+                {% elif total_mailscan_count > 0 %}
+                  <p style="color:red;">
+                    +
+                  {% else %}
+                    <p>
+                    {% endif %}
+                    {% localize %}{{ total_mailscan_count }}{% endlocalize %}{% trans " the last 30 days" %}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Total matches - file results -->
+          {% if matches_by_source_and_handled_status.filescan.count %}
+            <div class="statistic_total_element">
+              <div class="statistic data_box small">
+                <div class="statistic_header_total">
+                  <div>
+                    <h1 class="page-title__sub">{% trans "File results" %}</h1>
+                    <button class="total_box_info expand">
+                      <i class="material-icons" aria-hidden="true">help</i>
+                    </button>
+                    <div class="dropdown-container">
+                      <div class="total-box-info-dropdown">{% trans "Current total number of unhandled matches from files" %}</div>
+                    </div>
+                    <p class="chart_description">{% trans "Total number of unhandled matches from file sources" %}</p>
+                  </div>
+                </div>
+                <div class="statistic_total_count">{{ matches_by_source_and_handled_status.filescan.count }}</div>
+                <div>
+                  {% if total_filescan_count < 0 %}
+                    <p style="color:green;">
+                    {% elif total_filescan_count > 0 %}
+                      <p style="color:red;">
+                        +
+                      {% else %}
+                        <p>
+                        {% endif %}
+                        {% localize %}{{ total_filescan_count }}{% endlocalize %}{% trans " the last 30 days" %}
+                      </p>
+                    </div>
+                  </div>
+                </div>
               {% endif %}
-              {% localize %}{{ total_mailscan_count }}{% endlocalize %}
-              {% trans "the last 30 days" %}
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Total matches - file drive -->
-    <div class="statistic_total_element">
-      <div class="statistic data_box small">
-        <div class="statistic_header_total">
-          <div>
-            <h1 class="page-title__sub">
-              {% trans "File drive" %}<i class="material-icons"
-   aria-hidden="true"
-   title="Number of matches from file drive. Updated daily">help</i>
-            </h1>
-            <p class="chart_description">{% trans "Number of matches in file drive today" %}</p>
-          </div>
-        </div>
-        <div class="statistic_total_count">{{ matches_by_source_and_handled_status.filescan.count }}</div>
-        <div>
-          <p {% if total_filescan_count < 0 %} style="color: green;">
-          {% elif total_filescan_count > 0 %}
-            style="color: red;">+
-          {% else %}
-            >
-          {% endif %}
-          {% localize %}{{ total_filescan_count }}{% endlocalize %}
-          {% trans "the last 30 days" %}
-        </p>
-      </div>
-    </div>
-  </div>
+              <!-- Total matches - website -->
+              {% if matches_by_source_and_handled_status.webscan.count %}
+                <div class="statistic_total_element">
+                  <div class="statistic data_box small">
+                    <div class="statistic_header_total">
+                      <div>
+                        <h1 class="page-title__sub">{% trans "Web results" %}</h1>
+                        <button class="total_box_info expand">
+                          <i class="material-icons" aria-hidden="true">help</i>
+                        </button>
+                        <div class="dropdown-container">
+                          <div class="total-box-info-dropdown">{% trans "Current total number of unhandled matches from website" %}</div>
+                        </div>
+                        <p class="chart_description">{% trans "Total number of matches of website type" %}</p>
+                      </div>
+                    </div>
+                    <div class="statistic_total_count">{{ matches_by_source_and_handled_status.webscan.count }}</div>
+                    <div>
+                      {% if total_webscan_count < 0 %}
+                        <p style="color:green;">
+                        {% elif total_webscan_count > 0 %}
+                          <p style="color:red;">
+                            +
+                          {% else %}
+                            <p>
+                            {% endif %}
+                            {% localize %}{{ total_webscan_count }}{% endlocalize %}{% trans " the last 30 days" %}
+                          </p>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
 
-  <!-- Total matches - site drive -->
-  <div class="statistic_total_element">
-    <div class="statistic data_box small">
-      <div class="statistic_header_total">
-        <div>
-          <h1 class="page-title__sub">
-            {% trans "Web drive" %}<i class="material-icons"
-   aria-hidden="true"
-   title="Number of matches from site drive. Updated daily">help</i>
-          </h1>
-          <p class="chart_description">{% trans "Number of matches in web drive today" %}</p>
-        </div>
-      </div>
-      <div class="statistic_total_count">{{ matches_by_source_and_handled_status.webscan.count }}</div>
-      <div>
-        <p {% if total_webscan_count < 0 %} style="color: green;">
-        {% elif total_webscan_count > 0 %}
-          style="color: red;">+
-        {% else %}
-          >
-        {% endif %}
-        {% localize %}{{ total_webscan_count }}{% endlocalize %}
-        {% trans "the last 30 days" %}
-      </p>
-    </div>
-  </div>
-</div>
+
+                <!-- Total matches - Teams -->
+                {% if matches_by_source_and_handled_status.teamsscan.count %}
+                  <div class="statistic_total_element">
+                    <div class="statistic data_box small">
+                      <div class="statistic_header_total">
+                        <div>
+                          <h1 class="page-title__sub">{% trans "Teams file results" %}</h1>
+                          <button class="total_box_info expand">
+                            <i class="material-icons" aria-hidden="true">help</i>
+                          </button>
+                          <div class="dropdown-container">
+                            <div class="total-box-info-dropdown">{% trans "Current total number of unhandled matches from Teams files" %}</div>
+                          </div>
+                          <p class="chart_description">{% trans "Total number of matches of teams file type" %}</p>
+                        </div>
+                      </div>
+                      <div class="statistic_total_count">{{ matches_by_source_and_handled_status.teamsscan.count }}</div>
+                      <div>
+                        {% if total_teamsscan_count < 0 %}
+                          <p style="color:green;">
+                          {% elif total_teamsscan_count > 0 %}
+                            <p style="color:red;">
+                              +
+                            {% else %}
+                              <p>
+                              {% endif %}
+                              {% localize %}{{ total_teamsscan_count }}{% endlocalize %}{% trans " the last 30 days" %}
+                            </p>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  {% endif %}
+
+                  <!-- Total matches - Calendar -->
+                  {% if matches_by_source_and_handled_status.calendarscan.count %}
+                    <div class="statistic_total_element">
+                      <div class="statistic data_box small">
+                        <div class="statistic_header_total">
+                          <div>
+                            <h1 class="page-title__sub">{% trans "Teams file results" %}</h1>
+                            <button class="total_box_info expand">
+                              <i class="material-icons" aria-hidden="true">help</i>
+                            </button>
+                            <div class="dropdown-container">
+                              <div class="total-box-info-dropdown">{% trans "Current total number of unhandled matches from calendars" %}</div>
+                            </div>
+                            <p class="chart_description">{% trans "Total number of matches from calendars" %}</p>
+                          </div>
+                        </div>
+                        <div class="statistic_total_count">{{ matches_by_source_and_handled_status.calendarscan.count }}</div>
+                        <div>
+                          {% if total_calendarscan_count < 0 %}
+                            <p style="color:green;">
+                            {% elif total_calendarscan_count > 0 %}
+                              <p style="color:red;">
+                                +
+                              {% else %}
+                                <p>
+                                {% endif %}
+                                {% localize %}{{ total_calendarscan_count }}{% endlocalize %}{% trans " the last 30 days" %}
+                              </p>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    {% endif %}
  
 
-<!-- Total matches - other sources -->
-<div class="statistic_total_element">
-  <div class="statistic data_box small">
-    <div class="statistic_header_total">
-      <div>
-        <h1 class="page-title__sub">
-          {% trans "Other" %}<i class="material-icons"
-   aria-hidden="true"
-   title="Number of matches from other sources. Updated daily">help</i>
-        </h1>
-        <p class="chart_description">{% trans "Number of matches in other sources today" %}</p>
-      </div>
-    </div>
-    <div class="statistic_total_count">{{ matches_by_source_and_handled_status.other.count }}</div>
-    <div>
-      <p {% if total_other_count < 0 %} style="color: green;">
-      {% elif total_other_count > 0 %}
-        style="color: red;">+
-      {% else %}
-        >
-      {% endif %}
-      {% localize %}{{ total_other_count }}{% endlocalize %}
-      {% trans "the last 30 days" %}
-    </p>
-  </div>
-</div>
-</div>
-</div>
-</div>
+                    <!-- Total matches - other sources -->
+                    {% if matches_by_source_and_handled_status.other.count %}
+                      <div class="statistic_total_element">
+                        <div class="statistic data_box small">
+                          <div class="statistic_header_total">
+                            <div>
+                              <h1 class="page-title__sub">{% trans "Other results" %}</h1>
+                              <button class="total_box_info expand">
+                                <i class="material-icons" aria-hidden="true">help</i>
+                              </button>
+                              <div class="dropdown-container">
+                                <div class="total-box-info-dropdown">
+                                  {% trans "Current total number of unhandled matches from unknown file types" %}
+                                </div>
+                              </div>
+                              <p class="chart_description">{% trans "Total number of matches from other sources" %}</p>
+                            </div>
+                          </div>
+                          <div class="statistic_total_count">{{ matches_by_source_and_handled_status.other.count }}</div>
+                          <div>
+                            {% if total_other_count < 0 %}
+                              <p style="color:green;">
+                              {% elif total_other_count > 0 %}
+                                <p style="color:red;">
+                                  +
+                                {% else %}
+                                  <p>
+                                  {% endif %}
+                                  {% localize %}{{ total_other_count }}{% endlocalize %}{% trans " the last 30 days" %}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        {% endif %}
+                      </div>
+                    </div>
  
-<div class="statistic_wrapper">
-  <!-- Doughnut chart -->
-  <div class="statistic data_box medium">
-    <div class="statistic_header">
-      <div>
-        <h1 class="page-title__sub">{% trans "Handled results" %}</h1>
-        <p class="chart_description" data-chartid="handling-all-results">
-          {% trans "The department's percentage of handled results" %}
-        </p>
-      </div>
-    </div>
-    <div class="chart_container" data-chartid="handling-all-results">
-      <div class="doughnut_chart_container">
-        <div class="canvas_size donut_chart">
-          <canvas id="doughnut_chart_total"></canvas>
-        </div>
-        <div class="doughnut_info_box">
-          <h4>{% trans "Handled results" %}</h4>
-          <p>{{ match_data.handled }} {% trans "of" %} {{ match_data.handled|add:match_data.unhandled }}</p>
-        </div>
-      </div>
-    </div>
-  </div>
+                    <div class="statistic_wrapper">
+                      <!-- Doughnut chart -->
+                      <div class="statistic data_box medium">
+                        <div class="statistic_header">
+                          <div>
+                            <h1 class="page-title__sub">{% trans "Handled results" %}</h1>
+                            <p class="chart_description" data-chartid="handling-all-results">
+                              {% trans "The organizational unit's percentage of handled results" %}
+                            </p>
+                          </div>
+                        </div>
+                        <div class="chart_container" data-chartid="handling-all-results">
+                          <div class="doughnut_chart_container">
+                            <div class="canvas_size donut_chart">
+                              <canvas id="doughnut_chart_total"></canvas>
+                            </div>
+                            <div class="doughnut_info_box">
+                              <h4>{% trans "Handled results" %}</h4>
+                              <p>{{ match_data.handled }} {% trans "of" %} {{ match_data.handled|add:match_data.unhandled }}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
  
-  <!-- Pie chart -->
-  <div class="statistic data_box medium">
-    <div class="statistic_header">
-      <div>
-        <h1 class="page-title__sub">{% trans "Distribution of results" %}</h1>
-        <p class="chart_description" data-chartid="distribution-data-sources">
-          {% trans "Results distributed by data sources" %}
-        </p>
-        <p class="hidden chart_description"
-           data-chartid="distribution-resolution-status">{% trans "Results distributed by resolution statuses" %}</p>
-      </div>
-      <div class="statistic_header_nav">
-        <div class="dropdown">
-          <select>
-            <option value="distribution-data-sources">{% trans "Data sources" %}</option>
-            <option value="distribution-resolution-status">{% trans "Resolution statuses" %}</option>
-          </select>
-        </div>
-      </div>
-    </div>
-    <div class="pie_chart_container chart_container canvas_size pie_chart"
-         style="height: 22rem"
-         data-chartid="distribution-data-sources">
-      <div>
-        <canvas id="pie_chart_datasources"></canvas>
-      </div>
-      <div id="pie_legend_datasources"></div>
-    </div>
-    <div class="hidden pie_chart_container chart_container canvas_size pie_chart"
-         data-chartid="distribution-resolution-status">
-      <div>
-        <canvas id="pie_chart_resolution_status"></canvas>
-      </div>
-      <div id="pie_legend_resolution_status"></div>
-    </div>
-  </div>
-</div>
+                      <!-- Pie chart -->
+                      <div class="statistic data_box medium">
+                        <div class="statistic_header">
+                          <div>
+                            <h1 class="page-title__sub">{% trans "Distribution of results" %}</h1>
+                            <p class="chart_description" data-chartid="distribution-data-sources">
+                              {% trans "Results distributed by data sources" %}
+                            </p>
+                            <p class="hidden chart_description"
+                               data-chartid="distribution-resolution-status">
+                              {% trans "Results distributed by resolution statuses" %}
+                            </p>
+                          </div>
+                          <div class="statistic_header_nav">
+                            <div class="dropdown">
+                              <select>
+                                <option value="distribution-data-sources">{% trans "Data sources" %}</option>
+                                <option value="distribution-resolution-status">{% trans "Resolution statuses" %}</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="pie_chart_container chart_container canvas_size pie_chart"
+                             style="height: 22rem"
+                             data-chartid="distribution-data-sources">
+                          <div>
+                            <canvas id="pie_chart_datasources"></canvas>
+                          </div>
+                          <div id="pie_legend_datasources"></div>
+                        </div>
+                        <div class="hidden pie_chart_container chart_container canvas_size pie_chart"
+                             data-chartid="distribution-resolution-status">
+                          <div>
+                            <canvas id="pie_chart_resolution_status"></canvas>
+                          </div>
+                          <div id="pie_legend_resolution_status"></div>
+                        </div>
+                      </div>
+                    </div>
 
-<div class="statistic_wrapper">
-  <!-- bar chart - matches per org unit -->
-  <div class="statistic data_box large">
-    <div class="statistic_header">
-      <div>
-        <h1 class="page-title__sub">{% trans "Department distribution" %}</h1>
-        <p class="chart_description" data-chartid="department_distribution">{% trans "Matches distributed by department" %}</p>
-      </div>
-    </div>
-    <div class="chart_container canvas_size bar_chart_horizontal"
-         data-chartid="department_distribution">
-      <canvas class="bar_chart" id="bar_chart_department_distribution"></canvas>
-    </div>
-  </div>
-
-  <!-- bar chart - new and unhandled matches -->
-  <div class="statistic data_box large">
-    <div class="statistic_header">
-      <div>
-        <h1 class="page-title__sub">{% trans "Development overview" %}</h1>
-        <p class="chart_description" data-chartid="development-new-results">{% trans "New results by month" %}</p>
-        <p class="hidden chart_description"
-           data-chartid="development-unhandled-results">{% trans "Unhandled results by month" %}</p>
-      </div>
-      <div class="statistic_header_nav">
-        <div class="dropdown">
-          <select>
-            <option value="development-new-results">{% trans "New results" %}</option>
-            <option value="development-unhandled-results">{% trans "Unhandled results" %}</option>
-          </select>
-        </div>
-      </div>
-    </div>
-    <div class="chart_container " data-chartid="development-new-results">
-      <canvas class="bar_chart canvas_size bar_chart_vertical"
-              id="bar_chart_new_matches_by_month"></canvas>
-    </div>
-    <div class="hidden chart_container"
-         data-chartid="development-unhandled-results">
-      <canvas class="bar_chart canvas_size bar_chart_vertical"
-              id="bar_chart_unhandled_matches"></canvas>
-    </div>
-  </div>
-</div>
+                    <div class="statistic_wrapper">
+                      <!-- bar chart - matches per org unit -->
+                      {% if request.GET.orgunit == undefined %}
+                        <div class="statistic data_box large horizontal">
+                          <div class="statistic_header">
+                            <div>
+                              <h1 class="page-title__sub">{% trans "Organizational unit distribution" %}</h1>
+                              <p class="chart_description" data-chartid="org_unit_highest_unhandled">
+                                {% trans "Top ten organizational units with highest number of unhandled matches" %}
+                              </p>
+                              <p class="hidden chart_description"
+                                 data-chartid="org_unit_highest_handled">
+                                {% trans "Top ten organizational units with highest number of handled matches" %}
+                              </p>
+                              <p class="hidden chart_description"
+                                 data-chartid="org_unit_highest_total">
+                                {% trans "Top ten organizational units with highest number of total matches" %}
+                              </p>
+                            </div>
+                            <div class="statistic_header_nav">
+                              <div>
+                                <button class="graph-zoom-info expand">
+                                  <i class="material-icons" aria-hidden="true">search</i>
+                                </button>
+                                <div class="dropdown-container">
+                                  <div class="graph-zoom-info-dropdown">
+                                    {% trans "Hold and drag your mouse to zoom in on part of the graph. Hold shift while using the mouse wheel to manually zoom. Use the reset button to return the graph to normal." %}
+                                  </div>
+                                </div>
+                              </div>
+                              <div>
+                                <button class="sorting-options" onclick="resetZoomHighest()">
+                                  <span>{% trans "Reset" %}</span>
+                                </button>
+                              </div>
+                              <div class="dropdown">
+                                <select>
+                                  <option value="org_unit_highest_unhandled">{% trans "Highest unhandled" %}</option>
+                                  <option value="org_unit_highest_handled">{% trans "Highest handled" %}</option>
+                                  <option value="org_unit_highest_total">{% trans "Highest total" %}</option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
  
-{{ source_types|json_script:"source_types" }}
-{{ new_matches_by_month|json_script:"new_matches_by_month" }}
-{{ unhandled_matches_by_month|json_script:"unhandled_matches_by_month" }}
-{{ resolution_status|json_script:"resolution_status" }}
-{{ match_status_by_org_unit|json_script:"match_status_by_org_unit" }}
-{{ match_data|json_script:"match_data" }}
-</div>
+                          <div class="chart_container canvas_size bar_chart_horizontal"
+                               data-chartid="org_unit_highest_unhandled">
+                            <canvas class="bar_chart" id="bar_chart_org_unit_highest_unhandled"></canvas>
+                          </div>
+                          <div class="hidden chart_container canvas_size bar_chart_horizontal"
+                               data-chartid="org_unit_highest_handled">
+                            <canvas class="bar_chart" id="bar_chart_org_unit_highest_handled"></canvas>
+                          </div>
+                          <div class="hidden chart_container canvas_size bar_chart_horizontal"
+                               data-chartid="org_unit_highest_total">
+                            <canvas class="bar_chart" id="bar_chart_org_unit_highest_total"></canvas>
+                          </div>
+                        </div>
+                      {% endif %}
+                    </div>
+
+                    <div class="statistic_wrapper">
+                      <!-- bar chart - new and unhandled matches -->
+                      <div class="statistic data_box large">
+                        <div class="statistic_header">
+                          <div>
+                            <h1 class="page-title__sub">{% trans "Development overview" %}</h1>
+                            <p class="chart_description"
+                               data-chartid="development-unhandled-results">
+                              {% trans "Unhandled results by month" %}
+                            </p>
+                            <p class="hidden chart_description"
+                               data-chartid="development-new-results">{% trans "New results by month" %}</p>
+                          </div>
+                          <div class="statistic_header_nav">
+                            <div>
+                              <button class="graph-zoom-info expand">
+                                <i class="material-icons" aria-hidden="true">search</i>
+                              </button>
+                              <div class="dropdown-container">
+                                <div class="graph-zoom-info-dropdown">
+                                  {{ linebreaks }}
+                                  {% trans "Hold and drag your mouse to zoom in on part of the graph. Hold shift while using the mouse wheel to manually zoom. Use the reset button to return the graph to normal." %}
+ 
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <button class="sorting-options" onclick="resetZoomDevelopment()">
+                                <span>{% trans "Reset" %}</span>
+                              </button>
+                            </div>
+                            <div class="dropdown">
+                              <select>
+                                <option value="development-unhandled-results">{% trans "Unhandled results" %}</option>
+                                <option value="development-new-results">{% trans "New results" %}</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="chart_container" data-chartid="development-unhandled-results">
+                          <canvas class="bar_chart canvas_size bar_chart_vertical"
+                                  id="bar_chart_unhandled_matches"></canvas>
+                        </div>
+                        <div class="hidden chart_container "
+                             data-chartid="development-new-results">
+                          <canvas class="bar_chart canvas_size bar_chart_vertical"
+                                  id="bar_chart_new_matches_by_month"></canvas>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+ 
+ 
+                  {{ source_types|json_script:"source_types" }}
+                  {{ new_matches_by_month|json_script:"new_matches_by_month" }}
+                  {{ unhandled_matches_by_month|json_script:"unhandled_matches_by_month" }}
+                  {{ resolution_status|json_script:"resolution_status" }}
+                  {{ matches_by_org_unit_unhandled|json_script:"matches_by_org_unit_unhandled" }}
+                  {{ matches_by_org_unit_handled|json_script:"matches_by_org_unit_handled" }}
+                  {{ matches_by_org_unit_total|json_script:"matches_by_org_unit_total" }}
+                  {{ match_data|json_script:"match_data" }}
+                </div>

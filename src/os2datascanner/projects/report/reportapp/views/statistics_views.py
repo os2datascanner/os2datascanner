@@ -23,7 +23,7 @@ from collections import deque
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q, F, Count, Sum, DateField
+from django.db.models import Q, Count, DateField
 from django.db.models.functions import Coalesce, TruncMonth
 from django.http import HttpResponseForbidden, Http404, HttpResponse
 from django.utils.translation import ugettext_lazy as _
@@ -58,6 +58,8 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
     template_name = "statistics.html"
     model = DocumentReport
     scannerjob_filters = None
+
+    # TODO: We need to figure out multi tenancy. I.e. only view stuff from your organization
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -102,10 +104,6 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         today = timezone.now()
 
-        # Inefficient
-        for account in Account.objects.all():
-            account.save()
-
         if (scannerjob := self.request.GET.get('scannerjob')) and scannerjob != 'all':
             self.matches = self.matches.filter(
                 scanner_job_pk=scannerjob)
@@ -135,7 +133,13 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
 
         context['new_matches_by_month'] = self.count_new_matches_by_month(today)
 
-        context['match_status_by_org_unit'] = self.count_match_status_by_org_unit()
+        if self.request.GET.get('orgunit') is None:
+            highest_unhandled_ou, highest_handled_ou, highest_total_ou = (
+                self.count_match_status_by_org_unit())
+
+            context['matches_by_org_unit_unhandled'] = highest_unhandled_ou
+            context['matches_by_org_unit_handled'] = highest_handled_ou
+            context['matches_by_org_unit_total'] = highest_total_ou
 
         m_by_handled = self.count_matches_by_source_and_handled_status()
         m_last_month = self.count_matches_by_source_since_last_month(today)
@@ -144,7 +148,7 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
 
         context['matches_by_source_since_last_month'] = m_last_month
 
-        for src_type in ('mailscan', 'filescan', 'webscan', 'other'):
+        for src_type in ('mailscan', 'filescan', 'webscan', 'teamsscan', 'other'):
             context[f'total_{src_type}_count'] = m_by_handled[src_type]['count'] - \
                 m_last_month[src_type]['count']
 
@@ -186,7 +190,9 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
             'other': {'count': 0, 'label': _('Other')},
             'webscan': {'count': 0, 'label': _('Webscan')},
             'filescan': {'count': 0, 'label': _('Filescan')},
-            'mailscan': {'count': 0, 'label': _('Mailscan')}
+            'mailscan': {'count': 0, 'label': _('Mailscan')},
+            'teamsscan': {'count': 0, 'label': _('Teams scan')},
+            'calendarscan': {'count': 0, 'label': _('Calendar scan')},
         }
 
         created_month = {}
@@ -195,21 +201,27 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
 
         for obj in matches:
             match obj:
-                case {"source_type": "smb" | "smbc", "count": count}:
+                case {"source_type": "smb" | "smbc" | "msgraph-files" | "googledrive",
+                      "count": count}:
                     source_type["filescan"]["count"] += count
                 case {"source_type": "web", "count": count}:
                     source_type["webscan"]["count"] += count
-                case {"source_type": "ews" | "msgraph-mail", "count": count}:
+                case {"source_type": "ews" | "msgraph-mail" | "mail" | "gmail",
+                      "count": count}:
                     source_type["mailscan"]["count"] += count
+                case {"source_type": "msgraph-teams-files", "count": count}:
+                    source_type["teamsscan"]["count"] += count
+                case {"source_type": "msgraph-calendar", "count": count}:
+                    source_type["calendarscan"]["count"] += count
                 case {"count": count}:
                     source_type["other"]["count"] += count
 
-            match obj:
-                case {"resolution_status": None, "count": count}:
-                    match_data["unhandled"] += count
-                case {"resolution_status": val, "count": count}:
-                    match_data["handled"] += count
-                    resolution_status[val]["count"] += count
+            status = obj.get('resolution_status')
+            key = 'handled' if status else 'unhandled'
+            count = obj.get("count", 0)
+            match_data[key] += count
+            if status:
+                resolution_status[status]["count"] += count
 
             created_month[obj["created_month"]] = created_month.get(
                 obj["created_month"], 0) + obj["count"]
@@ -258,6 +270,13 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
                 total += delta
                 yield month_start, total
 
+        total_of_months = 0
+        for _month_start, total in list(_make_running_total())[-12:]:
+            total_of_months += total
+
+        if total_of_months == 0:
+            return []
+
         return [[month_abbr[month_start.month], total]
                 for month_start, total in list(_make_running_total())[-12:]]
 
@@ -283,9 +302,13 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
                                 for month, total in matches_by_month.items())
 
         values_by_month = [0] * 12
-
+        total_of_months = 0
         for month_id, total in matches_by_month_gen:
             values_by_month[month_id - 1] += total
+            total_of_months += total
+
+        if total_of_months == 0:
+            return []
 
         labelled_values_by_month = deque(
                 list(k) for k in zip(month_abbr[1:], values_by_month))
@@ -295,21 +318,40 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
         return list(labelled_values_by_month)
 
     def count_match_status_by_org_unit(self):
-        stats = OrganizationalUnit.objects.all().annotate(
-            match_count=Sum(F("account__match_count"))).values("name", "match_count")
-        handled = OrganizationalUnit.objects.all().annotate(
-            handled_matches=Sum(F("account__handled_matches"))).values("name", "handled_matches")
 
-        array = []
+        stats = OrganizationalUnit.objects.with_match_counts().filter(
+            organization=self.request.user.account.organization
+        ).values(
+            "name", "total_ou_matches", "handled_ou_matches"
+        )
 
-        for ou in stats:
-            for oou in handled:
-                if ou.get("name") == oou.get("name"):
-                    ou.update(oou)
-                    array.append([ou.get("name"), oou.get(
-                        "handled_matches"), ou.get("match_count")])
+        def get_matches(match_type):
+            match match_type:
+                case "unhandled":
+                    props = ("name", "handled_ou_matches", "total_ou_matches")
+                case "handled":
+                    props = ("name", "handled_ou_matches")
+                case "total":
+                    props = ("name", "total_ou_matches")
 
-        return array
+            return [[ou.get(prop) for prop in props] for ou in stats]
+
+        def sort_OU(array, match_type: str):
+            def _key(x):
+                match match_type, x:
+                    case "unhandled", [_, handled_matches, match_count] if (
+                            handled_matches is not None and match_count is not None):
+                        return match_count - handled_matches
+                    case "handled", [_, handled_matches] if handled_matches is not None:
+                        return handled_matches
+                    case "total", [_, match_count] if match_count is not None:
+                        return match_count
+                    case _:
+                        return 0
+            return sorted(array, key=_key)
+
+        return tuple(list(reversed(sort_OU(get_matches(mt), match_type=mt)[-10:]))
+                     for mt in ("unhandled", "handled", "total"))
 
     def count_matches_by_source_and_handled_status(self):
         current_matches = self.matches.filter(resolution_status__isnull=True)

@@ -50,6 +50,10 @@
 - Snackbar element is now displayed at the top of the page, instead of at the 
   bottom of the page. 
 
+- DPO module now has graphs displaying top ten highest unhandled/handled/total
+  matches in an organization. Barchart data can now also be zoomed in on. 
+  Total boxes will show the types and amount of matches in an organization/unit. 
+
 ### Bugfixes
 
 - The GmailScanner class no longer references a non-existant attribute.

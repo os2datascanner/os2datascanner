@@ -6,6 +6,7 @@ from django.urls import include
 from django.conf.urls.static import static
 from django.conf import settings
 from django.urls import path
+from django.views.i18n import JavaScriptCatalog
 from os2datascanner import __version__
 
 from .views.api import JSONAPIView
@@ -46,6 +47,10 @@ urlpatterns = [
     re_path(r'^version/?$', lambda r: HttpResponse(__version__)),
     re_path(r'^help/$', ManualMainView.as_view(), name="guide"),
     re_path(r'^support/$', SupportButtonView.as_view(), name="support_button"),
+    re_path(r'^jsi18n/$',
+            JavaScriptCatalog.as_view(
+                packages=(['os2datascanner.projects.report.reportapp'])),
+            name="jsi18n"),
     path('htmx_endpoints/', include('os2datascanner.projects.report.reportapp.htmx_endpoints_urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

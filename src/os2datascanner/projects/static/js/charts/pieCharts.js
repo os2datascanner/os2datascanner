@@ -63,7 +63,7 @@ function makePieChart(labels, data, colors, chartElement) {
           callbacks: {
             title: function(tooltipItems) {
               if (isEmptyChart) {
-                return "No data"; // Show custom title for empty charts
+                return gettext("No data"); // Show custom title for empty charts
               }
               return tooltipItems[0].label;
             },
@@ -100,7 +100,7 @@ function drawPie(data, ctxName, colors) {
 
   const filteredData = Object.values(data).filter(obj => obj.count); // Filter out entries with a count of 0
 
-  const labels = totalValue ? filteredData.map(obj => obj.label) : ["No Data"];
+  const labels = totalValue ? filteredData.map(obj => obj.label) : [gettext("No Data")];
   const values = totalValue ? filteredData.map(obj => obj.count) : [1];
 
   const colorPredicate = (color, index) => Object.values(data)[index].count;

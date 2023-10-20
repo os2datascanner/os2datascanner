@@ -8,46 +8,50 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-06 11:51+0100\n"
+"POT-Creation-Date: 2023-11-24 13:40+0100\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: organizations/models/account.py:45
+#: organizations/models/account.py:46
 msgid "Completed"
 msgstr "Færdig"
 
-#: organizations/models/account.py:46
+#: organizations/models/account.py:47
 msgid "Accepted"
 msgstr "Accepteret"
 
-#: organizations/models/account.py:47
+#: organizations/models/account.py:48
 msgid "Not accepted"
 msgstr "Ikke accepteret"
 
-#: organizations/models/account.py:128
+#: organizations/models/account.py:143
 msgid "User"
 msgstr "Bruger"
 
-#: organizations/models/account.py:131
+#: organizations/models/account.py:146
 msgid "Last handle"
 msgstr "Sidste håndtering"
 
-#: organizations/models/account.py:139
+#: organizations/models/account.py:154
 msgid "image"
 msgstr "billede"
 
-#: organizations/models/account.py:144
+#: organizations/models/account.py:159
 msgid "Number of matches"
 msgstr "Antal matches"
 
-#: organizations/models/account.py:149
+#: organizations/models/account.py:164
 msgid "Number of withheld matches"
 msgstr "Antal tilbageholdte matches"
 
-#: organizations/models/account.py:155
+#: organizations/models/account.py:169
+msgid "Number of handled matches"
+msgstr "Antal af håndterede matches"
+
+#: organizations/models/account.py:176
 msgid "Contact person"
 msgstr "Kontaktperson"
 
@@ -152,7 +156,7 @@ msgid "Dark Cranberry"
 msgstr "Mørk tranebær"
 
 #: organizations/models/account_outlook_setting.py:45
-#: reportapp/templates/components/outlook_category_settings.html:20
+#: reportapp/templates/components/outlook_category_settings.html:23
 msgid "Categorize emails"
 msgstr "Kategorisér emails"
 
@@ -173,7 +177,7 @@ msgid "account"
 msgstr "konto"
 
 #: reportapp/admin.py:13
-#: reportapp/templates/components/dpo-statistics-template.html:25
+#: reportapp/templates/components/dpo-statistics-template.html:30
 msgid "scanner job"
 msgstr "scannerjob"
 
@@ -230,7 +234,7 @@ msgid "probability"
 msgstr "sandsynlighed"
 
 #: reportapp/models/documentreport.py:142
-#: reportapp/views/statistics_views.py:168
+#: reportapp/views/statistics_views.py:193
 msgid "Other"
 msgstr "Andet"
 
@@ -323,73 +327,207 @@ msgstr "I mellemtiden kan du forsøge at genindlæse siden eller"
 msgid "go to the front page"
 msgstr "gå til forsiden"
 
-#: reportapp/templates/components/dpo-statistics-template.html:7
+#: reportapp/templates/components/dpo-statistics-template.html:12
 msgid "DPO statistics"
 msgstr "DPO-statistik"
 
-#: reportapp/templates/components/dpo-statistics-template.html:32
+#: reportapp/templates/components/dpo-statistics-template.html:37
 #: reportapp/templates/components/filters.html:38
 msgid "All scannerjobs"
 msgstr "Alle scannerjobs"
 
-#: reportapp/templates/components/dpo-statistics-template.html:43
+#: reportapp/templates/components/dpo-statistics-template.html:49
 msgid "organizational unit"
 msgstr "Organisatorisk enhed"
 
-#: reportapp/templates/components/dpo-statistics-template.html:64
-msgid "Development overview"
-msgstr "Udviklingsoverblik"
-
-#: reportapp/templates/components/dpo-statistics-template.html:65
-msgid "New results by month"
-msgstr "Antal nye resultater per måned"
-
-#: reportapp/templates/components/dpo-statistics-template.html:67
-msgid "Unhandled results by month"
-msgstr "Antal uhåndterede resultater per måned"
-
-#: reportapp/templates/components/dpo-statistics-template.html:72
-msgid "New results"
-msgstr "Nye resultater"
+#: reportapp/templates/components/dpo-statistics-template.html:52
+msgid "All"
+msgstr "Alle"
 
 #: reportapp/templates/components/dpo-statistics-template.html:73
-msgid "Unhandled results"
-msgstr "Uhåndterede resultater"
+#: reportapp/templates/components/filters.html:31
+#: reportapp/templates/components/filters.html:62
+#: reportapp/templates/components/filters.html:94
+#: reportapp/templates/components/filters.html:127
+msgid "Clear"
+msgstr "Ryd"
 
-#: reportapp/templates/components/dpo-statistics-template.html:91
-msgid "Distribution of results"
-msgstr "Fordeling af resultater"
+#: reportapp/templates/components/dpo-statistics-template.html:87
+msgid "Mail results"
+msgstr "Mailresultater"
 
-#: reportapp/templates/components/dpo-statistics-template.html:93
-msgid "Results distributed by data sources"
-msgstr "Resultater fordelt på datakilder"
+#: reportapp/templates/components/dpo-statistics-template.html:92
+msgid "Current total number of unhandled matches from mails"
+msgstr "Nuværende antal af uhåndterede matches fra mails"
 
-#: reportapp/templates/components/dpo-statistics-template.html:96
-msgid "Results distributed by resolution statuses"
-msgstr "Resultater fordelt på håndteringsstatusser"
+#: reportapp/templates/components/dpo-statistics-template.html:94
+msgid "Total number of unhandled matches from mails"
+msgstr "Antal af matches fra mails"
 
-#: reportapp/templates/components/dpo-statistics-template.html:101
-msgid "Data sources"
-msgstr "Datakilder"
+#: reportapp/templates/components/dpo-statistics-template.html:107
+#: reportapp/templates/components/dpo-statistics-template.html:140
+#: reportapp/templates/components/dpo-statistics-template.html:173
+#: reportapp/templates/components/dpo-statistics-template.html:208
+#: reportapp/templates/components/dpo-statistics-template.html:241
+#: reportapp/templates/components/dpo-statistics-template.html:278
+msgid " the last 30 days"
+msgstr " de sidste 30 dage"
 
-#: reportapp/templates/components/dpo-statistics-template.html:102
-msgid "Resolution statuses"
-msgstr "Håndteringsstatusser"
+#: reportapp/templates/components/dpo-statistics-template.html:120
+msgid "File results"
+msgstr "Resultater fra filer"
+
+#: reportapp/templates/components/dpo-statistics-template.html:125
+msgid "Current total number of unhandled matches from files"
+msgstr "Nuværende antal af uhåndterede matches fra filer"
 
 #: reportapp/templates/components/dpo-statistics-template.html:127
-#: reportapp/templates/components/dpo-statistics-template.html:139
+msgid "Total number of unhandled matches from file sources"
+msgstr "Antal af matches fra filkilder"
+
+#: reportapp/templates/components/dpo-statistics-template.html:153
+msgid "Web results"
+msgstr "Webresultater"
+
+#: reportapp/templates/components/dpo-statistics-template.html:158
+msgid "Current total number of unhandled matches from website"
+msgstr "Nuværende antal af uhåndterede matches fra hjemmesider"
+
+#: reportapp/templates/components/dpo-statistics-template.html:160
+msgid "Total number of matches of website type"
+msgstr "Antal af matches fra hjemmesider"
+
+#: reportapp/templates/components/dpo-statistics-template.html:188
+#: reportapp/templates/components/dpo-statistics-template.html:222
+msgid "Teams file results"
+msgstr "Teams filresultater"
+
+#: reportapp/templates/components/dpo-statistics-template.html:193
+msgid "Current total number of unhandled matches from Teams files"
+msgstr "Nuværende antal af uhåndterede matches fra andre kilder i dag"
+
+#: reportapp/templates/components/dpo-statistics-template.html:195
+msgid "Total number of matches of teams file type"
+msgstr "Antal af matches fra teams filer"
+
+#: reportapp/templates/components/dpo-statistics-template.html:227
+msgid "Current total number of unhandled matches from calendars"
+msgstr "Nuværende antal af matches fra kalendre"
+
+#: reportapp/templates/components/dpo-statistics-template.html:229
+msgid "Total number of matches from calendars"
+msgstr "Antal af matches fra kalendre"
+
+#: reportapp/templates/components/dpo-statistics-template.html:256
+msgid "Other results"
+msgstr "Andre resultater"
+
+#: reportapp/templates/components/dpo-statistics-template.html:262
+msgid "Current total number of unhandled matches from unknown file types"
+msgstr "Nuværende antal af uhåndterede matches fra ukendte filtyper"
+
+#: reportapp/templates/components/dpo-statistics-template.html:265
+msgid "Total number of matches from other sources"
+msgstr "Antal af matches fra andre kilder"
+
+#: reportapp/templates/components/dpo-statistics-template.html:292
+#: reportapp/templates/components/dpo-statistics-template.html:304
 msgid "Handled results"
 msgstr "Håndterede resultater"
 
-#: reportapp/templates/components/dpo-statistics-template.html:129
-msgid "The department's percentage of handled results"
+#: reportapp/templates/components/dpo-statistics-template.html:294
+msgid "The organizational unit's percentage of handled results"
 msgstr "Afdelingens procentvise andel af håndterede resultater"
 
-#: reportapp/templates/components/dpo-statistics-template.html:140
+#: reportapp/templates/components/dpo-statistics-template.html:305
 #: reportapp/templates/components/handle-match.html:79
 #: reportapp/templates/components/pagination.html:10
 msgid "of"
 msgstr "af"
+
+#: reportapp/templates/components/dpo-statistics-template.html:315
+msgid "Distribution of results"
+msgstr "Fordeling af resultater"
+
+#: reportapp/templates/components/dpo-statistics-template.html:317
+msgid "Results distributed by data sources"
+msgstr "Resultater fordelt på datakilder"
+
+#: reportapp/templates/components/dpo-statistics-template.html:321
+msgid "Results distributed by resolution statuses"
+msgstr "Resultater fordelt på håndteringsstatusser"
+
+#: reportapp/templates/components/dpo-statistics-template.html:327
+msgid "Data sources"
+msgstr "Datakilder"
+
+#: reportapp/templates/components/dpo-statistics-template.html:328
+msgid "Resolution statuses"
+msgstr "Håndteringsstatusser"
+
+#: reportapp/templates/components/dpo-statistics-template.html:357
+msgid "Organizational unit distribution"
+msgstr "Fordeling på organisatoriske enheder"
+
+#: reportapp/templates/components/dpo-statistics-template.html:359
+msgid "Top ten organizational units with highest number of unhandled matches"
+msgstr "Top ti afdelinger med flest uhåndterede matches"
+
+#: reportapp/templates/components/dpo-statistics-template.html:363
+msgid "Top ten organizational units with highest number of handled matches"
+msgstr "Top ti afdelinger med flest håndterede matches"
+
+#: reportapp/templates/components/dpo-statistics-template.html:367
+msgid "Top ten organizational units with highest number of total matches"
+msgstr "Top ti afdelinger med flest samlede matches"
+
+#: reportapp/templates/components/dpo-statistics-template.html:377
+#: reportapp/templates/components/dpo-statistics-template.html:431
+msgid ""
+"Hold and drag your mouse to zoom in on part of the graph. Hold shift while "
+"using the mouse wheel to manually zoom. Use the reset button to return the "
+"graph to normal."
+msgstr ""
+"Hold på grafen med musen, og træk for at markere et område, du ønsker at "
+"zoome ind på. Hold shift inde, mens du scroller med musehjulet, for manuelt "
+"at styre zoom. Tryk på nulstil-knappen for at nulstille zoom."
+
+#: reportapp/templates/components/dpo-statistics-template.html:383
+#: reportapp/templates/components/dpo-statistics-template.html:438
+msgid "Reset"
+msgstr "Nulstil"
+
+#: reportapp/templates/components/dpo-statistics-template.html:388
+msgid "Highest unhandled"
+msgstr "Højeste uhåndterede"
+
+#: reportapp/templates/components/dpo-statistics-template.html:389
+msgid "Highest handled"
+msgstr "Højeste håndterede"
+
+#: reportapp/templates/components/dpo-statistics-template.html:390
+msgid "Highest total"
+msgstr "Højeste samlede"
+
+#: reportapp/templates/components/dpo-statistics-template.html:417
+msgid "Development overview"
+msgstr "Udviklingsoverblik"
+
+#: reportapp/templates/components/dpo-statistics-template.html:419
+msgid "Unhandled results by month"
+msgstr "Antal uhåndterede resultater per måned"
+
+#: reportapp/templates/components/dpo-statistics-template.html:421
+msgid "New results by month"
+msgstr "Antal nye resultater per måned"
+
+#: reportapp/templates/components/dpo-statistics-template.html:443
+msgid "Unhandled results"
+msgstr "Uhåndterede resultater"
+
+#: reportapp/templates/components/dpo-statistics-template.html:444
+msgid "New results"
+msgstr "Nye resultater"
 
 #: reportapp/templates/components/employee_template.html:14
 #, python-format
@@ -413,26 +551,19 @@ msgid "Show/hide overview"
 msgstr "Vis/skjul overblik"
 
 #: reportapp/templates/components/faq_toc.html:5
-#: reportapp/templates/manual.html:192
+#: reportapp/templates/manual.html:194
 msgid "Why doesn't 'handle' delete my file or email?"
 msgstr "Hvorfor sletter 'Håndtér'-knappen ikke min fil eller e-mail?"
 
 #: reportapp/templates/components/faq_toc.html:9
-#: reportapp/templates/manual.html:200
+#: reportapp/templates/manual.html:202
 msgid "Why can't I open file scan matches?"
 msgstr "Hvorfor kan jeg ikke åbne matches fra filscan?"
 
 #: reportapp/templates/components/faq_toc.html:14
-#: reportapp/templates/manual.html:212
+#: reportapp/templates/manual.html:214
 msgid "Why are my emails not categorized in Outlook?"
 msgstr "Hvorfor er mine emails ikke kategoriseret i Outlook?"
-
-#: reportapp/templates/components/filters.html:31
-#: reportapp/templates/components/filters.html:62
-#: reportapp/templates/components/filters.html:94
-#: reportapp/templates/components/filters.html:127
-msgid "Clear"
-msgstr "Ryd"
 
 #: reportapp/templates/components/filters.html:32
 msgid "Scan"
@@ -783,26 +914,26 @@ msgstr ""
 "Denne funktionalitet kræver et tenant id, som OS2datascanner kun kan "
 "erhverve, hvis du har eksisterende email resultater."
 
-#: reportapp/templates/components/outlook_category_settings.html:28
+#: reportapp/templates/components/outlook_category_settings.html:31
 msgid ""
 "By checking this box, you allow OS2datascanner to categorize your emails."
 msgstr ""
 "Ved at sætte flueben i denne boks, tillader du OS2datascanner at "
 "kategorisere dine emails."
 
-#: reportapp/templates/components/outlook_category_settings.html:33
+#: reportapp/templates/components/outlook_category_settings.html:36
 msgid "Match category colour"
 msgstr "Match kategori farve"
 
-#: reportapp/templates/components/outlook_category_settings.html:47
+#: reportapp/templates/components/outlook_category_settings.html:50
 msgid "False positive category colour"
 msgstr "Falsk positiv kategori farve"
 
-#: reportapp/templates/components/outlook_category_settings.html:62
+#: reportapp/templates/components/outlook_category_settings.html:65
 msgid "Categorize all existing"
 msgstr "Kategorisér alle eksisterende"
 
-#: reportapp/templates/components/outlook_category_settings.html:66
+#: reportapp/templates/components/outlook_category_settings.html:69
 msgid ""
 "Categorizes your emails based on your existing results. Be aware that "
 "scannerjob runs will also do this for you, if you've enabled categorizing."
@@ -811,7 +942,7 @@ msgstr ""
 "opmærksom på at scannerjob kørsler også gør dette for dig, hvis du har "
 "tilladt kategorisering."
 
-#: reportapp/templates/components/outlook_category_settings.html:72
+#: reportapp/templates/components/outlook_category_settings.html:75
 msgid ""
 "This action will categorize your emails based on your existing results. Be "
 "aware that scannerjob runs will also do this for you, if you've enabled "
@@ -821,7 +952,7 @@ msgstr ""
 "resultater. Væropmærksom på at scannerjob kørsler også gør dette for dig, "
 "hvis du har tilladt kategorisering."
 
-#: reportapp/templates/components/outlook_category_settings.html:75
+#: reportapp/templates/components/outlook_category_settings.html:78
 msgid "Categorize"
 msgstr "Kategorisér"
 
@@ -1116,11 +1247,11 @@ msgstr "Tak fordi du brugte OS2datascanner."
 msgid "again"
 msgstr "igen"
 
-#: reportapp/templates/manual.html:45 reportapp/templates/manual.html:189
+#: reportapp/templates/manual.html:45 reportapp/templates/manual.html:191
 msgid "Frequently Asked Questions"
 msgstr "Ofte stillede spørgsmål"
 
-#: reportapp/templates/manual.html:190
+#: reportapp/templates/manual.html:192
 msgid ""
 "Here you can find answers to questions frequently asked by other users of "
 "OS2datascanner."
@@ -1128,7 +1259,7 @@ msgstr ""
 "Her kan du finde svar på de oftest stillede spørgsmål af andre brugere af "
 "OS2datascanner."
 
-#: reportapp/templates/manual.html:194
+#: reportapp/templates/manual.html:196
 msgid ""
 "For security reasons, OS2datascanner cannot interact with your files or "
 "emails in any way. For this reason, you must manually delete or handle the "
@@ -1140,7 +1271,7 @@ msgstr ""
 "eller på anden måde håndtere den matchede fil. 'Håndtér'-knappen i "
 "OS2datascanner fjerner kun matchet fra oversigten."
 
-#: reportapp/templates/manual.html:197
+#: reportapp/templates/manual.html:199
 msgid ""
 "You can manually access the file or email by pressing the 'copy'- or 'open'-"
 "buttons below the name of the match."
@@ -1148,7 +1279,7 @@ msgstr ""
 "Du kan manuelt tilgå filen eller e-mailen ved at trykke på 'kopier'- eller "
 "'åben'-knapperne under navnet på matchet."
 
-#: reportapp/templates/manual.html:202
+#: reportapp/templates/manual.html:204
 msgid ""
 "OS2datascanner is not located on your computer, but on an external server. "
 "You are accessing that server through your browser."
@@ -1156,7 +1287,7 @@ msgstr ""
 "OS2datascanner befinder sig ikke på din computer, men på en ekstern server. "
 "Du tilgår denne server gennem din browser."
 
-#: reportapp/templates/manual.html:205
+#: reportapp/templates/manual.html:207
 msgid ""
 "For security reasons, modern browsers are not allowed to open a file on your "
 "computer. This also prevents OS2datascanner from doing the same."
@@ -1164,7 +1295,7 @@ msgstr ""
 "Af sikkerhedsårsager har moderne browsere ikke adgang til, at åbne filer på "
 "din computer. Dette forhindrer også OS2datascanner i det samme."
 
-#: reportapp/templates/manual.html:208
+#: reportapp/templates/manual.html:210
 msgid ""
 "To find the file, which a match has been found in, click the 'Copy Folder' "
 "button on the match, then open your pathfinder on your computer, and paste "
@@ -1174,7 +1305,7 @@ msgstr ""
 "mappe'-knappen ved matchet. Derefter åbner du stifinderen på din computer, "
 "og indsætter indholdet af din udklipsholder."
 
-#: reportapp/templates/manual.html:214
+#: reportapp/templates/manual.html:216
 msgid ""
 "To categorize emails in your Outlook client, you must toggle the setting "
 "\"Categorize emails\" on your "
@@ -1182,19 +1313,19 @@ msgstr ""
 "For at kategorisere emails i din Outlook-klient, skal du slå indstillingen "
 "\"Kategorisér emails\" på din "
 
-#: reportapp/templates/manual.html:214 reportapp/templates/manual.html:217
+#: reportapp/templates/manual.html:216 reportapp/templates/manual.html:219
 msgid "profile page"
 msgstr "profilside"
 
-#: reportapp/templates/manual.html:214
+#: reportapp/templates/manual.html:216
 msgid "See more information in"
 msgstr "Se mere information i"
 
-#: reportapp/templates/manual.html:214
+#: reportapp/templates/manual.html:216
 msgid "the manual"
 msgstr "håndbogen"
 
-#: reportapp/templates/manual.html:217
+#: reportapp/templates/manual.html:219
 msgid ""
 "If the setting is already on, future matches will categorize the "
 "corresponding email in your Outlook client. To categorize the previously "
@@ -1421,41 +1552,49 @@ msgstr "Uidentificerbar scan type"
 msgid "%0D%0A%0D%0A--- Do not alter text below this line! ---%0D%0A"
 msgstr "%0D%0A%0D%0A--- Ændr ikke teksten under denne linje! ---%0D%0A"
 
-#: reportapp/views/report_views.py:68
+#: reportapp/views/report_views.py:70
 msgid "The page does not exist"
 msgstr "Siden eksisterer ikke"
 
-#: reportapp/views/report_views.py:473 reportapp/views/report_views.py:504
+#: reportapp/views/report_views.py:475 reportapp/views/report_views.py:506
 #, python-brace-format
 msgid "Failed to delete {pn}: {e}"
 msgstr "Kunne ikke slette {pn}: {e}"
 
-#: reportapp/views/statistics_views.py:87
+#: reportapp/views/statistics_views.py:92
 msgid "The user does not have an account."
 msgstr "Brugeren har ikke en konto."
 
-#: reportapp/views/statistics_views.py:115
+#: reportapp/views/statistics_views.py:121
 #, python-brace-format
 msgid "An organizational unit with the UUID '{0}' was not found."
 msgstr "En organisatorisk enhed med UUID'et '{0}' blev ikke fundet."
 
-#: reportapp/views/statistics_views.py:151
+#: reportapp/views/statistics_views.py:176
 msgid "Only DPOs and superusers have access to the DPO overview."
 msgstr "Kun DPOer og superbrugere har adgang til DPO-overblikket."
 
-#: reportapp/views/statistics_views.py:169
+#: reportapp/views/statistics_views.py:194
 msgid "Webscan"
 msgstr "Webscan"
 
-#: reportapp/views/statistics_views.py:170
+#: reportapp/views/statistics_views.py:195
 msgid "Filescan"
 msgstr "Filscan"
 
-#: reportapp/views/statistics_views.py:171
+#: reportapp/views/statistics_views.py:196
 msgid "Mailscan"
 msgstr "Mailscan"
 
-#: reportapp/views/statistics_views.py:428
+#: reportapp/views/statistics_views.py:197
+msgid "Teams scan"
+msgstr "Teams scan"
+
+#: reportapp/views/statistics_views.py:198
+msgid "Calendar scan"
+msgstr "Kalender scan"
+
+#: reportapp/views/statistics_views.py:522
 #, python-brace-format
 msgid "You deleted all results from {0} associated with {1}."
 msgstr "Du har slettet alle resultater fra {0} tilknyttet {1}."
@@ -1554,6 +1693,35 @@ msgid "You currently have no Outlook reports. Can't create categories!"
 msgstr ""
 "Du har i øjeblikket ingen email resultater. Kan ikke oprette kategorier!"
 
+#~ msgid "Mail drive"
+#~ msgstr "Maildrev"
+
+#, fuzzy
+#~| msgid "Total number of matches in file drive today"
+#~ msgid "Total number of matches in mail drive today"
+#~ msgstr "Totale antal af matches fra fildrev i dag"
+
+#~ msgid "File drive"
+#~ msgstr "Fildrev"
+
+#~ msgid "Total number of matches in file drive today"
+#~ msgstr "Totale antal af matches fra fildrev i dag"
+
+#~ msgid "Website"
+#~ msgstr "Hjemmeside"
+
+#~ msgid "Department distribution"
+#~ msgstr "Afdelingsfordeling"
+
+#~ msgid "Number of handled and total matches distributed by all departments"
+#~ msgstr "Antal af håndterede og samlede matches fordelt på alle afdelinger"
+
+#~ msgid "Ten highest departments"
+#~ msgstr "Ti højeste afdelinger"
+
+#~ msgid "All departments"
+#~ msgstr "Alle afdelinger"
+
 #~ msgid ""
 #~ "Couldn't create category! Please make sure the false positive category "
 #~ "doesn't already exist."
@@ -1581,9 +1749,6 @@ msgstr ""
 
 #~ msgid "Percentage of handled results distributed by sensitivity"
 #~ msgstr "Procentvis andel af håndterede resultater fordelt på følsomhed"
-
-#~ msgid "All results"
-#~ msgstr "Alle resultater"
 
 #~ msgid ""
 #~ "You deleted all {account.first_name or account.username}'s results from "

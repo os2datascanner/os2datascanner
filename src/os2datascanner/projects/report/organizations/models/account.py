@@ -59,6 +59,7 @@ class AccountManager(models.Manager):
     # that makes sense from an Account..
     # This means that we risk creating multiple User objects, if users username attribute changes.
     # It's the best we can do for now, until we out-phase User objects entirely
+
     def create(self, **kwargs):
         user_obj, created = User.objects.update_or_create(
             username=kwargs.get("username"),
@@ -204,11 +205,11 @@ class Account(Core_Account):
         # a single value
         for obj in reports:
             if obj.get("only_notify_superadmin"):
-                self.withheld_matches += obj.get("count")
+                self.withheld_matches += obj.get("count", 0)
             elif obj.get("resolution_status") is not None:
-                self.handled_matches += obj.get("count")
+                self.handled_matches += obj.get("count", 0)
             else:
-                self.match_count += obj.get("count")
+                self.match_count += obj.get("count", 0)
 
     def _calculate_status(self):
         """Calculate the status of the user. The user can have one of three
