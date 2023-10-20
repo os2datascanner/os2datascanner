@@ -247,4 +247,4 @@ def perform_os2mo_import(org_unit_list: list,  # noqa: CCR001, C901 too high cog
     # Append positions to to_delete
     positions_to_delete()
     # ... then, execute
-    prepare_and_publish(all_uuids, to_add, to_delete, to_update)
+    prepare_and_publish(organization, all_uuids, to_add, to_delete, to_update)
