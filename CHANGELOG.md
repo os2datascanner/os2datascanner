@@ -47,6 +47,8 @@
 
 - When the "Open" or "Copy" -buttons on the reportmodule are clicked, the last opened match
   will once again be highlighted. 
+  
+- In "My Overview", reverted matches are now counted correctly.
 
 - Delete button for MSGraph mail matches is now visible on matches 
   whether HANDLE_DROPDOWN is enabled or not.
