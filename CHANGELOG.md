@@ -62,6 +62,8 @@
 - If a Keycloak access token runs out during user fetching, OS2datascanner will now fetch a new one
 and proceed.
 
+- Additional fallback fonts for GhostScript conversion has been installed.
+
 - The `diagnostics`-management command will no longer encounter a TypeError
   when aliases without accounts or users are present in the database.
 
