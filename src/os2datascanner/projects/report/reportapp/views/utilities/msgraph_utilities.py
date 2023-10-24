@@ -70,8 +70,10 @@ def create_outlook_category_for_account(account: Account,
 
         except requests.HTTPError as ex:
             create_category_failed_message = _("Couldn't create category! "
+                                               "Please make sure category {category_name} doesn't "
+                                               "already exist in Outlook! "
                                                "Code: {status_code}").format(
-                status_code=ex.response.status_code)
+                category_name=category_name.value, status_code=ex.response.status_code)
             logger.warning(f"Couldn't create category! Got response: {ex.response}")
             # PermissionDenied is a bit misleading here, as it may not represent what went wrong.
             # But sticking to this exception, makes handling it in the view easier.

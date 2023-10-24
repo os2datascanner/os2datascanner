@@ -52,20 +52,33 @@ class AccountOutlookSettingView(LoginRequiredMixin, DetailView):
     def post(self, request, *args, **kwargs):  # noqa C901, CCR001
         account = self.get_object()
 
+        # try:
+        #     check_msgraph_settings(account.organization)
+        # except PermissionDenied as pe:
+
         htmx_trigger = self.request.headers.get("HX-Trigger-Name")
         if htmx_trigger == "categorize_existing":
-            categorize_existing_emails_from_account(
-                account,
-                OutlookCategoryName.Match
-            )
+            try:
+                categorize_existing_emails_from_account(
+                    account,
+                    OutlookCategoryName.Match
+                )
 
-            success_message = _("Successfully categorized your emails!")
-            logger.info(f"{account} categorized their emails manually")
-            messages.add_message(
-                request,
-                messages.SUCCESS,
-                success_message
-            )
+                success_message = _("Successfully categorized your emails!")
+                logger.info(f"{account} categorized their emails manually")
+                messages.add_message(
+                    request,
+                    messages.SUCCESS,
+                    success_message
+                )
+            except PermissionDenied as e:
+                logger.error(f"Error! {account} tried to categorized their emails manually \n"
+                             f"Exception: {e}")
+                messages.add_message(
+                    request,
+                    messages.ERROR,
+                    e
+                )
 
         if request.POST.get("outlook_setting", False):  # We're doing stuff in the outlook settings
             categorize_check = request.POST.get("categorize_check", False) == "on"
@@ -91,15 +104,20 @@ class AccountOutlookSettingView(LoginRequiredMixin, DetailView):
                                                                              match_colour))
                         acc_ol_settings.match_colour = match_colour
                         acc_ol_settings.match_category_uuid = match_resp.json().get("id")
+                        success_message = _("Successfully created OS2datascanner Match category!")
+                        logger.info(f"OS2datascanner Match category created for: {account}")
+                        messages.add_message(
+                            request,
+                            messages.SUCCESS,
+                            success_message
+                        )
                     except PermissionDenied as e:
                         acc_ol_settings.categorize_email = False
-                        error_message = _("Couldn't create category! Please make sure"
-                                          " the match category doesn't already exist.")
-                        logger.error(f"{error_message} \n {e}")
+                        logger.error(f"Error trying to create category: {e}")
                         messages.add_message(
                             request,
                             messages.ERROR,
-                            error_message)
+                            e)
 
                 if not acc_ol_settings.false_positive_category_uuid:
                     try:
@@ -107,18 +125,24 @@ class AccountOutlookSettingView(LoginRequiredMixin, DetailView):
                             account,
                             OutlookCategoryName.FalsePositive,
                             AccountOutlookSetting.OutlookCategoryColour(false_positive_colour))
-
                         acc_ol_settings.false_positive_colour = false_positive_colour
                         acc_ol_settings.false_positive_category_uuid = false_p_resp.json().get("id")
+                        success_message = _("Successfully created OS2datascanner False Positive "
+                                            "category!")
+                        logger.info(f"OS2datascanner False Positive category created for: "
+                                    f"{account}")
+                        messages.add_message(
+                            request,
+                            messages.SUCCESS,
+                            success_message
+                        )
                     except PermissionDenied as e:
                         acc_ol_settings.categorize_email = False
-                        error_message = _("Couldn't create category! Please make sure"
-                                          " the false positive category doesn't already exist.")
-                        logger.error(f"{error_message} \n {e}")
+                        logger.error(f"Error trying to create category: {e}")
                         messages.add_message(
                             request,
                             messages.ERROR,
-                            error_message
+                            e
                         )
 
                 # Else, we can assume that we're updating.
@@ -132,6 +156,12 @@ class AccountOutlookSettingView(LoginRequiredMixin, DetailView):
 
                         acc_ol_settings.match_colour = (AccountOutlookSetting.
                                                         OutlookCategoryColour(match_colour))
+                        success_message = _("Successfully updated OS2datascanner Match colour! ")
+                        messages.add_message(
+                            request,
+                            messages.SUCCESS,
+                            success_message
+                        )
                     except PermissionDenied as e:
                         error_message = _("Couldn't update match category colour!")
                         logger.error(f"{error_message} \n {e}")
@@ -151,6 +181,13 @@ class AccountOutlookSettingView(LoginRequiredMixin, DetailView):
                         acc_ol_settings.false_positive_colour = (AccountOutlookSetting.
                                                                  OutlookCategoryColour(
                                                                      false_positive_colour))
+                        success_message = _("Successfully updated OS2datascanner False Positive "
+                                            "colour! ")
+                        messages.add_message(
+                            request,
+                            messages.SUCCESS,
+                            success_message
+                        )
                     except PermissionDenied as e:
                         error_message = _("Couldn't update false positive category colour!")
                         logger.error(f"{error_message} \n {e}")
@@ -168,6 +205,12 @@ class AccountOutlookSettingView(LoginRequiredMixin, DetailView):
                                                         acc_ol_settings.match_category_uuid
                                                         )
                     acc_ol_settings.match_category_uuid = None
+                    success_message = _("Successfully deleted OS2datascanner Match category!")
+                    messages.add_message(
+                        request,
+                        messages.SUCCESS,
+                        success_message
+                    )
                 except PermissionDenied as e:
                     error_message = _("Couldn't delete match category!")
                     logger.error(f"{error_message} \n {e}")
@@ -182,8 +225,15 @@ class AccountOutlookSettingView(LoginRequiredMixin, DetailView):
                                                         acc_ol_settings.false_positive_category_uuid
                                                         )
                     acc_ol_settings.false_positive_category_uuid = None
+                    success_message = _("Successfully deleted OS2datascanner False Positive "
+                                        "category!")
+                    messages.add_message(
+                        request,
+                        messages.SUCCESS,
+                        success_message
+                    )
                 except PermissionDenied as e:
-                    error_message = _("Couldn't delete false positive category")
+                    error_message = _("Couldn't delete false positive category!")
                     logger.error(f"{error_message} \n {e}")
                     messages.add_message(
                         request,
