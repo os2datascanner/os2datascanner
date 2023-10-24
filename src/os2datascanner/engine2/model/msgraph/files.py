@@ -31,7 +31,7 @@ class MSGraphFilesSource(MSGraphSource):
     def handles(self, sm):  # noqa
         if self._site_drives:
             with warn_on_httperror("SharePoint drive check"):
-                drives = sm.open(self).get("sites/root/drives")
+                drives = sm.open(self).get("sites/root/drives").json()
                 for drive in drives["value"]:
                     yield self._make_drive_handle(drive)
         if self._user_drives:
@@ -39,13 +39,13 @@ class MSGraphFilesSource(MSGraphSource):
                 for user in self._list_users(sm):
                     pn = user["userPrincipalName"]
                     with warn_on_httperror(f"drive check for {pn}"):
-                        drive = sm.open(self).get("users/{0}/drive".format(pn))
+                        drive = sm.open(self).get("users/{0}/drive".format(pn)).json()
                         yield self._make_drive_handle(drive)
 
             else:
                 for pn in self._userlist:
                     with warn_on_httperror(f"drive check for {pn}"):
-                        drive = sm.open(self).get(f"users/{pn}/drive")
+                        drive = sm.open(self).get(f"users/{pn}/drive").json()
                         yield self._make_drive_handle(drive)
 
     def to_json_object(self):
@@ -74,7 +74,7 @@ DUMMY_MIME = "application/vnd.os2.datascanner.graphdrive"
 
 class MSGraphDriveResource(Resource):
     def check(self) -> bool:
-        response = self._get_cookie().get_raw(
+        response = self._get_cookie().get(
                 "drives/{0}?$select=id".format(self.handle.relative_path))
         return response.status_code not in (404, 410,)
 
@@ -145,12 +145,12 @@ class MSGraphDriveSource(DerivedSource):
                     subfolder = sm.open(self).get(
                             "/drives/{0}/items/{1}/children".format(
                                     self.handle.relative_path,
-                                    obj["id"]))
+                                    obj["id"])).json()
                     yield from _explore_folder(
                             components + [name], subfolder["value"])
         root = sm.open(self).get(
                 "drives/{0}/root/children".format(
-                        self.handle.relative_path))["value"]
+                        self.handle.relative_path)).json()["value"]
         yield from _explore_folder([], root)
 
 
@@ -167,7 +167,7 @@ class MSGraphFileResource(FileResource):
         yield from super()._generate_metadata()
 
     def check(self) -> bool:
-        response = self._get_cookie().get_raw("drives/{0}/root:/{1}".format(
+        response = self._get_cookie().get("drives/{0}/root:/{1}".format(
                 self.handle.source.handle.relative_path,
                 self.handle.relative_path))
         return response.status_code not in (404, 410,)
@@ -179,7 +179,7 @@ class MSGraphFileResource(FileResource):
 
     def get_file_metadata(self):
         if not self._metadata:
-            self._metadata = self._get_cookie().get(self.make_object_path())
+            self._metadata = self._get_cookie().get(self.make_object_path()).json()
         return self._metadata
 
     def get_last_modified(self):
@@ -192,8 +192,8 @@ class MSGraphFileResource(FileResource):
     @contextmanager
     def make_stream(self):
         response = self._get_cookie().get(
-                self.make_object_path() + ":/content", json=False)
-        with BytesIO(response) as fp:
+                self.make_object_path() + ":/content")
+        with BytesIO(response.content) as fp:
             yield fp
 
 

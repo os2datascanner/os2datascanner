@@ -28,6 +28,7 @@ class StatisticsPageConfigChoices(models.TextChoices):
     SUPERUSERS = "S", "Superusers"
     NONE = "N", "None"
 
+
 class SupportContactChoices(models.TextChoices):
     NONE = "NO", _("None")
     WEBSITE = "WS", _("Website")
@@ -38,6 +39,7 @@ class DPOContactChoices(models.TextChoices):
     NONE = "NO", _("None")
     SINGLE_DPO = "SD", _("Single DPO")
     UNIT_DPO = "UD", _("Unit DPO")
+
 
 class MSGraphWritePermissionChoices(models.TextChoices):
     CATEGORIZE = "CAT", _("Categorize emails")
@@ -177,7 +179,6 @@ class Organization(models.Model):
     def save(self, *args, **kwargs):
         self.clean()
         return super().save(*args, **kwargs)
-
 
     class Meta:
         abstract = True

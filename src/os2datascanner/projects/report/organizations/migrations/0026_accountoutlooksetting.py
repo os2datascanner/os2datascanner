@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('organizations', '0024_alter_alias__alias_type'),
+        ('organizations', '0025_support_button_settings'),
     ]
 
     operations = [

@@ -18,7 +18,7 @@ from .views.statistics_views import (
 from .views.report_views import (
     UserReportView, UserArchiveView, RemediatorView, RemediatorArchiveView,
     UndistributedView, UndistributedArchiveView)
-from .views.user_views import AccountView
+from .views.user_views import AccountView, AccountOutlookSettingView
 from .views.manual_views import ManualMainView
 from .views.support_views import SupportButtonView
 
@@ -34,6 +34,8 @@ urlpatterns = [
     re_path('api$',     JSONAPIView.as_view(),     name="json-api"),
     path('account/<uuid:pk>', AccountView.as_view(), name="account"),
     path('account/', AccountView.as_view(), name="account-me"),
+    path("account/outlook-category-settings/", AccountOutlookSettingView.as_view(),
+         name="outlook-category-settings"),
     re_path(r'^statistics/leader/$', LeaderStatisticsPageView.as_view(), name='statistics-leader'),
     re_path(r'^statistics/dpo/$', DPOStatisticsPageView.as_view(), name='statistics-dpo'),
     path('statistics/user/', UserStatisticsPageView.as_view(),

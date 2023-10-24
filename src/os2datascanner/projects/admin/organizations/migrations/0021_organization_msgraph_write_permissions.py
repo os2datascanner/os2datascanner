@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('organizations', '0019_alter_alias__alias_type'),
+        ('organizations', '0020_support_button_settings'),
     ]
 
     operations = [

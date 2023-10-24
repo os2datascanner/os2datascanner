@@ -39,7 +39,7 @@ class MSGraphMailSource(MSGraphSource):
                 # that this user doesn't have a mail account at all
                 with warn_on_httperror(f"mail check for {pn}"):
                     any_mails = sm.open(self).get(
-                        "users/{0}/messages?$select=id&$top=1".format(pn))
+                        "users/{0}/messages?$select=id&$top=1".format(pn)).json()
                     if not any_mails["value"]:
                         # This user has a mail account that contains no mails
                         continue
@@ -50,7 +50,7 @@ class MSGraphMailSource(MSGraphSource):
             for pn in self._userlist:
                 with warn_on_httperror(f"mail check for {pn}"):
                     any_mails = sm.open(self).get(
-                        "users/{0}/messages?$select=id&$top=1".format(pn))
+                        "users/{0}/messages?$select=id&$top=1".format(pn)).json()
                     if any_mails["value"]:
                         yield MSGraphMailAccountHandle(self, pn)
 
@@ -92,7 +92,7 @@ DUMMY_MIME = "application/vnd.os2.datascanner.graphmailaccount"
 
 class MSGraphMailAccountResource(Resource):
     def check(self) -> bool:
-        response = self._get_cookie().get_raw(
+        response = self._get_cookie().get(
                 "users/{0}/messages?$select=id&$top=1".format(
                         self.handle.relative_path))
         return response.status_code not in (404, 410,)
@@ -156,7 +156,7 @@ class MSGraphMailAccountSource(DerivedSource):
             # Find folder id of deleted post for given mail account
 
             del_post_folder_id = sm.open(self).get(
-                f"users/{pn}/mailFolders/deleteditems?$select=id").get("id")
+                f"users/{pn}/mailFolders/deleteditems?$select=id").json().get("id")
 
             # Exclude deleted post by issuing a 'not equal to' (ne) filter query
             filters.append(f"parentFolderId ne '{del_post_folder_id}'")
@@ -166,7 +166,7 @@ class MSGraphMailAccountSource(DerivedSource):
             # The syncissues folder is not guaranteed to be present, and requires a check
             try:
                 sync_issue_folder_id = sm.open(self).get(
-                    f"users/{pn}/mailFolders/syncissues?$select=id").get("id")
+                    f"users/{pn}/mailFolders/syncissues?$select=id").json().get("id")
 
                 filters.append(f"parentFolderId ne '{sync_issue_folder_id}'")
             except Exception:
@@ -177,14 +177,14 @@ class MSGraphMailAccountSource(DerivedSource):
 
         # If there is no syncissues folder, and we do want the deleted mail folder,
         # we can potentially hit filters without having declared the result variable.
-        result = sm.open(self).get(query)
+        result = sm.open(self).get(query).json()
 
         yield from (self._wrap(msg, builder) for msg in result["value"])
         # We want to get all emails for given account
         # This key takes us to the next page and is only present
         # as long as there is one.
         while '@odata.nextLink' in result:
-            result = sm.open(self).follow_next_link(result["@odata.nextLink"])
+            result = sm.open(self).follow_next_link(result["@odata.nextLink"]).json()
             yield from (self._wrap(msg, builder) for msg in result["value"])
 
     def _wrap(self, message, builder: MailFSBuilder):
@@ -218,7 +218,7 @@ class MSGraphMailMessageResource(FileResource):
         yield from super()._generate_metadata()
 
     def check(self) -> bool:
-        response = self._get_cookie().get_raw(
+        response = self._get_cookie().get(
                 self.make_object_path() + "?$select=id")
         return response.status_code not in (404, 410,)
 
@@ -231,14 +231,14 @@ class MSGraphMailMessageResource(FileResource):
         if not self._message:
             self._message = self._get_cookie().get(
                     self.make_object_path() + "?$select=lastModifiedDateTime,"
-                                              "sentDateTime,isDraft,categories")
+                                              "sentDateTime,isDraft,categories").json()
         return self._message
 
     @contextmanager
     def make_stream(self):
         response = self._get_cookie().get(
-                self.make_object_path() + "/$value", json=False)
-        with BytesIO(response) as fp:
+                self.make_object_path() + "/$value")
+        with BytesIO(response.content) as fp:
             yield fp
 
     def get_size(self):

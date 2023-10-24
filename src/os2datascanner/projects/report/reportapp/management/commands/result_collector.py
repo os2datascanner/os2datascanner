@@ -46,7 +46,7 @@ SUMMARY = Summary("os2datascanner_result_collector_report",
 ResolutionChoices = DocumentReport.ResolutionChoices
 
 
-def result_message_received_raw(body, ppt):
+def result_message_received_raw(body):
     """Method for restructuring and storing result body.
 
     The agreed structure is as follows:
@@ -76,7 +76,7 @@ def result_message_received_raw(body, ppt):
         elif queue == "problem":
             handle_problem_message(tag, body)
         elif queue == "metadata":
-            handle_metadata_message(tag, body, ppt)
+            yield from handle_metadata_message(tag, body)
 
     yield from []
 
@@ -102,8 +102,7 @@ def outlook_categorize_enabled(owner: str) -> bool:
                                                      categorize_email=True))
 
 
-# ppt defaults None for test purposes - we provide it through result_message_received_raw.
-def handle_metadata_message(scan_tag, result, ppt=None):
+def handle_metadata_message(scan_tag, result):
     # Evaluate the queryset that is updated later to lock it.
     message = messages.MetadataMessage.from_json_object(result)
     path = message.handle.crunch(hash=True)
@@ -154,14 +153,12 @@ def handle_metadata_message(scan_tag, result, ppt=None):
     if dr.source_type == MSGraphMailSource.type_label and not outlook_false_positive:
         if outlook_categorize_enabled(owner):
             message_body = (dr.pk, OutlookCategoryName.Match.value)
-            ppt.enqueue_message(routing_key="os2ds_email_tags",
-                                body=message_body)
+            yield ("os2ds_email_tags", message_body)
             logger.debug(f"Enqueued categorize email request containing body: {message_body}")
         else:
             logger.debug(f"Categorizing mail not enabled for {owner}")
 
     create_aliases(dr)
-    return dr
 
 
 def create_aliases(dr: DocumentReport):
@@ -451,7 +448,7 @@ class ResultCollectorRunner(PikaPipelineThread):
                 body=body)
             if routing_key == "os2ds_results":
                 with transaction.atomic():
-                    yield from result_message_received_raw(body, self)
+                    yield from result_message_received_raw(body)
 
 
 class Command(BaseCommand):

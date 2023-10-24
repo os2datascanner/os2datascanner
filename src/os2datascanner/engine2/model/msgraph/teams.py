@@ -9,7 +9,7 @@ class MSGraphTeamsFilesSource(MSGraphSource):
     def __init__(self, client_id, tenant_id, client_secret,):
         super().__init__(client_id, tenant_id, client_secret)
 
-    def _make_drive_handle(self, obj):
+    def _make_3drive_handle(self, obj):
         owner_name = None
         if "owner" in obj:
             if "user" in obj["owner"]:
@@ -19,12 +19,12 @@ class MSGraphTeamsFilesSource(MSGraphSource):
         return MSGraphDriveHandle(self, obj["id"], obj["name"], owner_name)
 
     def handles(self, sm):
-        teams = sm.open(self).get("/teams")
+        teams = sm.open(self).get("/teams").json()
         for team in teams["value"]:
-            channels = sm.open(self).get(f"teams/{team['id']}/channels")
+            channels = sm.open(self).get(f"teams/{team['id']}/channels").json()
             for channel in channels["value"]:
                 files_folder = sm.open(self).get(
-                    f"teams/{team['id']}/channels/{channel['id']}/filesFolder")
+                    f"teams/{team['id']}/channels/{channel['id']}/filesFolder").json()
                 match files_folder.get("parentReference"):
                     case {"driveId": drive_id}:
                         yield MSGraphDriveHandle(self, drive_id, files_folder["name"], None)

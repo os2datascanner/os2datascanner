@@ -25,7 +25,7 @@ class MSGraphCalendarSource(MSGraphSource):
 
                 with warn_on_httperror(f"calendar check for {pn}"):
                     any_events = sm.open(self).get(
-                        "users/{0}/events?$select=id&$top=1".format(pn))
+                        "users/{0}/events?$select=id&$top=1".format(pn)).json()
                     if not any_events["value"]:
                         continue
 
@@ -34,7 +34,7 @@ class MSGraphCalendarSource(MSGraphSource):
             for pn in self._userlist:
                 with warn_on_httperror(f"calendar check for {pn}"):
                     any_events = sm.open(self).get(
-                        "users/{0}/events?$select=id&$top=1".format(pn))
+                        "users/{0}/events?$select=id&$top=1".format(pn)).json()
                     if any_events["value"]:
                         yield MSGraphCalendarAccountHandle(self, pn)
 
@@ -59,7 +59,7 @@ DUMMY_MIME = "application/vnd.os2.datascanner.graphcalendaraccount"
 
 class MSGraphCalendarAccountResource(Resource):
     def check(self) -> bool:
-        response = self._get_cookie().get_raw(
+        response = self._get_cookie().get(
             "users/{0}/events?$select=id&$top=1".format(
                 self.handle.relative_path))
         return response.status_code not in (404, 410,)
@@ -100,12 +100,12 @@ class MSGraphCalendarAccountSource(DerivedSource):
         pn = self.handle.relative_path
         result = sm.open(self).get(
             "users/{}/events?$select=id,subject,webLink,start&$top={}".format(
-                pn, engine2_settings.model["msgraph"]["page_size"]))
+                pn, engine2_settings.model["msgraph"]["page_size"])).json()
 
         yield from (self._wrap(msg) for msg in result["value"])
 
         while '@odata.nextLink' in result:
-            result = sm.open(self).follow_next_link(result["@odata.nextLink"])
+            result = sm.open(self).follow_next_link(result["@odata.nextLink"]).json()
             yield from (self._wrap(evt) for evt in result["value"])
 
     def _wrap(self, event):
@@ -126,11 +126,11 @@ class MSGraphCalendarEventResource(FileResource):
     def _get_body(self):
         if not self._body:
             self._body = self._get_cookie().get(
-                    self.make_object_path() + "?$select=body")
+                    self.make_object_path() + "?$select=body").json()
         return self._body
 
     def check(self) -> bool:
-        response = self._get_cookie().get_raw(
+        response = self._get_cookie().get(
                 self.make_object_path() + "?$select=id")
         return response.status_code not in (404, 410,)
 
@@ -142,7 +142,7 @@ class MSGraphCalendarEventResource(FileResource):
     def get_event_metadata(self):
         if not self._event:
             self._event = self._get_cookie().get(
-                self.make_object_path() + "?$select=lastModifiedDateTime")
+                self.make_object_path() + "?$select=lastModifiedDateTime").json()
         return self._event
 
     @contextmanager

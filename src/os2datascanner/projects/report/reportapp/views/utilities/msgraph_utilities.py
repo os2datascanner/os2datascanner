@@ -236,9 +236,13 @@ def categorize_existing_emails_from_account(account: Account,
             msg_id = message_handle.relative_path if message_handle else None
             try:
                 existing_categories_response = gc.get(
-                    f"users/{owner}/messages/{msg_id}?$select=categories")
+                    f"users/{owner}/messages/{msg_id}?$select=categories").json()
                 email_categories = existing_categories_response.get("categories", [])
-                email_categories.append(category_name.value)
+
+                # Only append if it's not already marked False Positive.
+                if OutlookCategoryName.FalsePositive.value not in email_categories:
+                    email_categories.append(category_name.value)
+
                 categorize_email_response = gc.categorize_mail(owner,
                                                                msg_id,
                                                                email_categories)
@@ -348,6 +352,10 @@ def get_tenant_id_from_document_report(document_report: DocumentReport) -> str o
 
 
 def get_msgraph_mail_document_reports(account):
+    # TODO: Should this return only unresolved reports?
+    # When used before trying to get a tenant id, it lowers our odds of getting one.
+    # On the other hand, it might be annoying for the user to have an email cateogorized
+    # if they've already handled the result in OS2datascanner.
     document_report = DocumentReport.objects.filter(
         alias_relation__account=account,
         source_type="msgraph-mail",
