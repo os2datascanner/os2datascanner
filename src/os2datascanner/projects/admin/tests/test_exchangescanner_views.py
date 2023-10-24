@@ -116,7 +116,7 @@ class ExchangeScannerViewsTest(TestCase):
             name="This is an Exchange Scanner",
             organization=magenta_org,
             validation_status=ExchangeScanner.VALID,
-            userlist='path/to/nothing.csv',
+            userlist=SimpleUploadedFile("dummy.txt", b"aleph\nalex\nfred"),
             service_endpoint="exchangeendpoint",
             authentication=scanner_auth_obj,
         )
