@@ -92,6 +92,7 @@ class AccountOutlookSettingView(LoginRequiredMixin, DetailView):
                         acc_ol_settings.match_colour = match_colour
                         acc_ol_settings.match_category_uuid = match_resp.json().get("id")
                     except PermissionDenied as e:
+                        acc_ol_settings.categorize_email = False
                         error_message = _("Couldn't create category! Please make sure"
                                           " the match category doesn't already exist.")
                         logger.error(f"{error_message} \n {e}")
@@ -110,6 +111,7 @@ class AccountOutlookSettingView(LoginRequiredMixin, DetailView):
                         acc_ol_settings.false_positive_colour = false_positive_colour
                         acc_ol_settings.false_positive_category_uuid = false_p_resp.json().get("id")
                     except PermissionDenied as e:
+                        acc_ol_settings.categorize_email = False
                         error_message = _("Couldn't create category! Please make sure"
                                           " the false positive category doesn't already exist.")
                         logger.error(f"{error_message} \n {e}")
