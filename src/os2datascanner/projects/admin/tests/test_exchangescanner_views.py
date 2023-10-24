@@ -1,3 +1,5 @@
+from parameterized import parameterized
+
 from django.test import TestCase, RequestFactory
 from django.urls.base import reverse
 from django.utils.text import slugify
@@ -112,7 +114,7 @@ class ExchangeScannerViewsTest(TestCase):
         )
 
         exchange_scan = ExchangeScanner.objects.create(
-            pk=1,
+            pk=100,
             name="This is an Exchange Scanner",
             organization=magenta_org,
             validation_status=ExchangeScanner.VALID,
@@ -140,7 +142,7 @@ class ExchangeScannerViewsTest(TestCase):
         )
 
         ExchangeScanner.objects.create(
-            pk=2,
+            pk=200,
             name="This is an Exchange Scanner with userlist",
             organization=magenta_org,
             validation_status=ExchangeScanner.VALID,
@@ -162,7 +164,7 @@ class ExchangeScannerViewsTest(TestCase):
 
         self.benny_alias = Alias.objects.get(uuid="1cae2e34-fd56-428e-aa53-6f077da12d99")
         self.yvonne = Account.objects.get(uuid="1cae2e37-fd99-428e-aa53-6f077da53d51")
-        self.exchange_scan = ExchangeScanner.objects.get(pk=1)
+        self.exchange_scan = ExchangeScanner.objects.get(pk=100)
 
     def test_exchangesscanner_org_units_list_as_administrator(self):
         """Note that this is not a django administrator role,
@@ -233,7 +235,7 @@ class ExchangeScannerViewsTest(TestCase):
         Only Benny has an email alias and will have an
         EWSAccountSource object yielded"""
 
-        exchange_scanner_obj = ExchangeScanner.objects.get(pk=1)
+        exchange_scanner_obj = ExchangeScanner.objects.get(pk=100)
         exchange_scanner_obj.authentication.set_password("password")
         exchange_scanner_source = exchange_scanner_obj.generate_sources()
 
@@ -244,7 +246,7 @@ class ExchangeScannerViewsTest(TestCase):
 
     def test_exchangescanner_generate_source_with_no_email_aliases_in_org_unit(self):
 
-        exchange_scanner_obj = ExchangeScanner.objects.get(pk=1)
+        exchange_scanner_obj = ExchangeScanner.objects.get(pk=100)
         exchange_scanner_obj.authentication.set_password("password")
 
         # Delete Benny's alias in this case.
@@ -258,7 +260,7 @@ class ExchangeScannerViewsTest(TestCase):
         """ Test that amount of sources yielded correspond to amount
         of users with email aliases"""
         sources_yielded = 0  # Store a count
-        exchange_scanner_obj = ExchangeScanner.objects.get(pk=1)
+        exchange_scanner_obj = ExchangeScanner.objects.get(pk=100)
         exchange_scanner_obj.authentication.set_password("password")
 
         # Give Yvonne an email alias.
@@ -281,7 +283,7 @@ class ExchangeScannerViewsTest(TestCase):
 
     def test_exchangescanner_generate_source_with_uploaded_userlist(self):
         sources_yielded = 0  # Store a count
-        exchange_scanner_obj = ExchangeScanner.objects.get(pk=2)
+        exchange_scanner_obj = ExchangeScanner.objects.get(pk=200)
         exchange_scanner_obj.authentication.set_password("password")
 
         exchange_scanner_obj.userlist = SimpleUploadedFile("dummy.txt",
@@ -335,3 +337,53 @@ class ExchangeScannerViewsTest(TestCase):
         copy_form = copy_view.get_form()
         self.assertTrue('username' in copy_form.cleaned_data)
         self.assertTrue('password' in copy_form.cleaned_data)
+
+    @parameterized.expand([
+        (
+            SimpleUploadedFile(
+                'userlist_with_domains.txt',
+                b'egon@olsenbanden.com\nbenny@olsenbanden.com\nkjeld@olsenbanden.com'),
+            False
+        ),
+        (
+            SimpleUploadedFile(
+                'userlist_comma_separated.txt',
+                b'egon,benny,kjeld'),
+            False
+        ),
+        (
+            SimpleUploadedFile(
+                'userlist_whitespace_separated',
+                b'egon benny kjeld'),
+            False
+        ),
+        (
+            SimpleUploadedFile('correct_userlist.txt', b'egon\nbenny\nkjeld'),
+            True
+        )
+    ])
+    def test_userlist_formatting(self, userlist, valid):
+        """Makes sure that field errors are raised when the formatting of the
+        userlist is wrong. The correct formatting is username-parts of
+        email-addresses separated by newlines."""
+
+        self.client.force_login(self.egon)
+
+        response = self.client.post(reverse('exchangescanner_add'), {
+            'name': 'test_scanner',
+            'mail_domain': '@test.mail',
+            'organization': '5d02dfd3-b31c-4076-b2d5-4e41d3442952',
+            'validation_status': 0,
+            'username': 'dummy',
+            'password': 'super_secret',
+            'userlist': userlist,
+            'rules': 1
+        })
+
+        context = response.context
+        form = context.get('form') if context else None
+        # If the userlist is incorrectly formatted, the form will exist in the
+        # context. If it is correctly formatted, the form will not exist.
+        userlist_is_valid = form is None
+
+        self.assertEqual(userlist_is_valid, valid)
