@@ -19,6 +19,19 @@
     
 - UserErrorLog table from database can now be exported as a CSV-file.
 
+- Categorizing emails in Outlook based on OS2datascanner results is now possible.
+
+  - OS2datascanner will create two categories in the user's Outlook client: OS2datascanner Match and OS2datascanner False Positive
+
+  - OS2datascanner can now mark emails with the "OS2datascanner Match" category in the user's Outlook, either through scannerjob runs or manually by the user.
+
+  - If emails are categorized OS2datascanner False Positive, OS2datascanner will resolve corresponding report on the next run of the scannerjob.
+
+  - It is possible for an organisation to toggle whether this feature is enabled or not.
+
+  - Category colours are customizable.
+
+
 ### General improvements
 
 - Previously seen error messages in the user error log are now hidden by

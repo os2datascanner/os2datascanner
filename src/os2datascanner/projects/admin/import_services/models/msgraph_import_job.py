@@ -96,7 +96,7 @@ class MSGraphImportJob(BackgroundJob):
                             member_id = member.get("id")
                             userinfo = gc.get(
                                 f'/users/{member_id}/?$expand=manager($select=id, '
-                                f'givenName, surname ,userPrincipalName)')
+                                f'givenName, surname ,userPrincipalName)').json()
                             group_members.append({
                                 "type": "user",
                                 "uuid": member.get("id"),

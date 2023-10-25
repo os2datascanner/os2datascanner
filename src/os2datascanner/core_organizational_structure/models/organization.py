@@ -41,6 +41,13 @@ class DPOContactChoices(models.TextChoices):
     UNIT_DPO = "UD", _("Unit DPO")
 
 
+class MSGraphWritePermissionChoices(models.TextChoices):
+    CATEGORIZE = "CAT", _("Categorize emails")
+    DELETE = "DEL", _("Delete emails")
+    ALL = "ALL", _("Permit all")
+    NONE = "NON", _("No permissions")
+
+
 class Organization(models.Model):
     """Stores data for a specific organization.
 
@@ -86,6 +93,13 @@ class Organization(models.Model):
         blank=True,
         default="RRULE:FREQ=WEEKLY;BYDAY=FR",
         verbose_name=_('Email notification interval')
+    )
+    msgraph_write_permissions = models.CharField(
+        max_length=3,
+        choices=MSGraphWritePermissionChoices.choices,
+        default=MSGraphWritePermissionChoices.NONE,
+        verbose_name=_('MSGraph write permissions'),
+        help_text=_('Select permission(s) you wish to allow for your organization.')
     )
 
     # Access settings
@@ -183,4 +197,5 @@ class OrganizationSerializer(BaseSerializer):
         fields = ['pk', 'name', 'contact_email', 'contact_phone',
                   'email_notification_schedule', 'leadertab_access', 'dpotab_access',
                   'show_support_button', 'support_contact_method', 'support_name',
-                  'support_value', 'dpo_contact_method', 'dpo_name', 'dpo_value']
+                  'support_value', 'dpo_contact_method', 'dpo_name', 'dpo_value',
+                  'msgraph_write_permissions']

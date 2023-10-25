@@ -11,6 +11,8 @@ networks:
 services:
   db:
     image: postgres:12
+    ports:
+        - "5432:5432"
     shm_size: '256mb'
     env_file:
       - dev-environment/db.env
@@ -222,6 +224,23 @@ services:
       - report
       - queue
 
+
+  report_email_tagger:
+    image: magentaaps/os2datascanner-report:dev
+    build:
+      context: .
+      dockerfile: docker/base/Dockerfile
+      target: report
+    environment:
+      - OS2DS_SKIP_DJANGO_MIGRATIONS=1
+    command: python manage.py email_tagger
+    volumes:
+      - ./dev-environment/report/dev-settings.toml:/user-settings.toml
+      - ./src/os2datascanner:/code/src/os2datascanner
+    depends_on:
+      - db
+      - report
+      - queue
 
   explorer:
     image: magentaaps/os2datascanner-engine:dev

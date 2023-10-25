@@ -9,17 +9,35 @@ from os2datascanner.engine2.utilities.backoff import WebRetrier
 
 from ..core import Source
 
-
 logger = logging.getLogger(__name__)
 
 
 def make_token(client_id, tenant_id, client_secret):
     return mint_cc_token(
-            f"https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token",
-            client_id, client_secret,
-            scope="https://graph.microsoft.com/.default",
+        f"https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token",
+        client_id, client_secret,
+        scope="https://graph.microsoft.com/.default",
 
-            wrapper=WebRetrier().run)
+        wrapper=WebRetrier().run)
+
+
+def raw_request_decorator(fn):
+    def _wrapper(self, *args, **kwargs):
+        response = fn(self, *args, **kwargs)
+        try:
+            response.raise_for_status()
+            return response
+        except requests.exceptions.HTTPError as ex:
+            # If _retry, it means we have a status code 401 but are trying a second time.
+            # It should've succeeded the first time, so we raise an exc to avoid a potential
+            # endless loop
+            if ex.response.status_code != 401 or kwargs.get('_retry', False):
+                raise ex
+            self._token = self._token_creator()
+            kwargs['_retry'] = True
+            return fn(self, *args, **kwargs)
+
+    return _wrapper
 
 
 class MSGraphSource(Source):
@@ -36,7 +54,7 @@ class MSGraphSource(Source):
 
     def make_token(self):
         return make_token(
-                self._client_id, self._tenant_id, self._client_secret)
+            self._client_id, self._tenant_id, self._client_secret)
 
     def _generate_state(self, sm):
         with requests.Session() as session:
@@ -57,89 +75,85 @@ class MSGraphSource(Source):
                 "authorization": "Bearer {0}".format(self._token),
             }
 
-        def get_raw(self, tail, timeout=None):
+        @raw_request_decorator
+        def get(self, tail, timeout=engine2_settings.model["msgraph"]["timeout"]):
             return WebRetrier().run(
-                    self._session.get,
-                    "https://graph.microsoft.com/v1.0/{0}".format(tail),
-                    headers=self._make_headers(),
-                    timeout=timeout)
-
-        def get(self, tail, *, json=True, _retry=False):
-            timeout = engine2_settings.model["msgraph"]["timeout"]
-            response = self.get_raw(tail, timeout=timeout)
-            try:
-                response.raise_for_status()
-                if json:
-                    return response.json()
-                else:
-                    return response.content
-            except requests.exceptions.HTTPError as ex:
-                # If _retry, it means we have a status code 401 but are trying a second time.
-                # It should've succeeded the first time, so we raise an exc to avoid a potential
-                # endless loop
-                if ex.response.status_code != 401 or _retry:
-                    raise ex
-
-                self._token = self._token_creator()
-                return self.get(tail, json=json, _retry=True)
+                self._session.get,
+                "https://graph.microsoft.com/v1.0/{0}".format(tail),
+                headers=self._make_headers(),
+                timeout=timeout)
 
         def paginated_get(self, endpoint: str):
             """ Performs a GET request on specified MSGraph endpoint and
-            uses generators to go through pages if response is paginated"""
-            result = self.get(endpoint)
+            uses generators to go through pages if response is paginated.
+            Yields: JSON response of 'value' key. """
+            result = self.get(endpoint).json()
             yield from result.get('value')
 
             while '@odata.nextLink' in result:
-                result = self.follow_next_link(result["@odata.nextLink"])
+                result = self.follow_next_link(result["@odata.nextLink"]).json()
                 yield from result.get('value')
 
-        def head_raw(self, tail):
+        @raw_request_decorator
+        def head(self, tail):
             return WebRetrier().run(
-                    self._session.head,
-                    "https://graph.microsoft.com/v1.0/{0}".format(tail),
-                    headers=self._make_headers())
+                self._session.head,
+                "https://graph.microsoft.com/v1.0/{0}".format(tail),
+                headers=self._make_headers())
 
-        def head(self, tail, _retry=False):
-            response = self.head_raw(tail)
-            try:
-                response.raise_for_status()
-                return response
-            except requests.exceptions.HTTPError as ex:
-                if ex.response.status_code != 401 or _retry:
-                    raise ex
-
-            self._token = self._token_creator()
-            return self.head(tail, _retry=True)
-
-        def delete_message_raw(self, owner, msg_id):
+        @raw_request_decorator
+        def delete_message(self, owner, msg_id):
             return WebRetrier().run(
                 self._session.delete,
                 f"https://graph.microsoft.com/v1.0/users/{owner}/messages/{msg_id}",
                 headers=self._make_headers(),
             )
 
-        def delete_message(self, owner, msg_id, _retry=False):
-            response = self.delete_message_raw(owner, msg_id)
-            try:
-                response.raise_for_status()
-                return response
-            except requests.exceptions.HTTPError as ex:
-                if ex.response.status_code != 401 or _retry:
-                    raise ex
-                self._token = self._token_creator()
-                return self.delete_message(owner, msg_id, _retry=True)
+        @raw_request_decorator
+        def create_outlook_category(self, owner, category_name, category_colour):
+            json_params = {"displayName": f"{category_name}",
+                           "color": f"{category_colour}"}
+            return WebRetrier().run(
+                self._session.post,
+                f"https://graph.microsoft.com/v1.0/users/{owner}/outlook/masterCategories",
+                headers=self._make_headers(), json=json_params,
 
-        def follow_next_link(self, next_page, _retry=False):
-            response = WebRetrier().run(
-                    self._session.get, next_page, headers=self._make_headers())
-            try:
-                response.raise_for_status()
-                return response.json()
-            except requests.exceptions.HTTPError as ex:
-                if ex.response.status_code != 401 or _retry:
-                    raise ex
-            self._token = self._token_creator()
-            return self.follow_next_link(next_page, _retry=True)
+            )
+
+        @raw_request_decorator
+        def categorize_mail(self, owner: str, msg_id: str, categories: list):
+            json_params = {"categories": categories}
+            return WebRetrier().run(
+                self._session.patch,
+                f"https://graph.microsoft.com/v1.0/users/{owner}/messages/{msg_id}",
+                headers=self._make_headers(), json=json_params,
+            )
+
+        @raw_request_decorator
+        def update_category_colour(self, owner: str, category_id: str, category_colour: str):
+            json_params = {"color": category_colour}
+            return WebRetrier().run(
+                self._session.patch,
+                f"https://graph.microsoft.com/v1.0/users/{owner}"
+                f"/outlook/masterCategories/{category_id}",
+                headers=self._make_headers(), json=json_params,
+            )
+
+        @raw_request_decorator
+        def delete_category(self, owner: str, category_id: str):
+            return WebRetrier().run(
+                self._session.delete,
+                f"https://graph.microsoft.com/v1.0/users/{owner}/outlook/"
+                f"masterCategories/{category_id}",
+                headers=self._make_headers(),
+            )
+
+        @raw_request_decorator
+        def follow_next_link(self, next_page):
+            return WebRetrier().run(
+                self._session.get,
+                next_page,
+                headers=self._make_headers())
 
     def to_json_object(self):
         return dict(
@@ -158,8 +172,8 @@ def warn_on_httperror(label):
         yield
     except requests.exceptions.HTTPError as ex:
         logger.warning(
-                f"{label}: unexpected HTTP {ex.response.status_code}",
-                exc_info=True)
+            f"{label}: unexpected HTTP {ex.response.status_code}",
+            exc_info=True)
 
 
 class MailFSBuilder:
@@ -183,7 +197,7 @@ class MailFSBuilder:
 
         result = sm.open(src).get(
             (f"users/{pn}/mailFolders?$select=id,"
-             f"parentFolderId,displayName,childFolderCount&$top={ps}"))
+             f"parentFolderId,displayName,childFolderCount&$top={ps}")).json()
 
         recursion_stack = self._process_result(result, recursion_stack)
         if len(recursion_stack) > 0:
@@ -202,7 +216,7 @@ class MailFSBuilder:
                 recursion_stack.append(mail_folder)
 
         if '@odata.nextLink' in result:
-            result = self._sm.open(self._source).follow_next_link(result["@odata.nextLink"])
+            result = self._sm.open(self._source).follow_next_link(result["@odata.nextLink"]).json()
             self._process_result(result, recursion_stack)
 
         return recursion_stack
@@ -214,7 +228,7 @@ class MailFSBuilder:
 
         result = self._sm.open(self._source).get(
             (f"users/{self._pn}/mailFolders/{fid}/childFolders?$select=id,"
-             f"parentFolderId,displayName,childFolderCount&$top={ps}"))
+             f"parentFolderId,displayName,childFolderCount&$top={ps}")).json()
 
         recursion_stack = self._process_result(result, recursion_stack)
 

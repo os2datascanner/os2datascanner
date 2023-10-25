@@ -172,7 +172,7 @@
             {% endif %}
           {% endif %}
           {# personal is set True in UserReportView, as it must be this users results. #}
-          {% if personal and settings.MSGRAPH_ALLOW_DELETION and type == 'msgraph-mail-account' and not "/archive/" in request.path %}
+          {% if personal and has_delete_permission and type == 'msgraph-mail-account' and not "/archive/" in request.path %}
             <div class="delete-mail">
               <button class="matches-handle button button--has-icon"
                       id="{{ document_report.pk }}"

@@ -1,0 +1,82 @@
+{% load i18n %}
+
+{% include "components/page-load-indicator.html" %}
+
+<h2 id="outlook-settings-title">{% trans "Outlook Settings" %}</h2>
+{% if not tenant_id_retrievable %}
+  <p>
+    {% trans "This functionality requires a tenant id, which OS2datascanner can only acquire if you have existing mail results." %}
+  </p>
+{% endif %}
+<table class="userprofile-table outlook-settings">
+  <tbody>
+    <form id="settings-form"
+          hx-post="{% url "outlook-category-settings" %}"
+          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+          hx-trigger="change from:input, change from:select "
+          hx-vals='{"outlook_setting": "true" }'>
+      {% csrf_token %}
+      <tr>
+        <td>{% trans "Categorize emails" %}</td>
+        <td class="ds-checkbox">
+          <input type="checkbox"
+                 name="categorize_check"
+                 id="categorize_check"
+                 {% if account.outlook_settings.categorize_email %}checked{% endif %}
+                 {% if not tenant_id_retrievable %}disabled{% endif %}>
+          <label for="categorize_check"
+                 title="{% trans "By checking this box, you allow OS2datascanner to categorize your emails." %}">
+          </label>
+        </td>
+      </tr>
+      <tr>
+        <td>{% trans "Match category colour" %}</td>
+        <td class="dropdown">
+          <select name="match_colour"
+                  {% if not tenant_id_retrievable %}disabled{% endif %}>
+            {% for choice in colour_presets.fields.match_colour.choices %}
+              <option value="{{ choice.0 }}"
+                      {% if choice.0 == account.outlook_settings.match_colour %}selected{% endif %}>
+                {{ choice.1 }}
+              </option>
+            {% endfor %}
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td>{% trans "False positive category colour" %}</td>
+        <td class="dropdown">
+          <select name="false_positive_colour"
+                  {% if not tenant_id_retrievable %}disabled{% endif %}>
+            {% for choice in colour_presets.fields.false_positive_colour.choices %}
+              <option value="{{ choice.0 }}"
+                      {% if choice.0 == account.outlook_settings.false_positive_colour %}selected{% endif %}>
+                {{ choice.1 }}
+              </option>
+            {% endfor %}
+          </select>
+        </td>
+      </tr>
+    </form>
+    <tr>
+      <td>{% trans "Categorize all existing" %}</td>
+      <td>
+        <button class="button"
+          name="categorize_existing"
+          title="{% trans "Categorizes your emails based on your existing results. Be aware that scannerjob runs will also do this for you, if you've enabled categorizing." %}"
+          {% if not tenant_id_retrievable %}disabled{% endif %}
+          hx-post="{% url "outlook-category-settings" %}"
+          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+          hx-swap="none"
+          hx-trigger="click"
+          hx-confirm="{% trans "This action will categorize your emails based on your existing results. Be aware that scannerjob runs will also do this for you, if you've enabled categorizing." %}"
+          hx-indicator="#report-page-indicator"
+          >
+          {% trans "Categorize" %}
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+{% include "components/snackbar.html" %}

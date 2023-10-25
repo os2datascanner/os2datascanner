@@ -91,9 +91,9 @@ def record_metadata(metadata):
     """Records a metadata message to the database as though it were received by
     the report module's pipeline collector, in the process also creating Alias
     relations."""
-    return result_collector.handle_metadata_message(
+    list(result_collector.handle_metadata_message(
             metadata.scan_tag,
-            metadata.to_json_object())
+            metadata.to_json_object()))
 
 
 def record_problem(problem):

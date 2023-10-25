@@ -25,18 +25,19 @@ from os2datascanner.utils import debug
 from os2datascanner.utils.log_levels import log_levels
 from os2datascanner.engine2.conversions.types import OutputType
 from os2datascanner.engine2.model.core import Handle, Source
+from os2datascanner.engine2.model.msgraph import MSGraphMailSource
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
-
 from os2datascanner.projects.report.organizations.models import Alias, AliasType, Organization
-
 from os2datascanner.utils.system_utilities import time_now
 from prometheus_client import Summary, start_http_server
 
+
 from ...models.documentreport import DocumentReport
 from ...utils import prepare_json_object
-
+from ...views.utilities.msgraph_utilities import OutlookCategoryName
+from ....organizations.models import AccountOutlookSetting
 
 logger = structlog.get_logger(__name__)
 SUMMARY = Summary("os2datascanner_result_collector_report",
@@ -75,7 +76,7 @@ def result_message_received_raw(body):
         elif queue == "problem":
             handle_problem_message(tag, body)
         elif queue == "metadata":
-            handle_metadata_message(tag, body)
+            yield from handle_metadata_message(tag, body)
 
     yield from []
 
@@ -93,6 +94,14 @@ def owner_from_metadata(message: messages.MetadataMessage) -> str:
     return owner
 
 
+def outlook_categorize_enabled(owner: str) -> bool:
+    """ Checks if categorize email is enabled for an account with an aliases with owner string
+     as value.
+    Returns True/False"""
+    return bool(AccountOutlookSetting.objects.filter(account__aliases___value=owner,
+                                                     categorize_email=True))
+
+
 def handle_metadata_message(scan_tag, result):
     # Evaluate the queryset that is updated later to lock it.
     message = messages.MetadataMessage.from_json_object(result)
@@ -106,6 +115,7 @@ def handle_metadata_message(scan_tag, result):
         scanner_job_pk=scan_tag.scanner.pk
     ).first()
 
+    resolution_status = None
     lm = None
     if "last-modified" in message.metadata:
         lm = OutputType.LastModified.decode_json_object(
@@ -116,6 +126,12 @@ def handle_metadata_message(scan_tag, result):
         # If no datasource_last_modified value is ever set, matches will not be
         # shown.
         lm = scan_tag.time or time_now()
+
+    # Specific to Outlook matches - if they have a "False Positive" category set, resolve them.
+    outlook_false_positive = (OutlookCategoryName.FalsePositive.value in
+                              message.metadata.get("outlook-categories", []))
+    if outlook_false_positive:
+        resolution_status = ResolutionChoices.FALSE_POSITIVE.value
 
     dr, _ = DocumentReport.objects.update_or_create(
             path=path, scanner_job_pk=scan_tag.scanner.pk,
@@ -128,12 +144,21 @@ def handle_metadata_message(scan_tag, result):
                 "datasource_last_modified": lm,
                 "scanner_job_name": scan_tag.scanner.name,
                 "only_notify_superadmin": scan_tag.scanner.test,
-                "resolution_status": None,
+                "resolution_status": resolution_status,
                 "organization": get_org_from_scantag(scan_tag),
                 "owner": owner,
             })
+
+    # We've encountered an Outlook match that isn't categorized False Positive.
+    if dr.source_type == MSGraphMailSource.type_label and not outlook_false_positive:
+        if outlook_categorize_enabled(owner):
+            message_body = (dr.pk, OutlookCategoryName.Match.value)
+            yield ("os2ds_email_tags", message_body)
+            logger.debug(f"Enqueued categorize email request containing body: {message_body}")
+        else:
+            logger.debug(f"Categorizing mail not enabled for {owner}")
+
     create_aliases(dr)
-    return dr
 
 
 def create_aliases(dr: DocumentReport):
@@ -448,4 +473,5 @@ class Command(BaseCommand):
 
         ResultCollectorRunner(
             read=["os2ds_results"],
+            write=["os2ds_email_tags"],
             prefetch_count=8).run_consumer()

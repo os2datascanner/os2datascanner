@@ -132,6 +132,10 @@
     </tbody>
   </table>
 
+  {% if has_categorize_permission %}
+    {% include "components/outlook_category_settings.html" %}
+  {% endif %}
+
   <h2>{% trans "Login Information" %}</h2>
   <table class="userprofile-table login-info">
     <tbody>

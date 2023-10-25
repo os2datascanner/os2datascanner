@@ -15,12 +15,22 @@ from rest_framework import serializers
 from os2datascanner.core_organizational_structure.models import Organization as Core_Organization
 from os2datascanner.core_organizational_structure.models import \
     OrganizationSerializer as Core_OrganizationSerializer
+from os2datascanner.core_organizational_structure.models import MSGraphWritePermissionChoices
+
 from ..seralizer import BaseBulkSerializer
 
 
 class Organization(Core_Organization):
     """ Core logic lives in the core_organizational_structure app. """
     serializer_class = None
+
+    def has_categorize_permission(self) -> bool:
+        return bool(self.msgraph_write_permissions in (MSGraphWritePermissionChoices.CATEGORIZE,
+                                                       MSGraphWritePermissionChoices.ALL))
+
+    def has_delete_permission(self) -> bool:
+        return bool(self.msgraph_write_permissions in (MSGraphWritePermissionChoices.DELETE,
+                                                       MSGraphWritePermissionChoices.ALL))
 
 
 class OrganizationBulkSerializer(BaseBulkSerializer):

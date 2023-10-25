@@ -267,6 +267,6 @@ class EmailNotificationTest(TestCase):
 
 
 def record_metadata(metadata):
-    return result_collector.handle_metadata_message(
+    list(result_collector.handle_metadata_message(
             metadata.scan_tag,
-            metadata.to_json_object())
+            metadata.to_json_object()))
