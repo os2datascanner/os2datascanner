@@ -44,6 +44,7 @@ def create_context(scanner: Scanner, scan_status: ScanStatus, user: User):
     context = {
         "admin_login_url": settings.SITE_URL,
         "institution": settings.NOTIFICATION_INSTITUTION,
+        "usererrorlog_setting": settings.USERERRORLOG,
         "full_name": user.get_full_name() or user.username if user else "",
         "total_objects": scan_status.total_objects,
         "scanner_name": scanner.name,
