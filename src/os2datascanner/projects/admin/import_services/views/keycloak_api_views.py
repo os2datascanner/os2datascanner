@@ -8,11 +8,7 @@ from ..keycloak_services import request_access_token
 
 
 def process_request(request, parameter_keys, kc_call):
-    token_response = request_access_token()
-    if not token_response.status_code == 200:
-        return JsonResponse(
-            token_response.json(), status=token_response.status_code)
-    token = token_response.json()['access_token']
+    token = request_access_token()
     parameters = []
     missing_parameters = []
     for key in parameter_keys:

@@ -47,28 +47,21 @@ def get_token_first(request_function, realm, *args):
     request call. Returns the error-response if token retrieval fails. Returns
     the response from the given request call otherwise.
     """
-    token_response = request_access_token()
-    if token_response.status_code == 200:
-        token = token_response.json()['access_token']
-        response = request_function(realm, token, *args)
-        return response
-    else:
-        return token_response
+    token = request_access_token()
+    return request_function(realm, token, *args)
 
 
 # TODO: delete and replace usages with equivalent calls to get_token_first
 def create_realm(realm):
-    response_token = request_access_token()
+    token = request_access_token()
     # TODO: add error-handling for unsuccessful requests (here or move all to views?)
-    token = response_token.json()['access_token']
     return request_create_new_realm(realm, token)
 
 
 # TODO: delete and replace usages with equivalent calls to get_token_first
 def add_ldap_conf(realm, payload):
-    response_token = request_access_token()
+    token = request_access_token()
     # TODO: add error-handling for unsuccessful requests (here or move all to views?)
-    token = response_token.json()['access_token']
     return request_create_component(realm, token, payload)
 
 
