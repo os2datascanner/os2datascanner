@@ -82,6 +82,10 @@ and proceed.
 
 - Adjusted left margin for content on smaller screens.
 
+- Running a Microsoft Graph or OS2mo import job will no longer delete
+  unrelated or manually-imported objects. (LDAP import jobs were not affected
+  by this bug.)
+
 ## 3.20.6, 2nd October 2023
 
 "Purple Orchid in my Windowsill"

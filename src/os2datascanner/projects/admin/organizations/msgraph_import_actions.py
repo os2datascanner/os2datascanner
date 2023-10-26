@@ -188,4 +188,4 @@ def perform_msgraph_import(data: list,  # noqa: C901, CCR001
         if positions_to_delete:
             to_delete.append(positions_to_delete)
 
-    prepare_and_publish(all_uuids, to_add, to_delete, to_update)
+    prepare_and_publish(organization, all_uuids, to_add, to_delete, to_update)

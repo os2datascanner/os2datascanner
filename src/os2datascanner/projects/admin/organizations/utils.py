@@ -93,7 +93,9 @@ def delete_and_listify(manager, instances):
     return deletion_pks
 
 
-def prepare_and_publish(all_uuids, to_add, to_delete, to_update):
+def prepare_and_publish(
+        org: Organization,
+        all_uuids, to_add, to_delete, to_update):
     """ In a transaction, sorts out to_add, to_delete and to_update.
         Creates objects in the admin module and publishes broadcast events."""
     with transaction.atomic():
@@ -101,14 +103,18 @@ def prepare_and_publish(all_uuids, to_add, to_delete, to_update):
                      f"{to_delete}")
         # Deletes
         delete_dict = {}
-        for model in get_broadcasted_models():
-            if not model == Position:  # Position doesn't have any meaningful imported id
-                # TODO: This isn't safe in a multi-tenant environment.
-                # Technically there's a miniscule risk that two objects of different model types
-                # share UUID, which could mean an object that should be deleted, won't be.
-                to_delete.append(model.objects.exclude(imported_id__in=all_uuids,
-                                                       imported=True))
-                logger.debug(f"to_delete post append of {model}: {to_delete}")
+        for model, selector_expr in [
+                (Alias, "account__organization"),
+                (Account, "organization"),
+                (OrganizationalUnit, "organization")]:
+            relevant_objects = (
+                    model.objects.filter(**{selector_expr: org})
+                    .exclude(imported=False))
+            # TODO: This isn't safe in a multi-tenant environment.
+            # Technically there's a miniscule risk that two objects of different model types
+            # share UUID, which could mean an object that should be deleted, won't be.
+            to_delete.append(relevant_objects.exclude(imported_id__in=all_uuids))
+            logger.debug(f"to_delete post append of {model}: {to_delete}")
 
         # Look in Position
         to_delete = list(chain(*to_delete))
