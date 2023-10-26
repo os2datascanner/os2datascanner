@@ -1,5 +1,6 @@
 from typing import Iterator, Optional
 import structlog
+from itertools import pairwise
 
 from .regex import RegexRule
 from .utilities.context import make_context
@@ -8,7 +9,9 @@ from .rule import Rule, Sensitivity
 logger = structlog.get_logger(__name__)
 
 # dk_passport_regex = r"P<DNK[A-Z<]{39}[\n \t,]?(\d{9})(\d)DNK(\d{6})(\d)[MF<](\d{6})(\d)([A-Z\d<]{14})(\d)(\d)"  # noqa: E501 line too long
-passport_regex = r"P[A-Z<kx]([A-Z]{3})[A-Z<kx]{39}[\n \t,]?([\dA-Z]{9})(\d)([A-Z]{3})(\d{6})(\d)[MF<kx](\d{6})(\d)([A-Z\d<kx]{14})(\d)(\d)"  # noqa: E501 line too long
+passport_regex = (r"P[A-Z<kx]([A-Z]{3})[A-Z<kx]{39}[\n \t,]?"
+                  r"([\dA-Z]{9})(\d)[A-Z]{3}(\d{6})(\d)[MF<kx]"
+                  r"(\d{6})(\d)([A-Z\d<kx]{14})(\d)(\d)")
 
 
 class PassportRule(RegexRule):
@@ -27,18 +30,17 @@ class PassportRule(RegexRule):
             return
 
         for match in self._compiled_expression.finditer(content):
-            (country_issued, passport_number, cd1,
-                nationality, birthday, cd2, expiration_date,
-                cd3, personal_number, cd4, cd_all) = match.groups()
+            country_issued, *passport_data, cd_all = match.groups()
+            passport_number = passport_data[0]
+
+            all_passport_info = "".join(passport_data)
+            checks = pairwise(passport_data + [all_passport_info] + [cd_all])
+            print(checks)
 
             MRZ = match.string[match.start(): match.end()]
 
-            if (not checksum(passport_number, cd1)  # noqa: ECE001 Expression too complex
-                or not checksum(birthday, cd2)
-                or not checksum(expiration_date, cd3)
-                or not checksum(personal_number, cd4)
-               or not checksum(passport_number + cd1 + birthday + cd2 + expiration_date + cd3 + personal_number + cd4, cd_all)):  # noqa: E501 line too long
-                logger.debug(f"{MRZ} failed checksum")
+            if not any(checksum(*check) for check in checks):
+                logger.debug(f"{MRZ} Failed checksum")
                 continue
 
             yield {
@@ -51,6 +53,7 @@ class PassportRule(RegexRule):
                 ),
 
             }
+            print(MRZ, "matched")
 
     def to_json_object(self):
         return super().to_json_object()
