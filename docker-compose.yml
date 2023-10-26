@@ -12,7 +12,7 @@ services:
   db:
     image: postgres:12
     ports:
-        - "5432:5432"
+        - "8035:5432"
     shm_size: '256mb'
     env_file:
       - dev-environment/db.env
