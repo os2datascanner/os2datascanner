@@ -236,11 +236,9 @@
                                 hx-post=""
                                 hx-swap="outerHTML"
                                 hx-trigger="click"
-                                hx-target="#usererrorlog_entry__{{ error_log.pk|unlocalize }}"
+                                hx-target=".content"
                                 hx-vals='{"pk": "{{ error_log.pk|unlocalize }}"}'
-                                hx-select="#usererrorlog_entry__{{ error_log.pk|unlocalize }}">
-                          {% trans "Mark as seen" %}
-                        </button>
+                                hx-select=".content">{% trans "Mark as seen" %}</button>
                       {% endif %}
                     </div>
                   </td>
