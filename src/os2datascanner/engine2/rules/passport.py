@@ -1,6 +1,5 @@
 from typing import Iterator, Optional
 import structlog
-from itertools import pairwise
 
 from .regex import RegexRule
 from .utilities.context import make_context
@@ -34,12 +33,11 @@ class PassportRule(RegexRule):
             passport_number = passport_data[0]
 
             all_passport_info = "".join(passport_data)
-            checks = pairwise(passport_data + [all_passport_info] + [cd_all])
-            print(checks)
+            checks = passport_data + [all_passport_info] + [cd_all]
 
             MRZ = match.string[match.start(): match.end()]
 
-            if not any(checksum(*check) for check in checks):
+            if not all(checksum(checks[i], checks[i+1]) for i in range(0, 10, 2)):
                 logger.debug(f"{MRZ} Failed checksum")
                 continue
 
@@ -53,7 +51,6 @@ class PassportRule(RegexRule):
                 ),
 
             }
-            print(MRZ, "matched")
 
     def to_json_object(self):
         return super().to_json_object()
