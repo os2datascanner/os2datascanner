@@ -280,9 +280,9 @@ class UserErrorLogView(RestrictedListView):
             if order != "ascending":
                 sort_key = '-' + sort_key
 
-            qs = qs.order_by(sort_key)
+            qs = qs.order_by(sort_key, 'pk')
         else:
-            qs = qs.order_by('-scan_status__scan_tag__time', 'pk')
+            qs = qs.order_by('-pk')
 
         if search := self.request.GET.get('search_field'):
             qs = qs.filter(path__icontains=search) | qs.filter(error_message__icontains=search)
@@ -298,7 +298,7 @@ class UserErrorLogView(RestrictedListView):
         context['paginate_by'] = int(self.request.GET.get('paginate_by', self.paginate_by))
         context['paginate_by_options'] = self.paginate_by_options
 
-        context['order_by'] = self.request.GET.get('order_by', 'pk')
+        context['order_by'] = self.request.GET.get('order_by', '-pk')
         context['order'] = self.request.GET.get('order', 'ascending')
 
         context['show_seen'] = self.request.GET.get('show_seen', 'off') == 'on'
