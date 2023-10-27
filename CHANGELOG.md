@@ -80,8 +80,6 @@ and proceed.
 - The `diagnostics`-management command will no longer encounter a TypeError
   when aliases without accounts or users are present in the database.
 
-- Adjusted left margin for content on smaller screens.
-
 - Running a Microsoft Graph or OS2mo import job will no longer delete
   unrelated or manually-imported objects. (LDAP import jobs were not affected
   by this bug.)
