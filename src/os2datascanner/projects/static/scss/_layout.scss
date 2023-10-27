@@ -70,25 +70,6 @@ body {
   }
 }
 
-.content {
-  .stats_dropdown, 
-  .button--run_analysis,
-  .hint-text,
-  .last-btn,
-  .prose,
-  .aside,
-  .miniscan-container,
-  .scan-status-table p {
-    margin-left: 1rem;
-    margin-right: 1rem;
-
-    @media (min-width: $break-lg) {
-      margin-left: 0;
-      margin-right: 0;
-    }
-  }
-}
-
 .aside {
   display: flex;
   align-items: center;
