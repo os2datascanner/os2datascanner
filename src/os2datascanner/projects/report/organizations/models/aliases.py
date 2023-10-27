@@ -16,6 +16,7 @@ from rest_framework.fields import UUIDField
 from django.db import models, transaction
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
+from functools import reduce
 
 from os2datascanner.core_organizational_structure.models import Alias as Core_Alias
 from os2datascanner.core_organizational_structure.models import \
@@ -25,9 +26,39 @@ from os2datascanner.core_organizational_structure.models.aliases import AliasTyp
 from ..seralizer import BaseBulkSerializer
 
 
+class AliasQuerySet(models.query.QuerySet):
+    def associated_report_keys(self):
+        return reduce(
+                models.query.QuerySet.union,
+                (alias.match_relation.all().values_list("pk", flat=True)
+                 for alias in self),
+                self.model.objects.none())
+
+    def delete(self):
+        # Avoid circular import
+        from os2datascanner.projects.report.reportapp.management.commands.result_collector import \
+            create_aliases
+        from os2datascanner.projects.report.reportapp.models.documentreport import DocumentReport
+
+        associated_report_keys = set(self.associated_report_keys())
+
+        with transaction.atomic():
+            rv = super().delete()
+            for dr in DocumentReport.objects.filter(
+                    pk__in=associated_report_keys,
+                    raw_metadata__isnull=False):
+                create_aliases(dr)
+            return rv
+
+
+class AliasManager(models.Manager):
+    def get_queryset(self):
+        return AliasQuerySet(self.model, using=self._db, hints=self._hints)
+
+
 class Alias(Core_Alias):
     """ Core logic lives in the core_organizational_structure app. """
-
+    objects = AliasManager()
     serializer_class = None
     user = models.ForeignKey(User, null=False, verbose_name=_('user'),
                              on_delete=models.CASCADE, related_name="aliases")
@@ -42,6 +73,10 @@ class Alias(Core_Alias):
         blank=True,
         null=True
     )
+
+    def delete(self, *args, **kwargs):
+        # Defer to the QuerySet -- it cleans up in an optimised way
+        return self._meta.model.objects.filter(pk=self.pk).delete()
 
     @property
     def key(self):

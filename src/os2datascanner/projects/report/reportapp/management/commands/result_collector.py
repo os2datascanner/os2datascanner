@@ -24,7 +24,8 @@ from django.db.models import Q
 from os2datascanner.utils import debug
 from os2datascanner.utils.log_levels import log_levels
 from os2datascanner.engine2.conversions.types import OutputType
-from os2datascanner.engine2.model.core import Handle, Source
+from os2datascanner.engine2.model.core import (
+        Handle, Source, UnknownSchemeError)
 from os2datascanner.engine2.model.msgraph import MSGraphMailSource
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
@@ -170,7 +171,11 @@ def create_aliases(dr: DocumentReport):
     tm = Alias.match_relation.through
     new_objects = []
     owner = dr.owner
-    metadata = dr.metadata
+    try:
+        metadata = dr.metadata
+    except UnknownSchemeError:
+        logger.error(f"failed to unpack metadata for {dr}", exc_info=True)
+        return
 
     # Return early scenarios: No metadata, no owner - nothing to do.
     if not metadata:
