@@ -7,7 +7,8 @@ from ..models import Organization, OrganizationalUnit, Account, Position
 from ...core.models import Client, Administrator
 
 from os2datascanner.core_organizational_structure.models.organization import (
-    StatisticsPageConfigChoices, DPOContactChoices, SupportContactChoices)
+    StatisticsPageConfigChoices, DPOContactChoices, SupportContactChoices,
+    MSGraphWritePermissionChoices)
 
 
 class OrganizationListViewTests(TestCase):
@@ -78,6 +79,7 @@ class AddOrganizationViewTests(TestCase):
             'name': 'Unique',
             'contact_email': 'test@unique.mail',
             'contact_phone': '12341234',
+            'msgraph_write_permissions': MSGraphWritePermissionChoices.NONE,
         })
 
         success_url = reverse_lazy('organization-list')
@@ -115,6 +117,7 @@ class AddOrganizationViewTests(TestCase):
             'name': 'Same',
             'contact_email': '',
             'contact_phone': '',
+            'msgraph_write_permissions': MSGraphWritePermissionChoices.NONE,
         })
 
         num_org_post = Organization.objects.count()
@@ -140,6 +143,7 @@ class AddOrganizationViewTests(TestCase):
             'name': 'New Org',
             'contact_email': 'test@unique.mail',
             'contact_phone': '12341234',
+            'msgraph_write_permissions': MSGraphWritePermissionChoices.NONE,
         })
 
         num_org_post = Organization.objects.count()
@@ -198,6 +202,7 @@ class AddOrganizationViewTests(TestCase):
             'name': 'New Org',
             'contact_email': 'test@unique.mail',
             'contact_phone': '12341234',
+            'msgraph_write_permissions': MSGraphWritePermissionChoices.NONE,
         })
 
         success_url = reverse_lazy('organization-list')
@@ -241,6 +246,7 @@ class UpdateOrganizationViewTests(TestCase):
             'name': 'Updated Organization',
             'contact_email': 'something@else.com',
             'contact_phone': 'new phone, who dis?',
+            'msgraph_write_permissions': MSGraphWritePermissionChoices.NONE,
         })
 
         updated_org = Organization.objects.exclude(name="OS2datascanner").first()
@@ -274,6 +280,7 @@ class UpdateOrganizationViewTests(TestCase):
             'dpo_contact_method': DPOContactChoices.NONE,
             'dpo_name': '',
             'dpo_value': '',
+            'msgraph_write_permissions': MSGraphWritePermissionChoices.NONE,
         })
 
         success_url = reverse_lazy('organization-list')
@@ -309,6 +316,7 @@ class UpdateOrganizationViewTests(TestCase):
             'name': 'Updated Organization',
             'contact_email': 'something@else.com',
             'contact_phone': 'new phone, who dis?',
+            'msgraph_write_permissions': '',
         })
 
         updated_org = Organization.objects.exclude(name="OS2datascanner").first()
@@ -342,6 +350,7 @@ class UpdateOrganizationViewTests(TestCase):
             'dpo_contact_method': DPOContactChoices.NONE,
             'dpo_name': '',
             'dpo_value': '',
+            'msgraph_write_permissions': MSGraphWritePermissionChoices.NONE,
         })
 
         success_url = reverse_lazy('organization-list')
