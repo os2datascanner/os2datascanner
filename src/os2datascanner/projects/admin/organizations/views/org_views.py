@@ -48,11 +48,14 @@ class AddOrganizationView(RestrictedCreateView):
     model = Organization
     template_name = 'organizations/org_add.html'
     success_url = reverse_lazy('organization-list')
-    fields = ['name', 'contact_email', 'contact_phone', 'email_notification_schedule']
+    fields = ['name', 'contact_email', 'contact_phone',
+              'msgraph_write_permissions', 'email_notification_schedule']
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
         form.required_css_class = 'required-form'
+        # TODO: Overhaul styling of form: Dropdowns & Helptext
+        form.fields['msgraph_write_permissions'].help_text = None
         # form.error_css_class = # TODO: add if relevant?
         return form
 
@@ -84,12 +87,14 @@ class UpdateOrganizationView(RestrictedUpdateView):
     fields = ['name', 'contact_email', 'contact_phone',
               'leadertab_access', 'dpotab_access', 'show_support_button',
               'support_contact_method', 'support_name', 'support_value',
-              'dpo_contact_method', 'dpo_name', 'dpo_value',
+              'dpo_contact_method', 'dpo_name', 'dpo_value', 'msgraph_write_permissions',
               'email_notification_schedule']
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
         form.required_css_class = 'required-form'
+        # TODO: Overhaul styling of form: Dropdowns & Helptext
+        form.fields['msgraph_write_permissions'].help_text = None
         # form.error_css_class = # TODO: add if relevant?
         return form
 
