@@ -307,12 +307,22 @@ def delete_email(document_report: DocumentReport, account: Account):
                               document_report=document_report,
                               action=DocumentReport.ResolutionChoices.REMOVED)
         except requests.HTTPError as ex:
-            delete_failed_message = _("Couldn't delete email! Code: {status_code}").format(
-                status_code=ex.response.status_code)
-            logger.warning(f"Couldn't delete email! Got response: {ex.response}")
-            # PermissionDenied is a bit misleading here, as it may not represent what went wrong.
-            # But sticking to this exception, makes handling it in the view easier.
-            raise PermissionDenied(delete_failed_message)
+            # If the email is deleted from Outlook but a user clicks delete on the reportmodule
+            # It will still be handled as deleted.
+            if ex.response.status_code in (404, 410):
+                handle_report(account,
+                              document_report=document_report,
+                              action=DocumentReport.ResolutionChoices.REMOVED)
+                logger.info(f"Delete mail got response code {ex.response.status_code}! "
+                            "Interpreted as mail deleted - Document report handled as deleted")
+
+            else:
+                delete_failed_message = _("Couldn't delete email! Code: {status_code}").format(
+                    status_code=ex.response.status_code)
+                logger.warning(f"Couldn't delete email! Got response: {ex.response}")
+                # PermissionDenied is a bit misleading here, it may not represent what went wrong.
+                # But sticking to this exception, makes handling it in the view easier.
+                raise PermissionDenied(delete_failed_message)
 
 
 def get_mail_message_handle_from_document_report(document_report: DocumentReport) \
