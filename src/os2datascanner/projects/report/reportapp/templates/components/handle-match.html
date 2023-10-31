@@ -57,7 +57,7 @@
       </span>
     </button>
   {% endif %}
-  {% if personal and request.GET.source_type == "msgraph-mail" %}
+  {% if show_delete_button and request.GET.source_type == "msgraph-mail" %}
     <button type="button"
             class="button table-checkbox__action button--has-icon"
             data-status="match-handle"

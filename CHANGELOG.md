@@ -51,6 +51,9 @@
 
 - The rule engine and its capabilities are now documented in some detail.
 
+- The delete button, for Outlook e-mails on the reportmodule, has been moved
+  and gotten a darker color.
+
 ### Bugfixes
 
 - When clearing the search bar on the user error log page, the table is now
