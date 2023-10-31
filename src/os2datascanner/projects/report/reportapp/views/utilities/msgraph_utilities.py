@@ -185,8 +185,13 @@ def categorize_email_from_report(document_report: DocumentReport,
 
     # Fetch what categories are already set on this email.
     email_categories = get_msgraph_mail_categories_from_document_report(document_report)
-    # Append OS2datascanner category
-    email_categories.append(category_name)
+
+    # Make sure an OS2datascanner category isn't already added.
+    # We don't want to mark False Positive marked ones with Match, or
+    # mark any mails twice.
+    if not any(category.value in email_categories for category in OutlookCategoryName):
+        # Append OS2datascanner category
+        email_categories.append(category_name)
 
     owner = document_report.owner
     message_handle = get_mail_message_handle_from_document_report(document_report)
@@ -241,8 +246,8 @@ def categorize_existing_emails_from_account(account: Account,
                     f"users/{owner}/messages/{msg_id}?$select=categories").json()
                 email_categories = existing_categories_response.get("categories", [])
 
-                # Only append if it's not already marked False Positive.
-                if OutlookCategoryName.FalsePositive.value not in email_categories:
+                # Only append if it isn't already marked.
+                if not any(category.value in email_categories for category in OutlookCategoryName):
                     email_categories.append(category_name.value)
 
                 categorize_email_response = gc.categorize_mail(owner,
