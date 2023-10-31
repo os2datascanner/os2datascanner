@@ -49,7 +49,7 @@
                      rel="noopener">{% trans "Open folder" %}</a>
                 {% endif %}
               {% endif %}
-              {% if personal and has_delete_permission and type == 'msgraph-mail-account' and not "/archive/" in request.path %}
+              {% if show_delete_button and type == 'msgraph-mail-account' %}
                 <span class="delete-mail">
                   <button class="button button--deletion"
                           id="{{ document_report.pk }}"
@@ -187,7 +187,6 @@
               </button>
             {% endif %}
           {% endif %}
-          {# personal is set True in UserReportView, as it must be this users results. #}
           <button class="matches-expand button button-caret button--has-icon" title="{% trans "Show/hide matches" %}" type="button">
             <i class="material-icons" aria-hidden="true">expand_more</i>
           </button>
