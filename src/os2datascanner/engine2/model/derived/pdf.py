@@ -61,7 +61,7 @@ class PDFPageResource(Resource):
         page = int(self.handle.relative_path)
         with self.handle.source._make_stream(self._sm) as fp:
             reader = _open_pdf_wrapped(fp)
-            return page in range(1, reader.getNumPages() + 1 if reader else 0)
+            return page in range(1, len(reader.pages) + 1 if reader else 0)
 
     def compute_type(self):
         return PAGE_TYPE
