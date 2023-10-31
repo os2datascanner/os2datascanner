@@ -52,10 +52,6 @@ class AccountOutlookSettingView(LoginRequiredMixin, DetailView):
     def post(self, request, *args, **kwargs):  # noqa C901, CCR001
         account = self.get_object()
 
-        # try:
-        #     check_msgraph_settings(account.organization)
-        # except PermissionDenied as pe:
-
         htmx_trigger = self.request.headers.get("HX-Trigger-Name")
         if htmx_trigger == "categorize_existing":
             try:
@@ -295,9 +291,12 @@ class AccountView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
 
         if settings.MSGRAPH_ALLOW_WRITE and self.object.organization.has_categorize_permission():
-            acc_ol_settings, c = AccountOutlookSetting.objects.get_or_create(
-                account=self.object,
-                account_username=self.object.username)
+            acc_ol_settings, c = AccountOutlookSetting.objects.update_or_create(
+                account_username=self.object.username,
+                defaults={
+                    "account": self.object,
+                }
+            )
             context["has_categorize_permission"] = True
             try:
                 document_report = get_msgraph_mail_document_reports(self.object).last()
