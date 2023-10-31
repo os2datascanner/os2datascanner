@@ -1,5 +1,5 @@
 from os import listdir
-import PyPDF2
+import pypdf
 import string
 from tempfile import TemporaryDirectory
 
@@ -19,11 +19,11 @@ WHITESPACE_PLUS = string.whitespace + "\0"
 
 
 def _open_pdf_wrapped(obj):
-    reader = PyPDF2.PdfReader(obj)
+    reader = pypdf.PdfReader(obj)
     if reader.is_encrypted:
         # Some PDFs are "encrypted" with an empty password: give that a shot...
         if reader.decrypt("") == 0:  # the document has a real password
-            raise PyPDF2.utils.PdfReadError("File cannot be decrypted")
+            raise pypdf.errors.PdfReadError("File cannot be decrypted")
     return reader
 
 

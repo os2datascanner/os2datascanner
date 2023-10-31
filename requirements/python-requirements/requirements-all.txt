@@ -297,7 +297,7 @@ pyparsing==3.0.9
     # via
     #   httplib2
     #   packaging
-pypdf2==2.11.1
+pypdf==3.17.0
     # via -r requirements-all.in
 pysaml2==5.4.0
     # via
