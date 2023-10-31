@@ -109,7 +109,7 @@ def handle_metadata_message(scan_tag, result):
     path = message.handle.crunch(hash=True)
     owner = owner_from_metadata(message)
 
-    DocumentReport.objects.select_for_update(
+    previous_report = DocumentReport.objects.select_for_update(
         of=('self',)
     ).filter(
         path=path,
@@ -131,7 +131,11 @@ def handle_metadata_message(scan_tag, result):
     # Specific to Outlook matches - if they have a "False Positive" category set, resolve them.
     outlook_false_positive = (OutlookCategoryName.FalsePositive.value in
                               message.metadata.get("outlook-categories", []))
-    if outlook_false_positive:
+    # If the report is already handled as a false positive, keep it handled in that way.
+    previous_false_positive = (scan_tag.scanner.keep_fp and previous_report and
+                               previous_report.resolution_status ==
+                               ResolutionChoices.FALSE_POSITIVE.value)
+    if outlook_false_positive or previous_false_positive:
         resolution_status = ResolutionChoices.FALSE_POSITIVE.value
 
     dr, _ = DocumentReport.objects.update_or_create(
@@ -274,6 +278,12 @@ def handle_match_message(scan_tag, result):  # noqa: CCR001, E501 too high cogni
         while source.handle:
             source = source.handle.source
 
+        if (scan_tag.scanner.keep_fp and previous_report and
+                previous_report.resolution_status == ResolutionChoices.FALSE_POSITIVE.value):
+            new_status = ResolutionChoices.FALSE_POSITIVE.value
+        else:
+            new_status = None
+
         dr, _ = DocumentReport.objects.update_or_create(
                 path=path, scanner_job_pk=scan_tag.scanner.pk,
                 defaults={
@@ -292,11 +302,13 @@ def handle_match_message(scan_tag, result):  # noqa: CCR001, E501 too high cogni
                             sort_matches_by_probability(result)),
                     "scanner_job_name": scan_tag.scanner.name,
                     "only_notify_superadmin": scan_tag.scanner.test,
-                    "resolution_status": None,
+                    "resolution_status": new_status,
                     "organization": get_org_from_scantag(scan_tag),
 
                     "raw_problem": None,
                 })
+
+        print(dr.resolution_status)
 
         logger.debug("matches, saved DocReport", report=dr)
         return dr

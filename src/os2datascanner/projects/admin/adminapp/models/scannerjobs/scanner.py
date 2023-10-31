@@ -115,6 +115,11 @@ class Scanner(models.Model):
         verbose_name=_('only notify superadmin'),
     )
 
+    keep_false_positives = models.BooleanField(
+        default=True,
+        verbose_name=_('keep false positives')
+    )
+
     columns = models.CharField(validators=[validate_comma_separated_integer_list],
                                max_length=128,
                                null=True,
@@ -265,7 +270,8 @@ class Scanner(models.Model):
                 scanner=messages.ScannerFragment(
                         pk=self.pk,
                         name=self.name,
-                        test=self.only_notify_superadmin),
+                        test=self.only_notify_superadmin,
+                        keep_fp=self.keep_false_positives),
                 organisation=messages.OrganisationFragment(
                         name=self.organization.name,
                         uuid=self.organization.uuid))
