@@ -87,6 +87,8 @@ and proceed.
   unrelated or manually-imported objects. (LDAP import jobs were not affected
   by this bug.)
 
+- No error occurs when an already deleted e-mail, in Outlook, is deleted from the reportmodule.
+
 ## 3.20.6, 2nd October 2023
 
 "Purple Orchid in my Windowsill"
