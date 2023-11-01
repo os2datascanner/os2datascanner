@@ -73,7 +73,7 @@ class ScannerFragment(NamedTuple):
     pk: int
     name: str
     test: bool = False
-    keep_fp: bool = True
+    keep_fp: bool = False
 
     def to_json_object(self):
         return {
@@ -88,7 +88,7 @@ class ScannerFragment(NamedTuple):
         return ScannerFragment(
             pk=obj["pk"], name=obj["name"],
             test=obj.get("test", False),
-            keep_fp=obj.get("keep_fp", True))
+            keep_fp=obj.get("keep_fp", False))
 
     _deep_replace = _deep_replace
 

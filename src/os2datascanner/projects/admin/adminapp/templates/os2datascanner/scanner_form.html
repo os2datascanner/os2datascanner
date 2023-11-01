@@ -569,8 +569,6 @@
             <h3 class="required-form">{% trans "add users"|capfirst %}</h3>
  
             <label for="entire-org">{% trans "all users in this organization"|capfirst %}</label>
-                {% endif %}
-
  
             <input type="radio"
                    name="show-org-units"
@@ -628,10 +626,10 @@
               {% endif %}
 
               {% if form.keep_false_positives %}
-                  <div class="checkbox-group">
-                    {% include "os2datascanner/scanner_form_checkbox_field.html" with field=form.keep_false_positives %}
-                  </div>
-                {% endif %}
+                <div class="checkbox-group">
+                  {% include "os2datascanner/scanner_form_checkbox_field.html" with field=form.keep_false_positives %}
+                </div>
+              {% endif %}
  
               {% if form.only_notify_superadmin %}
 	

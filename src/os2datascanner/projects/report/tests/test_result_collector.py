@@ -42,6 +42,16 @@ scan_tag2 = messages.ScanTagFragment(
     scanner=messages.ScannerFragment(
             pk=22, name="Dummy test scanner"),
     time=parse_datetime(time2), user=None, organisation=org_frag)
+scan_tag3 = messages.ScanTagFragment(
+    scanner=messages.ScannerFragment(
+        pk=22, name="Dummy test scanner", keep_fp=True),
+    time=parse_datetime(time1),
+    user=None, organisation=org_frag)
+scan_tag4 = messages.ScanTagFragment(
+    scanner=messages.ScannerFragment(
+        pk=22, name="Dummy test scanner", keep_fp=False),
+    time=parse_datetime(time1),
+    user=None, organisation=org_frag)
 
 common_handle = FilesystemHandle(
         FilesystemSource("/mnt/fs01.magenta.dk/brugere/af"),
@@ -73,6 +83,26 @@ common_scan_spec_corrupt = messages.ScanSpecMessage(
 
 positive_match = messages.MatchesMessage(
         scan_spec=common_scan_spec._replace(scan_tag=scan_tag0),
+        handle=common_handle,
+        matched=True,
+        matches=[
+            messages.MatchFragment(
+                rule=common_rule,
+                matches=[{"dummy": "match object"}])
+        ])
+
+positive_match_keep_fp = messages.MatchesMessage(
+        scan_spec=common_scan_spec._replace(scan_tag=scan_tag3),
+        handle=common_handle,
+        matched=True,
+        matches=[
+            messages.MatchFragment(
+                rule=common_rule,
+                matches=[{"dummy": "match object"}])
+        ])
+
+positive_match_dont_keep_fp = messages.MatchesMessage(
+        scan_spec=common_scan_spec._replace(scan_tag=scan_tag4),
         handle=common_handle,
         matched=True,
         matches=[
@@ -429,3 +459,31 @@ class PipelineCollectorTests(TestCase):
         record_match(positive_match)
         self.assertEqual(DocumentReport.objects.count(), 1,
                          "Two DocumentReports created for the same handle!")
+
+    def test_reqeued_match_with_existing_false_positive_report(self):
+        """If a report has been handled as false positive, receiving the same
+        match message again should keep or override the resolution_status,
+        dependant on the 'keep_fp'-value received."""
+
+        # Initial match message
+        record_match(positive_match)
+
+        # Handle the report as a false positive
+        dr = DocumentReport.objects.last()
+        dr.resolution_status = DocumentReport.ResolutionChoices.FALSE_POSITIVE.value
+        dr.save()
+
+        # Another message
+        record_match(positive_match_keep_fp)
+
+        # Resolution status should still be the same.
+        self.assertEqual(DocumentReport.objects.last().resolution_status,
+                         DocumentReport.ResolutionChoices.FALSE_POSITIVE.value,
+                         "DocumentReport did not keep its false positive resolution status!")
+
+        # Another message, this time with keep_fp=False
+        record_match(positive_match_dont_keep_fp)
+
+        # Resolution status should be None now.
+        self.assertEqual(DocumentReport.objects.last().resolution_status, None,
+                         "DocumentReport resolution status was not reset!")

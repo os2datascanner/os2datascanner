@@ -308,8 +308,6 @@ def handle_match_message(scan_tag, result):  # noqa: CCR001, E501 too high cogni
                     "raw_problem": None,
                 })
 
-        print(dr.resolution_status)
-
         logger.debug("matches, saved DocReport", report=dr)
         return dr
     else:
