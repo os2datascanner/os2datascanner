@@ -142,13 +142,9 @@ class CPRRule(RegexRule):
         if not bin_accepted[num_bins-1]:
             bin_accepted[num_bins] = False
 
-        filtered_cprs = []
-        for i_bin in range(1, num_bins+1):
-            if not bin_accepted[i_bin]:
-                continue
-            filtered_cprs += bin_storage[i_bin]
-
-        return filtered_cprs
+        filtered_cprs = chain.from_iterable(
+            bin_storage[i] for i in range(1, num_bins+1) if bin_accepted[i])
+        return list(filtered_cprs)
 
     def match(self, content: str) -> Optional[Iterator[dict]]:  # noqa: CCR001,E501 too high cognitive complexity
         if content is None:
