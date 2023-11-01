@@ -1,5 +1,6 @@
 from typing import Iterator, Optional
 import structlog
+from itertools import pairwise
 
 from .regex import RegexRule
 from .utilities.context import make_context
@@ -37,7 +38,8 @@ class PassportRule(RegexRule):
 
             MRZ = match.string[match.start(): match.end()]
 
-            if not all(checksum(checks[i], checks[i+1]) for i in range(0, 10, 2)):
+            if not all(checksum(cl, cr)
+                       for i, (cl, cr) in enumerate(pairwise(checks)) if i % 2 == 0):
                 logger.debug(f"{MRZ} Failed checksum")
                 continue
 
@@ -67,18 +69,15 @@ class PassportRule(RegexRule):
 def checksum(string: str, digit) -> bool:  # noqa: CCR001 too high cognitive complexity
     sum = 0
     for i, char in enumerate(string):
-        value = 0
-        if char >= 'A' and char <= 'Z':
-            value = ord(char) - ord('A') + 10
-        if char >= '0' and char <= '9':
-            value = int(char)
+        value = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".index(char) if char != '<' else 0
 
-        if i % 3 == 0:
-            factor = 7
-        elif i % 3 == 1:
-            factor = 3
-        else:
-            factor = 1
+        match i % 3:
+            case 0:
+                factor = 7
+            case 1:
+                factor = 3
+            case _:
+                factor = 1
 
         sum += value * factor
     return sum % 10 == int(digit)
