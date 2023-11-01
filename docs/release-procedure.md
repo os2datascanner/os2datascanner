@@ -10,6 +10,12 @@
 #### Run translations and check migrations
 * Run django-admin command for translations
   * `docker-compose run <report|admin> django-admin makemessages --all`
+  * If you have made translations in core_organizational_structure, you'll have to:
+  ```
+    docker-compose exec admin bash
+    cd ../../core_organizational_structure/
+    ../projects/admin/manage.py makemessages --all
+  ```
 * Ensure migrations are up-to-date (checked by pipeline as well)
 * Commit changes
 * `git push -u origin release/%VERSION%`

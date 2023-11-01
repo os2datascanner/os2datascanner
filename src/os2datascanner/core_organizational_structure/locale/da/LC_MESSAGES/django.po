@@ -1,0 +1,230 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-11-06 14:46+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: apps.py:8
+msgid "core_organizational_structure"
+msgstr "core_organizational_structure"
+
+#: models/account.py:40 models/organization.py:71
+#: models/organizational_unit.py:39
+msgid "UUID"
+msgstr "UUID"
+
+#: models/account.py:44
+msgid "username"
+msgstr "brugernavn"
+
+#: models/account.py:48
+msgid "first name"
+msgstr "fornavn"
+
+#: models/account.py:54
+msgid "last name"
+msgstr "efternavn"
+
+#: models/account.py:62 models/organization.py:185
+msgid "organization"
+msgstr "organisation"
+
+#: models/account.py:76
+msgid "superuser_status"
+msgstr "superbruger status"
+
+#: models/account.py:88 models/aliases.py:79 models/position.py:38
+msgid "account"
+msgstr "konto"
+
+#: models/account.py:89
+msgid "accounts"
+msgstr "konti"
+
+#: models/aliases.py:51
+msgid "SID"
+msgstr "SID"
+
+#: models/aliases.py:52 models/organization.py:81
+msgid "email"
+msgstr "email"
+
+#: models/aliases.py:53
+msgid "remediator"
+msgstr "oprydder"
+
+#: models/aliases.py:55
+msgid "generic"
+msgstr "generisk"
+
+#: models/aliases.py:73
+msgid "alias ID"
+msgstr "alias ID"
+
+#: models/aliases.py:86
+msgid "alias type"
+msgstr "alias type"
+
+#: models/aliases.py:90
+msgid "value"
+msgstr "værdi"
+
+#: models/aliases.py:112
+msgid "alias"
+msgstr "alias"
+
+#: models/aliases.py:113
+msgid "aliases"
+msgstr "aliasser"
+
+#: models/aliases.py:122
+#, python-brace-format
+msgid "Alias ({type}) for {account_user}: {value}"
+msgstr "Alias ({type}) for {account_user}: {value}"
+
+#: models/organization.py:33 models/organization.py:39
+msgid "None"
+msgstr "Ingen"
+
+#: models/organization.py:34
+msgid "Website"
+msgstr "Hjemmeside"
+
+#: models/organization.py:35
+msgid "Email"
+msgstr "Email"
+
+#: models/organization.py:40
+msgid "Single DPO"
+msgstr "Enkel DPO"
+
+#: models/organization.py:41
+msgid "Unit DPO"
+msgstr "Enheds DPO"
+
+#: models/organization.py:45
+msgid "Categorize emails"
+msgstr "Kategorisér emails"
+
+#: models/organization.py:46
+msgid "Delete emails"
+msgstr "Slet emails"
+
+#: models/organization.py:47
+msgid "Permit all"
+msgstr "Tillad alle"
+
+#: models/organization.py:48
+msgid "No permissions"
+msgstr "Ingen tilladelser"
+
+#: models/organization.py:75 models/organizational_unit.py:44
+msgid "name"
+msgstr "navn"
+
+#: models/organization.py:87
+msgid "phone number"
+msgstr "telefonnummer"
+
+#: models/organization.py:95
+msgid "Email notification interval"
+msgstr "Emailudsendelse interval"
+
+#: models/organization.py:101
+msgid "MSGraph write permissions"
+msgstr "MSGraph skriverettigheder"
+
+#: models/organization.py:102
+msgid "Select permission(s) you wish to allow for your organization."
+msgstr "Vælg tilladelse(r) du ønsker at tillade for din organisation."
+
+#: models/organization.py:119
+msgid "show support button"
+msgstr "vis supportknap"
+
+#: models/organization.py:124
+msgid "support contact method"
+msgstr "support kontaktform"
+
+#: models/organization.py:129
+msgid "support name"
+msgstr "support navn"
+
+#: models/organization.py:132
+msgid "support value"
+msgstr "support værdi"
+
+#: models/organization.py:137
+msgid "DPO contact method"
+msgstr "DPO kontaktform"
+
+#: models/organization.py:142
+msgid "DPO name"
+msgstr "DPO navn"
+
+#: models/organization.py:145
+msgid "DPO value"
+msgstr "DPO værdi"
+
+#: models/organization.py:159
+msgid "Provide a name of the support contact."
+msgstr "Angiv navn på support kontakt"
+
+#: models/organization.py:167
+msgid "Provide a name of the DPO."
+msgstr "Angiv navn på DPO"
+
+#: models/organization.py:186
+msgid "organizations"
+msgstr "organisationer"
+
+#: models/organizational_unit.py:52
+msgid "parent unit"
+msgstr "overordnet enhed"
+
+#: models/organizational_unit.py:67 models/position.py:43
+msgid "organizational unit"
+msgstr "organisatorisk enhed"
+
+#: models/organizational_unit.py:68
+msgid "organizational units"
+msgstr "organisatoriske enheder"
+
+#: models/position.py:26
+msgid "employee"
+msgstr "medarbejder"
+
+#: models/position.py:27
+msgid "manager"
+msgstr "leder"
+
+#: models/position.py:28
+msgid "data protection officer"
+msgstr "data protection officer"
+
+#: models/position.py:57
+msgid "position"
+msgstr "tilknytning"
+
+#: models/position.py:58
+msgid "positions"
+msgstr "tilknytninger"
+
+#: models/position.py:67
+#, python-brace-format
+msgid "{cls}: {account} ({role}) at {unit}"
+msgstr "{cls}: {account} ({role}) i {unit}"
