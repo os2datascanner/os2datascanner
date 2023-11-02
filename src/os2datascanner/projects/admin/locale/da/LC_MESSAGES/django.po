@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-24 16:54+0200\n"
+"POT-Creation-Date: 2023-11-02 13:54+0100\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -871,7 +871,7 @@ msgstr " i alt - på "
 #, python-format
 msgid ""
 "<strong>%(usererrorlogs)s</strong> errors occured during the scan.<br /><a "
-"href=\"%(admin_login_url)serror_log/\">Click here to inspect the error logs</"
+"href=\"%(admin_login_url)serror-log/\">Click here to inspect the error logs</"
 "a>"
 msgstr ""
 "<strong>%(usererrorlogs)s</strong> fejl opstod under scannet.<br/><a href="
@@ -1104,19 +1104,19 @@ msgstr "Vælg resultater"
 msgid "New"
 msgstr "Ny"
 
-#: adminapp/templates/os2datascanner/error_log.html:242
+#: adminapp/templates/os2datascanner/error_log.html:241
 msgid "Mark as seen"
 msgstr "Markér som set"
 
-#: adminapp/templates/os2datascanner/error_log.html:255
+#: adminapp/templates/os2datascanner/error_log.html:253
 msgid "no errors found."
 msgstr "ingen fejl fundet."
 
-#: adminapp/templates/os2datascanner/miniscan.html:19
+#: adminapp/templates/os2datascanner/miniscan.html:18
 msgid "OS2datascanner mini-scanner"
 msgstr "OS2datascanner miniscanner"
 
-#: adminapp/templates/os2datascanner/miniscan.html:22
+#: adminapp/templates/os2datascanner/miniscan.html:21
 msgid ""
 "The mini-scanner lets you execute any OS2datascanner rule on a single file, "
 "and returns the results directly to this page."
@@ -1124,37 +1124,37 @@ msgstr ""
 "Med miniscanneren kan man afvikle en vilkårlig OS2datascanner-regel på én "
 "enkel fil. Resultaterne vises længere nede på denne side."
 
-#: adminapp/templates/os2datascanner/miniscan.html:28
-#: adminapp/templates/os2datascanner/miniscan.html:49
+#: adminapp/templates/os2datascanner/miniscan.html:27
+#: adminapp/templates/os2datascanner/miniscan.html:48
 msgid "Maximum allowed file size is: "
 msgstr "Den maksimalt tilladte filstørrelse er: "
 
-#: adminapp/templates/os2datascanner/miniscan.html:38
+#: adminapp/templates/os2datascanner/miniscan.html:37
 msgid "File to scan"
 msgstr "Upload fil"
 
-#: adminapp/templates/os2datascanner/miniscan.html:47
+#: adminapp/templates/os2datascanner/miniscan.html:46
 msgid "The selected file is too big!"
 msgstr "Den valgte fil er for stor!"
 
-#: adminapp/templates/os2datascanner/miniscan.html:51
+#: adminapp/templates/os2datascanner/miniscan.html:50
 msgid "Please, select another (smaller) file to scan."
 msgstr "Vælg venligst at scanne en anden (mindre) fil."
 
-#: adminapp/templates/os2datascanner/miniscan.html:54
+#: adminapp/templates/os2datascanner/miniscan.html:53
 msgid "Rule to execute"
 msgstr "Definér regel"
 
-#: adminapp/templates/os2datascanner/miniscan.html:60
+#: adminapp/templates/os2datascanner/miniscan.html:59
 #: adminapp/templates/os2datascanner/scanners.html:141
 msgid "Run"
 msgstr "Kør"
 
-#: adminapp/templates/os2datascanner/miniscan.html:62
+#: adminapp/templates/os2datascanner/miniscan.html:61
 msgid "Scan result"
 msgstr "Scanresultat"
 
-#: adminapp/templates/os2datascanner/miniscan.html:63
+#: adminapp/templates/os2datascanner/miniscan.html:62
 msgid "(none yet)"
 msgstr "(endnu ingen)"
 
@@ -2823,8 +2823,8 @@ msgstr "Ingen organisatoriske enheder fundet ..."
 msgid "No organizational units."
 msgstr "Ingen organisatoriske enheder"
 
-#: organizations/tests/test_org_views.py:127
-#: organizations/views/org_views.py:63
+#: organizations/tests/test_org_views.py:130
+#: organizations/views/org_views.py:66
 msgid "That name is already taken."
 msgstr "Navnet er allerede i brug."
 
