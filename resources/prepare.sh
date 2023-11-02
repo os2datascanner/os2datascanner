@@ -2,7 +2,7 @@
 
 set -ex
 
-here="`dirname "$0"`"
+here=$(dirname "$0")
 
 get_tesseract_models() {
     mkdir -p "$here/downloads/tessdata"
