@@ -1,6 +1,6 @@
 # Changelog
 
-## Next release
+## 3.21.0
 
 "Folie à Tous"
 

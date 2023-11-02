@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-25 10:05+0200\n"
+"POT-Creation-Date: 2023-11-02 13:54+0100\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -164,11 +164,11 @@ msgstr "Kategori farve for matches"
 msgid "Category colour for false positives"
 msgstr "Kategori farve for falske positiver"
 
-#: organizations/models/aliases.py:32
+#: organizations/models/aliases.py:63
 msgid "user"
 msgstr "bruger"
 
-#: organizations/models/aliases.py:41
+#: organizations/models/aliases.py:72
 msgid "account"
 msgstr "konto"
 
@@ -476,8 +476,8 @@ msgstr "Inkludér resultater, der er under 30 dage gamle"
 
 #: reportapp/templates/components/handle-match.html:10
 #: reportapp/templates/components/handle-match.html:43
-#: reportapp/templates/components/hit.html:120
-#: reportapp/templates/components/hit.html:162
+#: reportapp/templates/components/hit.html:136
+#: reportapp/templates/components/hit.html:178
 msgid ""
 "OS2datascanner will not delete results from the system that was scanned. "
 "Marking a result as handled will only remove the result from OS2datascanner."
@@ -491,8 +491,8 @@ msgid "Mark as handled"
 msgstr "Markér som håndterede"
 
 #: reportapp/templates/components/handle-match.html:18
-#: reportapp/templates/components/hit.html:125
-#: reportapp/templates/components/hit.html:170
+#: reportapp/templates/components/hit.html:141
+#: reportapp/templates/components/hit.html:186
 msgid ""
 "You are about to handle this result. This action does not change the file, "
 "that the result is about. Please do not handle a result before action has "
@@ -503,8 +503,8 @@ msgstr ""
 "manuelt har gjort noget ved filen."
 
 #: reportapp/templates/components/handle-match.html:25
-#: reportapp/templates/components/hit.html:131
-#: reportapp/templates/components/hit.html:157
+#: reportapp/templates/components/hit.html:147
+#: reportapp/templates/components/hit.html:173
 msgid "Revert"
 msgstr "Fortryd"
 
@@ -554,32 +554,11 @@ msgstr "Åbn"
 msgid "Open folder"
 msgstr "Åbn mappe"
 
-#: reportapp/templates/components/hit.html:56
-msgid "Opened"
-msgstr "Åbnet: "
-
-#: reportapp/templates/components/hit.html:94
-msgid "Copy folder path"
-msgstr "Kopiér sti til mappe"
-
-#: reportapp/templates/components/hit.html:99
-msgid "Copy path"
-msgstr "Kopiér sti"
-
-#: reportapp/templates/components/hit.html:106
-msgid "Copy link"
-msgstr "Kopiér link"
-
-#: reportapp/templates/components/hit.html:121
-#: reportapp/templates/components/hit.html:172
-msgid "Handle"
-msgstr "Håndtér"
-
-#: reportapp/templates/components/hit.html:182
+#: reportapp/templates/components/hit.html:58
 msgid "Deletes email from your mailbox"
 msgstr "Sletter email fra din mailboks"
 
-#: reportapp/templates/components/hit.html:188
+#: reportapp/templates/components/hit.html:64
 msgid ""
 "You are about to delete selected email from your mailbox. OS2datascanner "
 "cannot reverse this action. Are you sure?"
@@ -587,37 +566,58 @@ msgstr ""
 "Du er ved at slette valgte email fra din mailboks. Denne handling kan ikke "
 "fortrydes i OS2datascanner. Er du sikker?"
 
-#: reportapp/templates/components/hit.html:190
+#: reportapp/templates/components/hit.html:65
 msgid "Delete"
 msgstr "Slet"
 
-#: reportapp/templates/components/hit.html:194
+#: reportapp/templates/components/hit.html:72
+msgid "Opened"
+msgstr "Åbnet: "
+
+#: reportapp/templates/components/hit.html:110
+msgid "Copy folder path"
+msgstr "Kopiér sti til mappe"
+
+#: reportapp/templates/components/hit.html:115
+msgid "Copy path"
+msgstr "Kopiér sti"
+
+#: reportapp/templates/components/hit.html:122
+msgid "Copy link"
+msgstr "Kopiér link"
+
+#: reportapp/templates/components/hit.html:137
+#: reportapp/templates/components/hit.html:188
+msgid "Handle"
+msgstr "Håndtér"
+
+#: reportapp/templates/components/hit.html:192
 msgid "Show/hide matches"
 msgstr "Vis/skjul matches"
 
-#: reportapp/templates/components/hit.html:209
+#: reportapp/templates/components/hit.html:207
 msgid "Anonymized match"
 msgstr "Anonymiseret match"
 
-#: reportapp/templates/components/hit.html:210
+#: reportapp/templates/components/hit.html:208
 msgid "Context"
 msgstr "Kontekst"
 
-#: reportapp/templates/components/hit.html:211
+#: reportapp/templates/components/hit.html:209
 msgid "Probability"
 msgstr "Sandsynlighed"
 
-#: reportapp/templates/components/hit.html:229
+#: reportapp/templates/components/hit.html:227
 msgid "A temporary error occurred during the latest check of this match"
 msgstr "Der opstod en midlertidig fejl under sidste tjek af dette match"
 
-#: reportapp/templates/components/hit.html:231
+#: reportapp/templates/components/hit.html:229
 msgid ""
 "OS2datascanner will automatically check this match again as part of the next "
 "scan"
 msgstr "OS2datascanner genbesøger dette match automatisk under næste scan"
 
-#: reportapp/templates/components/hit.html:235
+#: reportapp/templates/components/hit.html:233
 msgid "Show/hide technical details of the error"
 msgstr "Vis/skjul tekniske detaljer om fejlen"
 
@@ -671,7 +671,7 @@ msgid "Personal"
 msgstr "Personlige"
 
 #: reportapp/templates/components/index_navigation.html:11
-#: reportapp/views/user_views.py:318
+#: reportapp/views/user_views.py:314
 msgid "Remediator"
 msgstr "Oprydder"
 
@@ -1390,7 +1390,7 @@ msgstr "%0D%0A%0D%0A--- Ændr ikke teksten under denne linje! ---%0D%0A"
 msgid "The page does not exist"
 msgstr "Siden eksisterer ikke"
 
-#: reportapp/views/report_views.py:468 reportapp/views/report_views.py:499
+#: reportapp/views/report_views.py:473 reportapp/views/report_views.py:504
 #, python-brace-format
 msgid "Failed to delete {pn}: {e}"
 msgstr "Kunne ikke slette {pn}: {e}"
@@ -1425,47 +1425,47 @@ msgstr "Mailscan"
 msgid "You deleted all results from {0} associated with {1}."
 msgstr "Du har slettet alle resultater fra {0} tilknyttet {1}."
 
-#: reportapp/views/user_views.py:70
+#: reportapp/views/user_views.py:63
 msgid "Successfully categorized your emails!"
 msgstr "Kategoriserede dine emails succesfuldt!"
 
-#: reportapp/views/user_views.py:110
+#: reportapp/views/user_views.py:103
 msgid "Successfully created OS2datascanner Match category!"
 msgstr "Oprettede OS2datascanner Match kategorien succesfuldt!"
 
-#: reportapp/views/user_views.py:133
+#: reportapp/views/user_views.py:126
 msgid "Successfully created OS2datascanner False Positive category!"
 msgstr "Oprettede OS2datascanner False Positive kategorien succesfuldt!"
 
-#: reportapp/views/user_views.py:162
+#: reportapp/views/user_views.py:155
 msgid "Successfully updated OS2datascanner Match colour! "
 msgstr "Opdaterede OS2datascanner Match kategorien succesfuldt!"
 
-#: reportapp/views/user_views.py:169
+#: reportapp/views/user_views.py:162
 msgid "Couldn't update match category colour!"
 msgstr "Kunne ikke opdatere match kategori farve!"
 
-#: reportapp/views/user_views.py:187
+#: reportapp/views/user_views.py:180
 msgid "Successfully updated OS2datascanner False Positive colour! "
 msgstr "Opdaterede OS2datascanner False Positive kategorien succesfuldt!"
 
-#: reportapp/views/user_views.py:195
+#: reportapp/views/user_views.py:188
 msgid "Couldn't update false positive category colour!"
 msgstr "Kunne ikke opdatere falsk positiv kategori farve!"
 
-#: reportapp/views/user_views.py:211
+#: reportapp/views/user_views.py:204
 msgid "Successfully deleted OS2datascanner Match category!"
 msgstr "Slettede OS2datascanner Match kategorien succesfuldt!"
 
-#: reportapp/views/user_views.py:218
+#: reportapp/views/user_views.py:211
 msgid "Couldn't delete match category!"
 msgstr "Kunne ikke slette match kategori!"
 
-#: reportapp/views/user_views.py:231
+#: reportapp/views/user_views.py:224
 msgid "Successfully deleted OS2datascanner False Positive category!"
 msgstr "Slettede OS2datascanner False Positive kategorien succesfuldt!"
 
-#: reportapp/views/user_views.py:239
+#: reportapp/views/user_views.py:232
 msgid "Couldn't delete false positive category!"
 msgstr "Kunne ikke slette falsk positiv kategori!"
 
@@ -1488,33 +1488,33 @@ msgstr "Kunne ikke opdatere kategori! Fejlkode: {status_code}"
 msgid "Couldn't delete category! Code: {status_code}"
 msgstr "Kunne ikke slette kategori! Fejlkode: {status_code}"
 
-#: reportapp/views/utilities/msgraph_utilities.py:279
+#: reportapp/views/utilities/msgraph_utilities.py:284
 #, python-brace-format
 msgid "Not allowed! You tried to delete an email belonging to {owner}!"
 msgstr "Ikke tilladt! Du har forsøgt at slette en email tilhørende {owner}!"
 
-#: reportapp/views/utilities/msgraph_utilities.py:305
+#: reportapp/views/utilities/msgraph_utilities.py:320
 #, python-brace-format
 msgid "Couldn't delete email! Code: {status_code}"
 msgstr "Kunne ikke slette email! Fejlkode: {status_code}"
 
-#: reportapp/views/utilities/msgraph_utilities.py:326
+#: reportapp/views/utilities/msgraph_utilities.py:341
 msgid "System configuration does not allow mail deletion."
 msgstr "Systemindstillingerne tillader ikke email sletning."
 
-#: reportapp/views/utilities/msgraph_utilities.py:330
+#: reportapp/views/utilities/msgraph_utilities.py:345
 msgid "System configuration is missing Azure-application credentials. "
 msgstr "Systemindstillingerne mangler Azure-applikation oplysninger."
 
-#: reportapp/views/utilities/msgraph_utilities.py:335
+#: reportapp/views/utilities/msgraph_utilities.py:350
 msgid "Your organization does not allow this operation."
 msgstr "Din organisation tillader ikke denne handling."
 
-#: reportapp/views/utilities/msgraph_utilities.py:350
+#: reportapp/views/utilities/msgraph_utilities.py:365
 msgid "Could not find your Microsoft tenant!"
 msgstr "Kunne ikke finde din Microsoft tenant!"
 
-#: reportapp/views/utilities/msgraph_utilities.py:367
+#: reportapp/views/utilities/msgraph_utilities.py:382
 msgid "You currently have no Outlook reports. Can't create categories!"
 msgstr ""
 "Du har i øjeblikket ingen email resultater. Kan ikke oprette kategorier!"
