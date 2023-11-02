@@ -9,9 +9,9 @@ from .rule import Rule, Sensitivity
 logger = structlog.get_logger(__name__)
 
 # dk_passport_regex = r"P<DNK[A-Z<]{39}[\n \t,]?(\d{9})(\d)DNK(\d{6})(\d)[MF<](\d{6})(\d)([A-Z\d<]{14})(\d)(\d)"  # noqa: E501 line too long
-passport_regex = (r"P[A-Z<kx]([A-Z]{3})[A-Z<kx]{39}[\n \t,]?"
-                  r"([\dA-Z]{9})(\d)[A-Z]{3}(\d{6})(\d)[MF<kx]"
-                  r"(\d{6})(\d)([A-Z\d<kx]{14})(\d)(\d)")
+passport_regex = (r"P[A-Z<]([A-Z]{3})[A-Z<]{39}[\n \t,\-]?"
+                  r"([\dA-Z]{9})(\d)[A-Z]{3}(\d{6})(\d)[MF<]"
+                  r"(\d{6})(\d)([A-Z\d<]{14})(\d)(\d)")
 
 
 class PassportRule(RegexRule):
