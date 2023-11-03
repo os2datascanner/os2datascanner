@@ -15,6 +15,7 @@ for model in [OrganizationalUnit, Position]:
 class AliasAdmin(ImportedAdmin):
     """ Controls behaviour in Django Admin
            for the Alias model"""
+    list_filter = ["_alias_type"]
     fields = ('account', '_alias_type', '_value',
               'last_import_requested', 'last_import'
               )

@@ -237,15 +237,17 @@ def create_alias_and_match_relations(sub_alias: Alias) -> int:
     """Method for creating match_relations for a given alias
     with all the matching DocumentReports"""
     tm = Alias.match_relation.through
-    reports = DocumentReport.objects.only("pk", "alias_relation")
+    # We're using "only" here in combination with iterator later, to avoid
+    # running into RAM issues on large datasets. DocumentReports can be many and they can be large.
+    all_reports = DocumentReport.objects.only("pk", "alias_relation")
 
     # Although RFC 5321 says that the local part of an email address
     # -- the bit to the left of the @ --
     # is case sensitive, the real world disagrees..
     if sub_alias.alias_type == AliasType.EMAIL:
-        reports = reports.filter(owner__iexact=sub_alias.value)
+        reports = all_reports.filter(owner__iexact=sub_alias.value)
     else:
-        reports = reports.filter(owner=sub_alias.value)
+        reports = all_reports.filter(owner=sub_alias.value)
 
     # If we've found reports above, we should make sure no remediator alias exist
     # for those.
@@ -256,13 +258,13 @@ def create_alias_and_match_relations(sub_alias: Alias) -> int:
         remediator_for = sub_alias.value
 
         if remediator_for == "0":  # Remediator for all scannerjobs, becomes a string,
-            reports = reports.filter(
+            reports = all_reports.filter(
                 (Q(alias_relation__isnull=True) |
                  Q(alias_relation___alias_type=AliasType.REMEDIATOR.value))
             )
 
         else:  # Remediator for a specific scannerjob
-            reports = reports.filter(
+            reports = all_reports.filter(
                 (Q(alias_relation__isnull=True) |
                  Q(alias_relation___alias_type=AliasType.REMEDIATOR.value)) &
                 Q(scanner_job_pk=remediator_for)
