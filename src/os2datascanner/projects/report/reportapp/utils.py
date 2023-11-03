@@ -237,14 +237,15 @@ def create_alias_and_match_relations(sub_alias: Alias) -> int:
     """Method for creating match_relations for a given alias
     with all the matching DocumentReports"""
     tm = Alias.match_relation.through
+    reports = DocumentReport.objects.only("pk", "alias_relation")
 
     # Although RFC 5321 says that the local part of an email address
     # -- the bit to the left of the @ --
     # is case sensitive, the real world disagrees..
     if sub_alias.alias_type == AliasType.EMAIL:
-        reports = DocumentReport.objects.filter(owner__iexact=sub_alias.value)
+        reports = reports.filter(owner__iexact=sub_alias.value)
     else:
-        reports = DocumentReport.objects.filter(owner=sub_alias.value)
+        reports = reports.filter(owner=sub_alias.value)
 
     # If we've found reports above, we should make sure no remediator alias exist
     # for those.
@@ -255,20 +256,29 @@ def create_alias_and_match_relations(sub_alias: Alias) -> int:
         remediator_for = sub_alias.value
 
         if remediator_for == "0":  # Remediator for all scannerjobs, becomes a string,
-            reports = DocumentReport.objects.filter(
+            reports = reports.filter(
                 (Q(alias_relation__isnull=True) |
                  Q(alias_relation___alias_type=AliasType.REMEDIATOR.value))
             )
 
         else:  # Remediator for a specific scannerjob
-            reports = DocumentReport.objects.filter(
+            reports = reports.filter(
                 (Q(alias_relation__isnull=True) |
                  Q(alias_relation___alias_type=AliasType.REMEDIATOR.value)) &
                 Q(scanner_job_pk=remediator_for)
             )
 
-    tm.objects.bulk_create([tm(documentreport_id=r.pk, alias_id=sub_alias.pk)
-                            for r in reports], ignore_conflicts=True)
+    tm_create_list = []
+    for i, report in enumerate(reports.iterator(chunk_size=2000)):
+        tm_create_list.append(tm(documentreport_id=report.pk, alias_id=sub_alias.pk))
+
+        if i % 2000 == 0 and tm_create_list:
+            tm.objects.bulk_create(tm_create_list, ignore_conflicts=True)
+            tm_create_list.clear()
+
+    if tm_create_list:
+        tm.objects.bulk_create(tm_create_list, ignore_conflicts=True)
+
     return reports.count()
 
 
