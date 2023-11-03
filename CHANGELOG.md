@@ -1,5 +1,14 @@
 # Changelog
 
+## Next Release
+
+"Quick Rewrite It"
+
+### Bugfixes
+
+- Alias-Match relation creation initiated by event_collector is now significantly less RAM intensive.
+
+
 ## 3.21.0
 
 "Folie à Tous"
