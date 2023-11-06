@@ -1,5 +1,5 @@
 from os import listdir
-import PyPDF2
+import pypdf
 import string
 from tempfile import TemporaryDirectory
 
@@ -19,11 +19,11 @@ WHITESPACE_PLUS = string.whitespace + "\0"
 
 
 def _open_pdf_wrapped(obj):
-    reader = PyPDF2.PdfReader(obj)
+    reader = pypdf.PdfReader(obj)
     if reader.is_encrypted:
         # Some PDFs are "encrypted" with an empty password: give that a shot...
         if reader.decrypt("") == 0:  # the document has a real password
-            raise PyPDF2.utils.PdfReadError("File cannot be decrypted")
+            raise pypdf.errors.PdfReadError("File cannot be decrypted")
     return reader
 
 
@@ -50,12 +50,9 @@ class PDFPageResource(Resource):
     def _generate_metadata(self):
         with self.handle.source.handle.follow(self._sm).make_stream() as fp:
             reader = _open_pdf_wrapped(fp)
-            info = reader.getDocumentInfo() if reader else None
             # Some PDF authoring tools helpfully stick null bytes into the
             # author field. Make sure we remove these
-            author = (
-                    info.get("/Author").strip(WHITESPACE_PLUS)
-                    if info and info.get("/Author") else None)
+            author = reader.metadata.get("/Author", "").strip(WHITESPACE_PLUS)
 
         if author:
             yield "pdf-author", str(author)
@@ -64,7 +61,7 @@ class PDFPageResource(Resource):
         page = int(self.handle.relative_path)
         with self.handle.source._make_stream(self._sm) as fp:
             reader = _open_pdf_wrapped(fp)
-            return page in range(1, reader.getNumPages() + 1 if reader else 0)
+            return page in range(1, len(reader.pages) + 1 if reader else 0)
 
     def compute_type(self):
         return PAGE_TYPE

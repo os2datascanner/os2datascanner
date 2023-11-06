@@ -33,7 +33,7 @@ pandas
 Pillow
 prometheus_client
 PyNaCl
-PyPDF2
+pypdf
 pysmbc
 pytest
 pytest-xdist
