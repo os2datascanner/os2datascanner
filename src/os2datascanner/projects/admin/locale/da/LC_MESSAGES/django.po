@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-02 13:54+0100\n"
+"POT-Creation-Date: 2023-11-06 11:50+0100\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -2645,11 +2645,11 @@ msgstr ""
 msgid "return to organizations page"
 msgstr "vend tilbage til organisationer-siden"
 
-#: organizations/admin.py:39
+#: organizations/admin.py:40
 msgid "Tab access"
 msgstr "Menu-adgang"
 
-#: organizations/admin.py:45
+#: organizations/admin.py:46
 msgid "Support button settings"
 msgstr "Supportknap indstillinger"
 
