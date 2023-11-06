@@ -8,6 +8,9 @@
     {% trans "This functionality requires a tenant id, which OS2datascanner can only acquire if you have existing mail results." %}
   </p>
 {% endif %}
+
+{% include "components/snackbar.html" %}
+
 <table class="userprofile-table outlook-settings">
   <tbody>
     <form id="settings-form"
@@ -78,5 +81,3 @@
     </tr>
   </tbody>
 </table>
-
-{% include "components/snackbar.html" %}
