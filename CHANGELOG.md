@@ -8,6 +8,7 @@
 
 - Alias-Match relation creation initiated by event_collector is now significantly less RAM intensive.
 
+- Microsoft Graph tokens can once again be refreshed properly.
 
 ## 3.21.0
 

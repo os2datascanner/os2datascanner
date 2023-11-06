@@ -22,7 +22,7 @@ def make_token(client_id, tenant_id, client_secret):
 
 
 def raw_request_decorator(fn):
-    def _wrapper(self, *args, **kwargs):
+    def _wrapper(self, *args, _retry=False, **kwargs):
         response = fn(self, *args, **kwargs)
         try:
             response.raise_for_status()
@@ -31,11 +31,10 @@ def raw_request_decorator(fn):
             # If _retry, it means we have a status code 401 but are trying a second time.
             # It should've succeeded the first time, so we raise an exc to avoid a potential
             # endless loop
-            if ex.response.status_code != 401 or kwargs.get('_retry', False):
+            if ex.response.status_code != 401 or _retry:
                 raise ex
             self._token = self._token_creator()
-            kwargs['_retry'] = True
-            return fn(self, *args, **kwargs)
+            return _wrapper(self, *args, _retry=True, **kwargs)
 
     return _wrapper
 
