@@ -8,7 +8,7 @@ from structlog.stdlib import LoggerFactory
 from . import engine2  # noqa
 
 
-__version__ = "3.21.0"
+__version__ = "3.21.1"
 __commit__ = os.getenv("COMMIT_SHA", "")
 __tag__ = os.getenv("COMMIT_TAG", __version__)
 __branch__ = os.getenv("CURRENT_BRANCH", "main")

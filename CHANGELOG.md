@@ -1,6 +1,6 @@
 # Changelog
 
-## Next Release
+## 3.21.1, 6th November 2023
 
 "Quick Rewrite It"
 
@@ -10,7 +10,7 @@
 
 - Microsoft Graph tokens can once again be refreshed properly.
 
-## 3.21.0
+## 3.21.0, 2nd November 2023
 
 "Folie à Tous"
 
