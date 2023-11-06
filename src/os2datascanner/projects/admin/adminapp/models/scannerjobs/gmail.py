@@ -35,10 +35,6 @@ class GmailScanner(Scanner):
                                          null=False,
                                          validators=[validate_filetype_csv])
 
-    def __str__(self):
-        """Return the URL for the scanner."""
-        return self.url
-
     def get_type(self):
         return 'gmail'
 
