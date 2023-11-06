@@ -2,12 +2,40 @@
 Unit tests for utilities for use with MS Graph.
 """
 
+import requests
 import unittest
 
+from os2datascanner.engine2.model.msgraph import utilities as msgu
 from os2datascanner.engine2.model.msgraph.graphiti import (builder,
                                                            baseclasses,
                                                            exceptions,
                                                            query_parameters)
+
+
+class TestGraphUtilities(unittest.TestCase):
+    def setUp(self):
+        self._token = 1
+
+    def _token_creator(self):
+        self._token += 1
+
+    def test_rrd(self):
+        """The raw_request_decorator function implements retry logic
+        correctly."""
+        @msgu.raw_request_decorator
+        def handle(self):
+            response = requests.Response()
+            match self._token:
+                case 1:
+                    response.status_code = 401
+                case _:
+                    response.status_code = 200
+            return response
+
+        self.assertEqual(
+                handle(self).status_code,
+                200,
+                "didn't get the expected status code")
 
 
 class TestMSGraphURLBuilder(unittest.TestCase):
