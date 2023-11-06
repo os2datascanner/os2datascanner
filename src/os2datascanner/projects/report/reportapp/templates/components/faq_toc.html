@@ -8,4 +8,10 @@
      {% if request.path != "/help/" %}target="_blank"{% endif %}>
     <li>{% trans "Why can't I open file scan matches?" %}</li>
   </a>
+  {% if categorization %}
+    <a href="{% url "guide" %}#how_categorize"
+       {% if request.path != "/help/" %}target="_blank"{% endif %}>
+      <li>{% trans "Why are my emails not categorized in Outlook?" %}</li>
+    </a>
+  {% endif %}
 </ul>

@@ -35,6 +35,11 @@
         <a href="#filtering">
           <li>Filtreringsmulighed</li>
         </a>
+        {% if categorization %}
+          <a href="#categorize">
+            <li>Kategorisering i Outlook</li>
+          </a>
+        {% endif %}
       </ul>
       <a href="#FAQ">
         <h3>{% trans "Frequently Asked Questions" %}</h3>
@@ -170,6 +175,19 @@
         Du skal være opmærksom på, at OS2datascanner løbende sender ny resultater til dig, mens scanneren kører, så det kan være en gode idé at holde øje med om der er tikket nye resultater ind.
       </p>
 
+      {% if categorization %}
+        <h2 id="categorize">Kategorisering i Outlook</h2>
+        <p>
+          Du har mulighed for at markere de mails, som der er fundet matches i, i din Outlook klient via OS2datascanner. For at slå denne indstilling til skal du tilgå din <a href="{% url "account-me" %}">profilside</a>, og sætte et flueben i indstillingen "Kategorisér emails". Fremtidige scanninger vil herefter automatisk tilføje kategorien "OS2datascanner match" til mails, hvori der findes matches.
+        </p>
+        <p>
+          Når indstillingen er slået til har du også mulighed for at kategorisere alle mails med tidligere fundne resultater, ved at trykke på knappen "Kategorisér".
+        </p>
+        <p>
+          Aktivering af kategorisering tilføjer også kategorien "OS2datascanner false positive" til Outlook. Sættes denne kategori på en mail, vil mailen fremover ikke optræde som et match i OS2datascanner.
+        </p>
+      {% endif %}
+
       <h1 id="FAQ">{% trans "Frequently Asked Questions" %}</h1>
       <p>{% trans "Here you can find answers to questions frequently asked by other users of OS2datascanner." %}</p>
 
@@ -192,6 +210,15 @@
         {% trans "To find the file, which a match has been found in, click the 'Copy Folder' button on the match, then open your pathfinder on your computer, and paste in the content of your clipboard." %}
       </p>
 
+      {% if categorization %}
+        <h2 id="how_categorize">{% trans "Why are my emails not categorized in Outlook?" %}</h2>
+        <p>
+          {% blocktrans %}To categorize emails in your Outlook client, you must toggle the setting "Categorize emails" on your {% endblocktrans %}<a href="{% url "account-me" %}">{% trans "profile page" %}</a>. {% trans "See more information in" %} <a href="{% url "guide" %}#categorize">{% trans "the manual" %}</a>.
+        </p>
+        <p>
+          {% blocktrans %}If the setting is already on, future matches will categorize the corresponding email in your Outlook client. To categorize the previously matched emails, you must use the "Categorize" function on your {% endblocktrans %}<a href="{% url "account-me" %}">{% trans "profile page" %}</a>.
+        </p>
+      {% endif %}
     </div>
 
   </main>

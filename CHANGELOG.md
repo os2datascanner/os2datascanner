@@ -4,9 +4,15 @@
 
 "LMGTFY"
 
+### General improvements
+
+- Added some information about categorization in Outlook to the manual in the
+  report module.
+
 ### Bugfixes
 
 - The GmailScanner class no longer references a non-existant attribute.
+
 
 ## 3.21.1, 6th November 2023
 
