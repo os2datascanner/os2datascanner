@@ -413,14 +413,19 @@ msgid "Show/hide overview"
 msgstr "Vis/skjul overblik"
 
 #: reportapp/templates/components/faq_toc.html:5
-#: reportapp/templates/manual.html:176
+#: reportapp/templates/manual.html:192
 msgid "Why doesn't 'handle' delete my file or email?"
 msgstr "Hvorfor sletter 'Håndtér'-knappen ikke min fil eller e-mail?"
 
 #: reportapp/templates/components/faq_toc.html:9
-#: reportapp/templates/manual.html:184
+#: reportapp/templates/manual.html:200
 msgid "Why can't I open file scan matches?"
 msgstr "Hvorfor kan jeg ikke åbne matches fra filscan?"
+
+#: reportapp/templates/components/faq_toc.html:14
+#: reportapp/templates/manual.html:212
+msgid "Why are my emails not categorized in Outlook?"
+msgstr "Hvorfor er mine emails ikke kategoriseret i Outlook?"
 
 #: reportapp/templates/components/filters.html:31
 #: reportapp/templates/components/filters.html:62
@@ -939,7 +944,7 @@ msgid "Consult the manual to find instructions for using OS2datascanner."
 msgstr "Læs håndbogen for at finde instruktioner til brugen af OS2datascanner."
 
 #: reportapp/templates/components/service.html:65
-#: reportapp/templates/manual.html:15 reportapp/templates/manual.html:47
+#: reportapp/templates/manual.html:15 reportapp/templates/manual.html:52
 msgid "Manual"
 msgstr "Håndbog"
 
@@ -1111,11 +1116,11 @@ msgstr "Tak fordi du brugte OS2datascanner."
 msgid "again"
 msgstr "igen"
 
-#: reportapp/templates/manual.html:40 reportapp/templates/manual.html:173
+#: reportapp/templates/manual.html:45 reportapp/templates/manual.html:189
 msgid "Frequently Asked Questions"
 msgstr "Ofte stillede spørgsmål"
 
-#: reportapp/templates/manual.html:174
+#: reportapp/templates/manual.html:190
 msgid ""
 "Here you can find answers to questions frequently asked by other users of "
 "OS2datascanner."
@@ -1123,7 +1128,7 @@ msgstr ""
 "Her kan du finde svar på de oftest stillede spørgsmål af andre brugere af "
 "OS2datascanner."
 
-#: reportapp/templates/manual.html:178
+#: reportapp/templates/manual.html:194
 msgid ""
 "For security reasons, OS2datascanner cannot interact with your files or "
 "emails in any way. For this reason, you must manually delete or handle the "
@@ -1135,7 +1140,7 @@ msgstr ""
 "eller på anden måde håndtere den matchede fil. 'Håndtér'-knappen i "
 "OS2datascanner fjerner kun matchet fra oversigten."
 
-#: reportapp/templates/manual.html:181
+#: reportapp/templates/manual.html:197
 msgid ""
 "You can manually access the file or email by pressing the 'copy'- or 'open'-"
 "buttons below the name of the match."
@@ -1143,7 +1148,7 @@ msgstr ""
 "Du kan manuelt tilgå filen eller e-mailen ved at trykke på 'kopier'- eller "
 "'åben'-knapperne under navnet på matchet."
 
-#: reportapp/templates/manual.html:186
+#: reportapp/templates/manual.html:202
 msgid ""
 "OS2datascanner is not located on your computer, but on an external server. "
 "You are accessing that server through your browser."
@@ -1151,7 +1156,7 @@ msgstr ""
 "OS2datascanner befinder sig ikke på din computer, men på en ekstern server. "
 "Du tilgår denne server gennem din browser."
 
-#: reportapp/templates/manual.html:189
+#: reportapp/templates/manual.html:205
 msgid ""
 "For security reasons, modern browsers are not allowed to open a file on your "
 "computer. This also prevents OS2datascanner from doing the same."
@@ -1159,7 +1164,7 @@ msgstr ""
 "Af sikkerhedsårsager har moderne browsere ikke adgang til, at åbne filer på "
 "din computer. Dette forhindrer også OS2datascanner i det samme."
 
-#: reportapp/templates/manual.html:192
+#: reportapp/templates/manual.html:208
 msgid ""
 "To find the file, which a match has been found in, click the 'Copy Folder' "
 "button on the match, then open your pathfinder on your computer, and paste "
@@ -1168,6 +1173,36 @@ msgstr ""
 "For at finde en fil, som der er fundet et match i, kan du trykke på 'Kopier "
 "mappe'-knappen ved matchet. Derefter åbner du stifinderen på din computer, "
 "og indsætter indholdet af din udklipsholder."
+
+#: reportapp/templates/manual.html:214
+msgid ""
+"To categorize emails in your Outlook client, you must toggle the setting "
+"\"Categorize emails\" on your "
+msgstr ""
+"For at kategorisere emails i din Outlook-klient, skal du slå indstillingen "
+"\"Kategorisér emails\" på din "
+
+#: reportapp/templates/manual.html:214 reportapp/templates/manual.html:217
+msgid "profile page"
+msgstr "profilside"
+
+#: reportapp/templates/manual.html:214
+msgid "See more information in"
+msgstr "Se mere information i"
+
+#: reportapp/templates/manual.html:214
+msgid "the manual"
+msgstr "håndbogen"
+
+#: reportapp/templates/manual.html:217
+msgid ""
+"If the setting is already on, future matches will categorize the "
+"corresponding email in your Outlook client. To categorize the previously "
+"matched emails, you must use the \"Categorize\" function on your "
+msgstr ""
+"Hvis indstillingen allerede er slået til, vil fremtidige matches "
+"kategorisere den tilsvarende email i din Outlook-klient. For at kategorisere "
+"tidligere matchede emails, skal du bruge \"Kategorisér\"-funktionen på din "
 
 #: reportapp/templates/partials/header.html:62
 msgid "OS2datascanner version"

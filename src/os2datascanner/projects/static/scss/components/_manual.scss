@@ -8,6 +8,8 @@
     box-shadow: var(--box-shadow-widget);
     padding: 2rem;
     max-width: 20rem;
+    max-height: 70vh;
+    overflow-y: scroll;
 
     @media (min-width: $break-sm) {
       display: block;
@@ -57,13 +59,15 @@
 
   .content {
     max-width: 100%;
+    margin: 1rem;
 
     @media (min-width: $break-sm) {
-      max-width: 60%;
+      max-width: 55%;
     }
 
     @media (min-width: $break-lg) {
       left: 8rem;
+      max-width: 60%;
     }
 
     table {
