@@ -1,5 +1,13 @@
 # Changelog
 
+## Next release
+
+"LMGTFY"
+
+### Bugfixes
+
+- The GmailScanner class no longer references a non-existant attribute.
+
 ## 3.21.1, 6th November 2023
 
 "Quick Rewrite It"
