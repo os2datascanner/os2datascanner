@@ -392,8 +392,12 @@ class UserStatisticsPageView(LoginRequiredMixin, DetailView):
         scannerjobs = (
             filter_inapplicable_matches(
                 user=account.user,
-                matches=DocumentReport.objects.filter(number_of_matches__gte=1,
-                                                      resolution_status__isnull=True))
+                matches=DocumentReport.objects.filter(
+                        number_of_matches__gte=1,
+                        resolution_status__isnull=True
+                    ).exclude(
+                        alias_relation___alias_type=AliasType.REMEDIATOR
+                    ))
             .order_by(
                 "scanner_job_pk"
             ).values(

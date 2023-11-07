@@ -234,6 +234,11 @@ class AccountTest(TestCase):
             user=self.kjeld_acc.user,
             account=self.kjeld_acc,
             _alias_type="generic")
+        self.egon_rem_alias = Alias.objects.create(
+            user=self.egon_acc.user,
+            account=self.egon_acc,
+            _alias_type="remediator",
+            _value=0)
 
     def test_save_with_no_new_matches_and_some_handled(self):
         """If a user has not recently had new matches, their status should be
@@ -250,6 +255,9 @@ class AccountTest(TestCase):
             created=timezone.now() -
             datetime.timedelta(
                 days=100))
+
+        # Matches related to a remediator should be ignored:
+        make_matched_document_reports_for(self.egon_rem_alias, handled=5, amount=10)
 
         # This is the real test. This is where .match_count and .match_status are set.
         self.egon_acc.save()
@@ -285,6 +293,9 @@ class AccountTest(TestCase):
         kjeld_all = 10
         make_matched_document_reports_for(self.kjeld_alias, handled=kjeld_handled, amount=kjeld_all)
 
+        # Matches related to a remediator should be ignored:
+        make_matched_document_reports_for(self.egon_rem_alias, handled=5, amount=10)
+
         # This is where the match_status and match_count are set.
         self.egon_acc.save()
         self.benny_acc.save()
@@ -317,6 +328,8 @@ class AccountTest(TestCase):
         handled = 0
         all_matches = 10
         make_matched_document_reports_for(self.kjeld_alias, handled=handled, amount=all_matches)
+        # Matches related to a remediator should be ignored:
+        make_matched_document_reports_for(self.egon_rem_alias, handled=5, amount=10)
 
         self.kjeld_acc.save()
 
@@ -341,6 +354,8 @@ class AccountTest(TestCase):
             created=timezone.now() -
             datetime.timedelta(
                 days=100))
+        # Matches related to a remediator should be ignored:
+        make_matched_document_reports_for(self.egon_rem_alias, handled=5, amount=10)
 
         self.benny_acc.save()
 
@@ -383,6 +398,8 @@ class AccountTest(TestCase):
         """Test the Account.count_matches_by_week-method with a report without
         a created timestamp, to make sure the method does not break."""
         make_matched_document_reports_for(self.kjeld_alias, handled=0, amount=1, created=None)
+        # Matches related to a remediator should be ignored:
+        make_matched_document_reports_for(self.egon_rem_alias, handled=5, amount=10)
         kjeld_weekly_matches = self.kjeld_acc.count_matches_by_week(weeks=1)
 
         self.assertEqual(kjeld_weekly_matches[0]["matches"], 1)
@@ -391,6 +408,8 @@ class AccountTest(TestCase):
         all_matches = 10
         handled = 0
         make_matched_document_reports_for(self.kjeld_alias, handled=handled, amount=all_matches)
+        # Matches related to a remediator should be ignored:
+        make_matched_document_reports_for(self.egon_rem_alias, handled=5, amount=10)
 
         # Refresh match count.
         self.kjeld_acc._count_matches()
@@ -422,6 +441,8 @@ class AccountTest(TestCase):
         all_matches = 10
         handled = 0
         make_matched_document_reports_for(self.kjeld_alias, handled=handled, amount=all_matches)
+        # Matches related to a remediator should be ignored:
+        make_matched_document_reports_for(self.egon_rem_alias, handled=5, amount=10)
 
         # Mark Kjeld's matches as withheld
         DocumentReport.objects.filter(alias_relation=self.kjeld_alias).update(
