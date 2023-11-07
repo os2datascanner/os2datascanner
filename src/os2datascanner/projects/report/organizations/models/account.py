@@ -34,6 +34,7 @@ from os2datascanner.core_organizational_structure.models import \
     AccountSerializer as Core_AccountSerializer
 from os2datascanner.core_organizational_structure.models.organization import \
     StatisticsPageConfigChoices
+from os2datascanner.core_organizational_structure.models.aliases import AliasType
 from os2datascanner.utils.system_utilities import time_now
 
 from ..seralizer import BaseBulkSerializer, SelfRelatingField
@@ -175,10 +176,12 @@ class Account(Core_Account):
     def _count_matches(self):
         """Counts the number of unhandled matches associated with the account."""
         from ...reportapp.models.documentreport import DocumentReport
-        reports = DocumentReport.objects.filter(
+        reports = DocumentReport.objects.filter(  # noqa: ECE001
             alias_relation__account=self,
             number_of_matches__gte=1,
-            resolution_status__isnull=True).values(
+            resolution_status__isnull=True).exclude(
+                alias_relation___alias_type=AliasType.REMEDIATOR
+            ).values(
                 "only_notify_superadmin").order_by(
                     "only_notify_superadmin").annotate(
             count=Count("only_notify_superadmin")).values(
@@ -230,6 +233,8 @@ class Account(Core_Account):
             number_of_matches__gte=1,
             alias_relation__account=self,
             only_notify_superadmin=False,
+        ).exclude(
+            alias_relation___alias_type=AliasType.REMEDIATOR
         ).values(
             "created_timestamp",
             "resolution_time",

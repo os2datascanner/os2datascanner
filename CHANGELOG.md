@@ -13,6 +13,9 @@
 
 - The GmailScanner class no longer references a non-existant attribute.
 
+- The weekly and total count of matches for each account now ignores matches
+  from remediator aliases.
+
 
 ## 3.21.1, 6th November 2023
 
