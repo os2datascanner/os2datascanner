@@ -16,6 +16,8 @@
 - The weekly and total count of matches for each account now ignores matches
   from remediator aliases.
 
+- A timeout is now enforced when retrieving OAuth 2.0 client credentials
+  tokens.
 
 ## 3.21.1, 6th November 2023
 

@@ -18,7 +18,8 @@ def make_token(client_id, tenant_id, client_secret):
         client_id, client_secret,
         scope="https://graph.microsoft.com/.default",
 
-        wrapper=WebRetrier().run)
+        wrapper=WebRetrier().run,
+        post_timeout=engine2_settings.utils["oauth2"]["cc_token_timeout"])
 
 
 def raw_request_decorator(fn):

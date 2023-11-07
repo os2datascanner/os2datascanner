@@ -82,3 +82,8 @@ page_size = 100
 
 # The time to spend waiting for an API response to begin (in seconds)
 timeout = 30
+
+[utils.oauth2]
+# The number of seconds to wait for a client credentials response from an OAuth
+# 2.0 token provider before concluding that something has gone wrong
+cc_token_timeout = 180

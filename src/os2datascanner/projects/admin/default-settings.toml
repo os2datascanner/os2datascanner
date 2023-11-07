@@ -284,3 +284,8 @@ LOGS_DIR = ["*", "var", "logs"]
 STATIC_ROOT = ["*", 'src', 'os2datascanner', 'projects', 'static', 'admin']
 MEDIA_ROOT = ["*", "uploads", "admin"]
 TEST_OUTPUT_FILE_NAME = ["*", "build", "test-results.xml"]
+
+[utils.oauth2]
+# The number of seconds to wait for a client credentials response from an OAuth
+# 2.0 token provider before concluding that something has gone wrong
+cc_token_timeout = 180
