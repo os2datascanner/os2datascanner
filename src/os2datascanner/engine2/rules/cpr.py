@@ -110,37 +110,39 @@ class CPRRule(RegexRule):
         num_bins = 40
         bin_size = ceil(file_size / num_bins)
 
-        bin_accepted = [False for _ in range(num_bins+1)]
-        bin_storage = [[] for _ in range(num_bins+1)]
+        bin_accepted = [False] * (num_bins + 1)
+        bin_storage = [[] for _ in range(num_bins + 1)]
 
         cut_off = 0.15
 
         i_nums = 0
         i_cprs = 0
         for i_bin in range(1, num_bins+1):
-            nums_in_bin = 0
+            def elements_in_bin(i, max_elems, elems, end_point):
+                elems_in_bin = []
+                while i < max_elems and elems[i].start(0) < (end_point):
+                    elems_in_bin.append(elems[i])
+                    i += 1
+                return elems_in_bin
+
             # Iterates through all elements in current bin
-            while i_nums < num_elems and numbers[i_nums].start(0) < bin_size * i_bin:
-                nums_in_bin += 1
-                i_nums += 1
+            nums_in_bin = len(elements_in_bin(i_nums, num_elems, numbers, bin_size * i_bin))
+            i_nums += nums_in_bin
 
-            cprs_in_bin = 0
             # Iterates through all cprs in current bin
-            while i_cprs < num_cprs and cprs[i_cprs].start(0) < bin_size * i_bin:
-                bin_storage[i_bin].append(cprs[i_cprs])
-                cprs_in_bin += 1
-                i_cprs += 1
+            cprs_in_bin = elements_in_bin(i_cprs, num_cprs, cprs, bin_size * i_bin)
+            i_cprs += len(cprs_in_bin)
+            bin_storage[i_bin].extend(cprs_in_bin)
 
-            if nums_in_bin == 0 or cprs_in_bin / nums_in_bin >= cut_off:
-                bin_accepted[i_bin] = True
+            # Check if a bin has matches and is above the cut-off limit.
+            bin_accepted[i_bin] = nums_in_bin == 0 or (len(cprs_in_bin) / nums_in_bin >= cut_off)
 
             # A bin who's neighbors weren't accepted, isn't accepted
-            if not (bin_accepted[i_bin-2] or bin_accepted[i_bin]):
-                bin_accepted[i_bin-1] = False
+            bin_accepted[i_bin-1] = (bin_accepted[i_bin-1] and
+                                     (bin_accepted[i_bin-2] or bin_accepted[i_bin]))
 
         # Check last bins neighbor
-        if not bin_accepted[num_bins-1]:
-            bin_accepted[num_bins] = False
+        bin_accepted[num_bins] = bin_accepted[num_bins] and bin_accepted[num_bins-1]
 
         filtered_cprs = chain.from_iterable(
             bin_storage[i] for i in range(1, num_bins+1) if bin_accepted[i])
@@ -193,6 +195,7 @@ class CPRRule(RegexRule):
 
         if self._bin_check:
             cpr_numbers = self._check_bins(numbers, cpr_numbers)
+        print(len(cpr_numbers))
 
         for m in cpr_numbers:
             cpr = m.group(1).replace(" ", "") + m.group(2)
