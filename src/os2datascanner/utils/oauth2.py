@@ -13,13 +13,14 @@ def mint_cc_token(
         endpoint: str,  # URL
         client_id: str,
         client_secret: str,
-        *, wrapper=None, **kwargs):
+        *, wrapper=None, post_timeout=60, **kwargs):
     """Retrieves a token from the given endpoint following the OAuth 2.0
     client credentials flow.
 
-    Callers can set the wrapper keyword argument to wrap this operation in
-    (for example) a retrier; all other keyword arguments are passed into the
-    JSON body of the request."""
+    All keyword arguments are passed into the JSON body of the request, apart
+    from two: the wrapper argument can be set to wrap this operation in (for
+    example) a retrier, and the post_timeout argument can be set to specify a
+    timeout for the HTTP POST request."""
     response = (wrapper or _default_wrapper)(
             requests.post,
             endpoint,
@@ -28,7 +29,8 @@ def mint_cc_token(
                 "client_id": client_id,
                 "client_secret": client_secret,
                 **kwargs
-            })
+            },
+            timeout=post_timeout)
     response.raise_for_status()
     logger.info(f"Collected new token from {endpoint}")
     return response.json()["access_token"]
