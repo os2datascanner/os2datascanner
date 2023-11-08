@@ -200,30 +200,31 @@ class RuleTests(unittest.TestCase):
         rules = [
             (
                 CPRRule(modulus_11=True, ignore_irrelevant=False, examine_context=False,
-                        blacklist=[]),
+                        bin_check=True, blacklist=[]),
                 ALL_MATCHES,
                 "match all"
             ),
             (
                 CPRRule(modulus_11=True, ignore_irrelevant=False, examine_context=True,
-                        blacklist=[]),
+                        bin_check=True, blacklist=[]),
                 [ALL_MATCHES[i] for i in [0, 1, 2, 3, 5, 6, 19]],
                 "match using context rules"
             ),
             (
                 CPRRule(modulus_11=True, ignore_irrelevant=False, examine_context=True,
-                        blacklist=[], whitelist=[]),
+                        bin_check=True, blacklist=[], whitelist=[]),
                 [ALL_MATCHES[i] for i in [0, 2, 3, 5, 6, 19]],
                 "match setting `whitelist=[]`"
             ),
             (
-                CPRRule(modulus_11=True, ignore_irrelevant=False, examine_context=True),
+                CPRRule(modulus_11=True, ignore_irrelevant=False, examine_context=True,
+                        bin_check=True),
                 [ALL_MATCHES[i] for i in []],
                 "match with blacklist"
             ),
             (
                 CPRRule(modulus_11=True, ignore_irrelevant=False, examine_context=True,
-                        blacklist=[], whitelist=["anders", "and"]),
+                        bin_check=True, blacklist=[], whitelist=["anders", "and"]),
                 [ALL_MATCHES[i] for i in [0, 1, 2, 3, 4, 5, 6, 19]],
                 "match setting `whitelist=['anders', 'and']`"
             ),

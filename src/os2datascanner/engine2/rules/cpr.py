@@ -4,6 +4,7 @@ from functools import partial
 from itertools import chain
 from enum import Enum, unique
 import structlog
+from math import ceil
 
 from .rule import Rule, Sensitivity
 from .regex import RegexRule
@@ -69,6 +70,7 @@ class CPRRule(RegexRule):
                  modulus_11: bool = True,
                  ignore_irrelevant: bool = True,
                  examine_context: bool = True,
+                 bin_check: bool = True,
                  whitelist: Optional[List[str]] = None,
                  blacklist: Optional[List[str]] = None,
                  **super_kwargs):
@@ -76,6 +78,7 @@ class CPRRule(RegexRule):
         self._modulus_11 = modulus_11
         self._ignore_irrelevant = ignore_irrelevant
         self._examine_context = examine_context
+        self._bin_check = bin_check
         self._whitelist = self.WHITELIST_WORDS if whitelist is None else set(whitelist)
         self._blacklist = self.BLACKLIST_WORDS if blacklist is None else set(blacklist)
         self._blacklist_pattern = re.compile("|".join(self._blacklist))
@@ -89,11 +92,61 @@ class CPRRule(RegexRule):
             properties.append("relevance check")
         if self._examine_context:
             properties.append("context check")
+        if self._bin_check:
+            properties.append("bin check")
 
         if properties:
             return "CPR number (with {0})".format(oxford_comma(properties, "and"))
         else:
             return "CPR number"
+
+    def _check_bins(self, numbers, cprs):  # noqa: CCR001, C901 too high cognitive complexity
+        num_elems = len(numbers)
+        num_cprs = len(cprs)
+        if num_cprs == 0:
+            return []
+
+        file_size = numbers[-1].end(0)
+        num_bins = 40
+        bin_size = ceil(file_size / num_bins)
+
+        bin_accepted = [False] * (num_bins + 1)
+        bin_storage = [[] for _ in range(num_bins + 1)]
+
+        cut_off = 0.15
+
+        i_nums = 0
+        i_cprs = 0
+        for i_bin in range(1, num_bins+1):
+            def elements_in_bin(i, max_elems, elems, end_point):
+                elems_in_bin = []
+                while i < max_elems and elems[i].start(0) < (end_point):
+                    elems_in_bin.append(elems[i])
+                    i += 1
+                return elems_in_bin
+
+            # Iterates through all elements in current bin
+            nums_in_bin = len(elements_in_bin(i_nums, num_elems, numbers, bin_size * i_bin))
+            i_nums += nums_in_bin
+
+            # Iterates through all cprs in current bin
+            cprs_in_bin = elements_in_bin(i_cprs, num_cprs, cprs, bin_size * i_bin)
+            i_cprs += len(cprs_in_bin)
+            bin_storage[i_bin].extend(cprs_in_bin)
+
+            # Check if a bin has matches and is above the cut-off limit.
+            bin_accepted[i_bin] = nums_in_bin == 0 or (len(cprs_in_bin) / nums_in_bin >= cut_off)
+
+            # A bin who's neighbors weren't accepted, isn't accepted
+            bin_accepted[i_bin-1] = (bin_accepted[i_bin-1] and
+                                     (bin_accepted[i_bin-2] or bin_accepted[i_bin]))
+
+        # Check last bins neighbor
+        bin_accepted[num_bins] = bin_accepted[num_bins] and bin_accepted[num_bins-1]
+
+        filtered_cprs = chain.from_iterable(
+            bin_storage[i] for i in range(1, num_bins+1) if bin_accepted[i])
+        return list(filtered_cprs)
 
     def match(self, content: str) -> Optional[Iterator[dict]]:  # noqa: CCR001,E501 too high cognitive complexity
         if content is None:
@@ -104,21 +157,52 @@ class CPRRule(RegexRule):
                 logger.debug("Blacklist matched content", matches=m.group(0))
                 return
 
-        imatch = 0
-        for itot, m in enumerate(self._compiled_expression.finditer(content), 1):
-            cpr = m.group(1).replace(" ", "") + m.group(2)
+        def _is_cpr(candidate: Match[str]):
+            cpr = candidate.group(1).replace(" ", "") + candidate.group(2)
+
             if self._modulus_11:
                 mod11, reason = modulus11_check(cpr)
                 if not mod11:
                     logger.debug(f"{cpr} failed modulus11 check due to {reason}")
-                    continue
+                    return False
 
             probability = 1.0
             if self._ignore_irrelevant:
                 probability = calculator.cpr_check(cpr, do_mod11_check=False)
                 if isinstance(probability, str):
                     logger.debug(f"{cpr} is not valid cpr due to {probability}")
-                    continue
+                    return False
+
+            cpr = cpr[0:4] + "XXXXXX"
+            low, high = candidate.span()
+            # only examine context if there is any
+            if self._examine_context and len(content) > (high - low):
+                p, ctype = self.examine_context(candidate)
+                # determine if probability stems from context or calculator
+                probability = p if p is not None else probability
+                ctype = ctype if ctype != [] else Context.PROBABILITY_CALC
+                logger.debug(f"{cpr} with probability {probability} from context "
+                             f"due to {ctype}")
+
+            if probability:
+                return True
+            else:
+                return False
+
+        numbers = [m for m in self._compiled_expression.finditer(content)]
+
+        cpr_numbers = [m for m in numbers if _is_cpr(m)]
+
+        if self._bin_check:
+            cpr_numbers = self._check_bins(numbers, cpr_numbers)
+        print(len(cpr_numbers))
+
+        for m in cpr_numbers:
+            cpr = m.group(1).replace(" ", "") + m.group(2)
+
+            probability = 1.0
+            if self._ignore_irrelevant:
+                probability = calculator.cpr_check(cpr, do_mod11_check=False)
 
             cpr = cpr[0:4] + "XXXXXX"
             low, high = m.span()
@@ -131,22 +215,17 @@ class CPRRule(RegexRule):
                 logger.debug(f"{cpr} with probability {probability} from context "
                              f"due to {ctype}")
 
-            if probability:
-                imatch += 1
-                yield {
-                    "match": cpr,
+            yield {
+                "match": cpr,
 
-                    **make_context(m, content),
+                **make_context(m, content),
 
-                    "sensitivity": (
-                        self.sensitivity.value
-                        if self.sensitivity
-                        else self.sensitivity
-                    ),
-                    "probability": probability,
-                }
-            logger.debug(f"{itot} cpr-like numbers, "
-                         f"of which {imatch} had a probabiliy > 0")
+                "sensitivity": (
+                    self.sensitivity.value if self.sensitivity
+                    else self.sensitivity
+                ),
+                "probability": probability,
+            }
 
     def examine_context(  # noqa: CCR001, C901 too high cognitive complexity
         self, match: Match[str]

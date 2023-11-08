@@ -12,6 +12,9 @@
 - Added validation of the formatting of the uploaded userlist to the exchange-
   scanner form, as well as a helpful tooltip in the interface.
 
+- Added bin_check to the cpr rule, which decreases the amount of false positives 
+  in files with many 10 digit numbers
+
 ### Bugfixes
 
 - The GmailScanner class no longer references a non-existant attribute.
