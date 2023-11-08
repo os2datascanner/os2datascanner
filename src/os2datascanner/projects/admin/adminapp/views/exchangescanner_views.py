@@ -199,19 +199,21 @@ def validate_userlist_or_org_units(form):
         form.add_error('userlist', _("No userlist has been selected"))
     if userlist := form.cleaned_data.get('userlist'):
         users = (u.decode("utf-8").strip() for u in userlist if u.strip())
+        userlist_errors = set()
         for user in users:
             if "@" in user:
-                form.add_error(
+                userlist_errors.add((
                     'userlist',
                     _("The userlist should only include the usernames of the "
-                      "users, not the domain!"))
-                break
+                      "users, not the domain!")))
             if any(c in user for c in (",", " ")):
-                form.add_error(
+                userlist_errors.add((
                     'userlist',
                     _("Usernames in the userlist should be separated by "
-                      "newlines, not commas or whitespace!"))
-                break
+                      "newlines, not commas or whitespace!")))
+        for error in userlist_errors:
+            form.add_error(*error)
+
     return form
 
 

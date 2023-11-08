@@ -63,7 +63,6 @@
 
   - Category colours are customizable.
 
-
 ### General improvements
 
 - Previously seen error messages in the user error log are now hidden by
