@@ -20,9 +20,13 @@
   scanner form, as well as a helpful tooltip in the interface.
 
 - Added bin_check to the cpr rule, which decreases the amount of false positives 
-  in files with many 10 digit numbers
-  
+  in files with many 10 digit numbers.
+
 - The Gmail scanner dynamically discovers labels for each users mailbox.
+
+- The diagnostics tool now also gives a list of some environment variables,
+  installation-wide settings, as well as presenting the settings and contact
+  information of all Organization-objects.
 
 ### Bugfixes
 
