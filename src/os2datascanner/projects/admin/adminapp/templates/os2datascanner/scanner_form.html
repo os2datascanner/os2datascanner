@@ -502,33 +502,38 @@
               {% if form.userlist %}
                 <div id="{{ form.userlist.auto_id }}_container"
                      class="form__group form__group--flex{% if form.userlist.errors %} has-error{% endif %}">
-                  <label class="control-label block" for="id_{{ form.userlist.name }}">{% trans "List of mail users" %}</label>
-                  <input id="upload-file"
-                         placeholder="{% trans 'Select a file' %}"
-                         disabled="disabled"
-                         class="grow" />
-                  <div id="fileUpload" class="fileUpload button button--grey button--upload">
-                    <span>{% trans "Upload" %}</span>
-                    <input type="file"
-                           class="upload"
-                           name="{{ form.userlist.name }}"
-                           id="id_{{ form.userlist.name }}"
-                           {% if form.userlist.value %}value="{{ form.userlist.value }}"{% endif %}>
-                  </div>
-                  {% if form.userlist.value %}
-                    <p>
-                      <small>{% trans "Existing file:" %} {{ form.userlist.value }}</small>
-                    </p>
-                  {% endif %}
-
-                  {% if form.userlist.help_text %}<span class="form__help-text">{{ form.userlist.help_text }}</span>{% endif %}
-
-                  {% if form.userlist.errors %}{{ form.userlist.errors }}{% endif %}
+                  <label class="control-label block" for="id_{{ form.userlist.name }}">
+                    {% trans "List of mail users" %}<span class="help-tooltip"
+      title="{% trans "The uploaded file should contain a newline-separated list of usernames or localparts of the email addresses, without domains." %}">
+                    {% include "components/svg-icons/help.svg" %}
+                  </span>
+                </label>
+                <input id="upload-file"
+                       placeholder="{% trans 'Select a file' %}"
+                       disabled="disabled"
+                       class="grow" />
+                <div id="fileUpload" class="fileUpload button button--grey button--upload">
+                  <span>{% trans "Upload" %}</span>
+                  <input type="file"
+                         class="upload"
+                         name="{{ form.userlist.name }}"
+                         id="id_{{ form.userlist.name }}"
+                         {% if form.userlist.value %}value="{{ form.userlist.value }}"{% endif %}>
                 </div>
-              {% endif %}
+                {% if form.userlist.value %}
+                  <p>
+                    <small>{% trans "Existing file:" %} {{ form.userlist.value }}</small>
+                  </p>
+                {% endif %}
 
-              <!-- Available Employees widget -->
-              <!-- <p class="information">Vælg kun medarbejdere, som du ønsker at tilføje til scannerjobbet.</p>
+                {% if form.userlist.help_text %}<span class="form__help-text">{{ form.userlist.help_text }}</span>{% endif %}
+
+                {% if form.userlist.errors %}{{ form.userlist.errors }}{% endif %}
+              </div>
+            {% endif %}
+
+            <!-- Available Employees widget -->
+            <!-- <p class="information">Vælg kun medarbejdere, som du ønsker at tilføje til scannerjobbet.</p>
 
           <div id="{% if view.edit %}messageColorId{% endif %}" class="form__group{% if form.rules.errors %} has-error{% endif %}">
             <div class="select-employees">
@@ -554,165 +559,165 @@
 
             </div>
           </div> -->
-            </fieldset>
-          </section>
-        {% endif %}
+          </fieldset>
+        </section>
+      {% endif %}
 
-        {% if not form.userlist and form.org_unit %}
-          <section class="data-form">
-            <fieldset class="form__fieldset">
-              <h3 class="required-form">{% trans "add users"|capfirst %}</h3>
- 
-              <label for="entire-org">{% trans "all users in this organization"|capfirst %}</label>
- 
-              <input type="radio"
-                     name="show-org-units"
-                     value="hide-org-units"
-                     onclick="hideOrgUnits();"
-                     id="entire-org"
-                     checked />
- 
-              <label for="select-org-units">{% trans "select users from organizational units"|capfirst %}</label>
- 
-              <input type="radio"
-                     name="show-org-units"
-                     value="show-org-units"
-                     onclick="showOrgUnits();"
-                     id="select-org-units" />
-
-              <p class="information" id="org-unit-info">{% trans "select users from"|capfirst %}</p>
-              <div class="form__group {% if form.org_unit.errors %}has-error{% endif %}"
-                   id="org-units">
-                <label class="treeview-label {% if required %}required-form{% endif %}"
-                       for="{{ form.org_unit.name }}">{% trans "organizational units"|capfirst %}</label>
-                <select class="treeview"
-                        id="sel_1"
-                        name="{{ form.org_unit.name }}"
-                        multiple
-                        size="10"
-                        url="{% url 'org-units-listing' %}"
-                        disabled></select>
-                {% if form.org_unit.errors %}{{ form.org_unit.errors }}{% endif %}
-              </div>
- 
-	
-            </fieldset>
-          </section>
-
-        {% endif %}
-
-
+      {% if not form.userlist and form.org_unit %}
         <section class="data-form">
           <fieldset class="form__fieldset">
-            <h3>{% trans "Scanner settings" %}</h3>
-            <div class="form__group">
-              <div id="select_scan_rules_container">
-
-                {% if form.do_ocr %}
-                  <div class="checkbox-group">
-                    {% include "os2datascanner/scanner_form_checkbox_field.html" with field=form.do_ocr %}
-                  </div>
-                {% endif %}
-                {% if form.do_last_modified_check %}
-                  <div class="checkbox-group">
-                    {% include "os2datascanner/scanner_form_checkbox_field.html" with field=form.do_last_modified_check %}
-                  </div>
+            <h3 class="required-form">{% trans "add users"|capfirst %}</h3>
  
-                {% endif %}
+            <label for="entire-org">{% trans "all users in this organization"|capfirst %}</label>
  
-                {% if form.only_notify_superadmin %}
-	
-                  <div class="checkbox-group">
-                    {% include "os2datascanner/scanner_form_checkbox_field.html" with field=form.only_notify_superadmin %}
-                  </div>
+            <input type="radio"
+                   name="show-org-units"
+                   value="hide-org-units"
+                   onclick="hideOrgUnits();"
+                   id="entire-org"
+                   checked />
  
-                {% endif %}
+            <label for="select-org-units">{% trans "select users from organizational units"|capfirst %}</label>
+ 
+            <input type="radio"
+                   name="show-org-units"
+                   value="show-org-units"
+                   onclick="showOrgUnits();"
+                   id="select-org-units" />
 
-                {% if form.scan_deleted_items_folder %}
-	
-                  <div class="checkbox-group">
-                    {% include "os2datascanner/scanner_form_checkbox_field.html" with field=form.scan_deleted_items_folder %}
-                  </div>
-                {% endif %}
-
-                {% if form.scan_syncissues_folder %}
-	
-                  <div class="checkbox-group">
-                    {% include "os2datascanner/scanner_form_checkbox_field.html" with field=form.scan_syncissues_folder %}
-                  </div>
-                {% endif %}
-	
-                {% if form.skip_super_hidden %}
-                  <div class="checkbox-group">
-                    {% include "os2datascanner/scanner_form_checkbox_field.html" with field=form.skip_super_hidden %}
-                  </div>
-                {% endif %}
-
-                {% if form.unc_is_home_root %}
-                  <div class="checkbox-group">
-                    {% include "os2datascanner/scanner_form_checkbox_field.html" with field=form.unc_is_home_root %}
-                  </div>
-                {% endif %}
-
-                {% if form.do_link_check %}
-                  <div class="checkbox-group">
-                    {% include "os2datascanner/scanner_form_checkbox_field.html" with field=form.do_link_check %}
-                  </div>
-                {% endif %}
-
-                {% if form.exclude_urls %}
-                  <div class="input-group">
-                    {% include "os2datascanner/scanner_form_input_field.html" with field=form.exclude_urls placeholder=form.exclude_urls.field.widget.attrs.placeholder %}
-                  </div>
-                {% endif %}
-
-              </div>
+            <p class="information" id="org-unit-info">{% trans "select users from"|capfirst %}</p>
+            <div class="form__group {% if form.org_unit.errors %}has-error{% endif %}"
+                 id="org-units">
+              <label class="treeview-label {% if required %}required-form{% endif %}"
+                     for="{{ form.org_unit.name }}">{% trans "organizational units"|capfirst %}</label>
+              <select class="treeview"
+                      id="sel_1"
+                      name="{{ form.org_unit.name }}"
+                      multiple
+                      size="10"
+                      url="{% url 'org-units-listing' %}"
+                      disabled></select>
+              {% if form.org_unit.errors %}{{ form.org_unit.errors }}{% endif %}
             </div>
+ 
+	
           </fieldset>
         </section>
 
-        {% include "components/rule-selector.html" with rules=form.rules is_required=True selector_id="rules" component_title="Add rule" changed_id="changed_rules" %}
+      {% endif %}
 
-        {% if settings.EXCLUSION_RULES %}
 
-          {% include "components/rule-selector.html" with rules=form.exclusion_rules selector_id="exclusion_rules" component_title="Add exclusion rule" changed_id="changed_exclusion_rules" %}
+      <section class="data-form">
+        <fieldset class="form__fieldset">
+          <h3>{% trans "Scanner settings" %}</h3>
+          <div class="form__group">
+            <div id="select_scan_rules_container">
 
-        {% endif %}
+              {% if form.do_ocr %}
+                <div class="checkbox-group">
+                  {% include "os2datascanner/scanner_form_checkbox_field.html" with field=form.do_ocr %}
+                </div>
+              {% endif %}
+              {% if form.do_last_modified_check %}
+                <div class="checkbox-group">
+                  {% include "os2datascanner/scanner_form_checkbox_field.html" with field=form.do_last_modified_check %}
+                </div>
+ 
+              {% endif %}
+ 
+              {% if form.only_notify_superadmin %}
+	
+                <div class="checkbox-group">
+                  {% include "os2datascanner/scanner_form_checkbox_field.html" with field=form.only_notify_superadmin %}
+                </div>
+ 
+              {% endif %}
 
-        <section class="data-form">
-          <fieldset class="form__fieldset">
-            <h3>{% trans "Schedule scan" %}</h3>
+              {% if form.scan_deleted_items_folder %}
+	
+                <div class="checkbox-group">
+                  {% include "os2datascanner/scanner_form_checkbox_field.html" with field=form.scan_deleted_items_folder %}
+                </div>
+              {% endif %}
 
-            <div class="form__group">
-              <div id="container">
+              {% if form.scan_syncissues_folder %}
+	
+                <div class="checkbox-group">
+                  {% include "os2datascanner/scanner_form_checkbox_field.html" with field=form.scan_syncissues_folder %}
+                </div>
+              {% endif %}
+	
+              {% if form.skip_super_hidden %}
+                <div class="checkbox-group">
+                  {% include "os2datascanner/scanner_form_checkbox_field.html" with field=form.skip_super_hidden %}
+                </div>
+              {% endif %}
 
-                {% if form.schedule.help_text %}<span class="form__help-text">{{ form.schedule.help_text }}</span>{% endif %}
+              {% if form.unc_is_home_root %}
+                <div class="checkbox-group">
+                  {% include "os2datascanner/scanner_form_checkbox_field.html" with field=form.unc_is_home_root %}
+                </div>
+              {% endif %}
 
-                <p>{% trans "Schedule your scan by creating a fixed interval or adding a date to complete the scannerjob." %}</p>
+              {% if form.do_link_check %}
+                <div class="checkbox-group">
+                  {% include "os2datascanner/scanner_form_checkbox_field.html" with field=form.do_link_check %}
+                </div>
+              {% endif %}
 
-                {{ form.schedule }}
-
-                <div id="{{ form.schedule.auto_id }}_errors">{{ form.schedule.errors }}</div>
-              </div>
+              {% if form.exclude_urls %}
+                <div class="input-group">
+                  {% include "os2datascanner/scanner_form_input_field.html" with field=form.exclude_urls placeholder=form.exclude_urls.field.widget.attrs.placeholder %}
+                </div>
+              {% endif %}
 
             </div>
-          </fieldset>
+          </div>
+        </fieldset>
+      </section>
 
-          <fieldset class="form__fieldset">
-            {% if object.pk %}
-              <p>
-                {% trans "The scanner will start at the following time for the selected days:" %}
-                <br />
-                {{ object.get_start_time }}
-              </p>
-            {% endif %}
-          </fieldset>
-        </section>
+      {% include "components/rule-selector.html" with rules=form.rules is_required=True selector_id="rules" component_title="Add rule" changed_id="changed_rules" %}
 
-        <div class="form__group last-btn">
-          <button type="submit" class="button button--cta" name="save">{% trans "Save changes" %}</button>
-        </div>
-      </form>
-    </div>
+      {% if settings.EXCLUSION_RULES %}
+
+        {% include "components/rule-selector.html" with rules=form.exclusion_rules selector_id="exclusion_rules" component_title="Add exclusion rule" changed_id="changed_exclusion_rules" %}
+
+      {% endif %}
+
+      <section class="data-form">
+        <fieldset class="form__fieldset">
+          <h3>{% trans "Schedule scan" %}</h3>
+
+          <div class="form__group">
+            <div id="container">
+
+              {% if form.schedule.help_text %}<span class="form__help-text">{{ form.schedule.help_text }}</span>{% endif %}
+
+              <p>{% trans "Schedule your scan by creating a fixed interval or adding a date to complete the scannerjob." %}</p>
+
+              {{ form.schedule }}
+
+              <div id="{{ form.schedule.auto_id }}_errors">{{ form.schedule.errors }}</div>
+            </div>
+
+          </div>
+        </fieldset>
+
+        <fieldset class="form__fieldset">
+          {% if object.pk %}
+            <p>
+              {% trans "The scanner will start at the following time for the selected days:" %}
+              <br />
+              {{ object.get_start_time }}
+            </p>
+          {% endif %}
+        </fieldset>
+      </section>
+
+      <div class="form__group last-btn">
+        <button type="submit" class="button button--cta" name="save">{% trans "Save changes" %}</button>
+      </div>
+    </form>
   </div>
+</div>
 {% endblock %}

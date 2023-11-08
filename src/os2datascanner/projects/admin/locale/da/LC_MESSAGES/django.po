@@ -1019,7 +1019,7 @@ msgstr "Beskrivelse af regel"
 
 #: adminapp/templates/os2datascanner/customrule_form.html:146
 #: adminapp/templates/os2datascanner/regexrule_form.html:254
-#: adminapp/templates/os2datascanner/scanner_form.html:713
+#: adminapp/templates/os2datascanner/scanner_form.html:716
 msgid "Save changes"
 msgstr "Gem ændringer"
 
@@ -1517,7 +1517,7 @@ msgstr "Upload servicekonto"
 #: adminapp/templates/os2datascanner/scanner_form.html:395
 #: adminapp/templates/os2datascanner/scanner_form.html:420
 #: adminapp/templates/os2datascanner/scanner_form.html:453
-#: adminapp/templates/os2datascanner/scanner_form.html:507
+#: adminapp/templates/os2datascanner/scanner_form.html:510
 msgid "Select a file"
 msgstr "Vælg en fil"
 
@@ -1526,7 +1526,7 @@ msgstr "Vælg en fil"
 #: adminapp/templates/os2datascanner/scanner_form.html:399
 #: adminapp/templates/os2datascanner/scanner_form.html:424
 #: adminapp/templates/os2datascanner/scanner_form.html:457
-#: adminapp/templates/os2datascanner/scanner_form.html:511
+#: adminapp/templates/os2datascanner/scanner_form.html:514
 msgid "Upload"
 msgstr "Upload"
 
@@ -1584,17 +1584,17 @@ msgid "Click here to upload sitemap.xml"
 msgstr "Klik her for at uploade sitemap.xml"
 
 #: adminapp/templates/os2datascanner/scanner_form.html:486
-#: adminapp/templates/os2datascanner/scanner_form.html:564
+#: adminapp/templates/os2datascanner/scanner_form.html:567
 msgid "add users"
 msgstr "tilføj brugere"
 
 #: adminapp/templates/os2datascanner/scanner_form.html:487
-#: adminapp/templates/os2datascanner/scanner_form.html:583
+#: adminapp/templates/os2datascanner/scanner_form.html:586
 msgid "select users from"
 msgstr "vælg brugere fra"
 
 #: adminapp/templates/os2datascanner/scanner_form.html:490
-#: adminapp/templates/os2datascanner/scanner_form.html:587
+#: adminapp/templates/os2datascanner/scanner_form.html:590
 #: import_services/models/ldap_configuration.py:38
 #: organizations/templates/organizations/orgunit_list.html:59
 msgid "organizational units"
@@ -1608,35 +1608,42 @@ msgstr "eller upload"
 msgid "List of mail users"
 msgstr "Liste af mail brugere"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:520
+#: adminapp/templates/os2datascanner/scanner_form.html:506
+msgid ""
+"The uploaded file should contain a newline-separated list of usernames or "
+"localparts of the email addresses, without domains."
+msgstr ""
+"Den uploadede fil skal indeholde ét email-brugernavn uden domæne på hver linje."
+
+#: adminapp/templates/os2datascanner/scanner_form.html:523
 msgid "Existing file:"
 msgstr "Eksisterende fil:"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:537
+#: adminapp/templates/os2datascanner/scanner_form.html:540
 msgid "Available employees"
 msgstr "Tilgængelige medarbejdere"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:551
+#: adminapp/templates/os2datascanner/scanner_form.html:554
 msgid "Selected employees"
 msgstr "Valgte medarbejdere"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:566
+#: adminapp/templates/os2datascanner/scanner_form.html:569
 msgid "all users in this organization"
 msgstr "alle brugere i denne organisation"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:575
+#: adminapp/templates/os2datascanner/scanner_form.html:578
 msgid "select users from organizational units"
 msgstr "vælg brugere fra organisatoriske enheder"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:607
+#: adminapp/templates/os2datascanner/scanner_form.html:610
 msgid "Scanner settings"
 msgstr "Scannerindstillinger"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:684
+#: adminapp/templates/os2datascanner/scanner_form.html:687
 msgid "Schedule scan"
 msgstr "Planlæg scan"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:691
+#: adminapp/templates/os2datascanner/scanner_form.html:694
 msgid ""
 "Schedule your scan by creating a fixed interval or adding a date to complete "
 "the scannerjob."
@@ -1644,7 +1651,7 @@ msgstr ""
 "Planlæg dit scan ved at oprette et fast interval eller tilføj en dato for "
 "afvikling af scannerjobbet."
 
-#: adminapp/templates/os2datascanner/scanner_form.html:704
+#: adminapp/templates/os2datascanner/scanner_form.html:707
 msgid "The scanner will start at the following time for the selected days:"
 msgstr "Scanneren vil starte på følgende tidspunkt på de valgte dage:"
 
@@ -1996,24 +2003,37 @@ msgstr "millisekund"
 msgid "milliseconds"
 msgstr "millisekunder"
 
-#: adminapp/views/exchangescanner_views.py:197
+#: adminapp/views/exchangescanner_views.py:198
 msgid "No organizational units has been selected"
 msgstr "Der er ikke valgt nogen organisatoriske enheder"
 
-#: adminapp/views/exchangescanner_views.py:198
+#: adminapp/views/exchangescanner_views.py:199
 msgid "No userlist has been selected"
 msgstr "Der er ikke valgt nogen brugerliste"
 
 #: adminapp/views/exchangescanner_views.py:206
+msgid ""
+"The userlist should only include the usernames of the users, not the domain!"
+msgstr "Brugerlisten skal kun indeholde brugernavne på brugerne, ikke domæne!"
+
+#: adminapp/views/exchangescanner_views.py:211
+msgid ""
+"Usernames in the userlist should be separated by newlines, not commas or "
+"whitespace!"
+msgstr ""
+"Brugernavnene i brugerlisten skal adskilles af linjeskift, ikke komma eller "
+"mellemrum!"
+
+#: adminapp/views/exchangescanner_views.py:220
 msgid "e.g. @example.com"
 msgstr "f.eks. @example.com"
 
-#: adminapp/views/exchangescanner_views.py:210
+#: adminapp/views/exchangescanner_views.py:224
 #: adminapp/views/filescanner_views.py:174
 msgid "Username"
 msgstr "Brugernavn"
 
-#: adminapp/views/exchangescanner_views.py:215
+#: adminapp/views/exchangescanner_views.py:229
 #: adminapp/views/filescanner_views.py:175
 msgid "Password"
 msgstr "Adgangskode"
