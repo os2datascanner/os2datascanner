@@ -102,10 +102,8 @@
     {% include "partials/main.html" with active_tab="home" %}
 
     <div class="content">
-
-      {% include "partials/breadcrumb.html" with page="scannerjob"  %}
-
-      <div class="aside">
+      <div class="content-header">
+        {% include "partials/breadcrumb.html" with page="scannerjob"  %}
         {% if view.edit %}
           <h1 class="page-title">{% trans "Edit scannerjob" %}</h1>
         {% endif %}
@@ -720,8 +718,10 @@
         </fieldset>
       </section>
 
-      <div class="form__group last-btn">
-        <button type="submit" class="button button--cta" name="save">{% trans "Save changes" %}</button>
+      <div class="content-footer">
+        <div class="form__group last-btn">
+          <button type="submit" class="button button--cta" name="save">{% trans "Save changes" %}</button>
+        </div>
       </div>
     </form>
   </div>

@@ -3,9 +3,9 @@
 {% load i18n %}
 
 {% block scripts %}
-  <script src="{% static "3rdparty/jquery.modal.js" %} "></script>
+  <script src="{% static '3rdparty/jquery.modal.js' %} "></script>
   <script src="{% static '3rdparty/htmx.min.js' %}"></script>
-  <script src="{% static "js/index.js" %}"></script>
+  <script src="{% static 'js/index.js' %}"></script>
 {% endblock %}
 
 {% block body %}
@@ -14,19 +14,20 @@
     {% include "partials/main.html" with active_tab="rules" %}
 
     <div class="content">
-
-      <div class="aside">
-        <h1 class="page-title">{% trans "Rules" %}</h1>
-
-        <div class="btn">
-          <a class="button button--cta"
-             href="{% url "customrule_add" %}"
-             title="{% trans 'Add rule' %}">
-            <svg class="icon icon--white">
-              <use xlink:href="/static/svg/symbol-defs.svg#icon-plus"></use>
-            </svg>
-            <span>{% trans "Add rule" %}</span>
-          </a>
+      <div class="content-header">
+        <div class="aside">
+          <h1 class="page-title">{% trans "Rules" %}</h1>
+ 
+          <div class="btn">
+            <a class="button button--cta"
+               href="{% url "customrule_add" %}"
+               title="{% trans 'Add rule' %}">
+              <svg class="icon icon--white">
+                <use xlink:href="/static/svg/symbol-defs.svg#icon-plus"></use>
+              </svg>
+              <span>{% trans "Add rule" %}</span>
+            </a>
+          </div>
         </div>
       </div>
 
@@ -66,7 +67,7 @@
                   </td>
                   <td class="datatable__column--actions">
                     <div class="action-wrapper">
-                      <a href="{% url "customrule_update" rule.pk %}"
+                      <a href="{% url 'customrule_update' rule.pk %}"
                          class="button button--small button--grey"
                          title="{% trans 'Edit' %}">
                         <svg class="icon">
@@ -116,7 +117,7 @@
         </p>
       {% endif %}
 
-      <div class="aside">
+      <div class="content-header">
         <h1 class="page-title">{% trans "System rules" %}</h1>
       </div>
 

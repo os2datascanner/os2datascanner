@@ -3,26 +3,27 @@
 {% load mptt_tags %}
 
 {% block scripts %}
-  <script src="{% static "3rdparty/jquery.modal.js" %} "></script>
+  <script src="{% static '3rdparty/jquery.modal.js' %} "></script>
   <script src="{% static '3rdparty/htmx.min.js' %}"></script>
-  <script src="{% static "js/index.js" %}"></script>
+  <script src="{% static 'js/index.js' %}"></script>
 {% endblock %}
 
 {% for client in client_list %}
-  <div class="aside">
-    <h1 class="page-title">{% trans 'organizations for'|capfirst %} {{ client }}</h1>
-    <div class="btn">
-      <a class="button button--cta"
-         href="{% url 'add-organization-for' client_id=client.pk %}"
-         title="{% trans 'Add new organization' %}">
-        <svg class="icon icon--white">
-          <use xlink:href="/static/svg/symbol-defs.svg#icon-plus"></use>
-        </svg>
-        <span>{% trans "Add new organization" %}</span>
-      </a>
+  <div class="content-header">
+    <div class="aside">
+      <h1 class="page-title">{% trans 'organizations for'|capfirst %} {{ client }}</h1>
+      <div class="btn">
+        <a class="button button--cta"
+           href="{% url 'add-organization-for' client_id=client.pk %}"
+           title="{% trans 'Add new organization' %}">
+          <svg class="icon icon--white">
+            <use xlink:href="/static/svg/symbol-defs.svg#icon-plus"></use>
+          </svg>
+          <span>{% trans "Add new organization" %}</span>
+        </a>
+      </div>
     </div>
   </div>
-
   <div class="datatable-wrapper card xl">
     <table class="datatable">
       <colgroup>
@@ -200,7 +201,7 @@
                            type="button"
                            class="button button--transparent">
                           <i id="library_add"
-                             title="{% trans "Add Microsoft Graph configuration" %}"
+                             title="{% trans 'Add Microsoft Graph configuration' %}"
                              class="material-icons">library_add</i>
                         </a>
                       {% else %}
@@ -209,7 +210,7 @@
                            type="button"
                            class="button button--transparent">
                           <i id="library_add"
-                             title="{% trans "Add Microsoft Graph configuration" %}"
+                             title="{% trans 'Add Microsoft Graph configuration' %}"
                              class="material-icons">library_add</i>
                         </a>
                       {% endif %}
@@ -219,7 +220,7 @@
                          type="button"
                          class="button button--transparent">
                         <i id="library_add_check"
-                           title="{% trans "Edit Microsoft Graph configuration" %}"
+                           title="{% trans 'Edit Microsoft Graph configuration' %}"
                            class="material-icons">library_add_check</i>
                       </a>
                       <a href="{% url 'import-msgraph' pk=organization.pk %}"
@@ -269,9 +270,9 @@
               {% endif %}
               <td class="datatable__column--actions">
                 {% if FEATURES.ORG_STRUCTURE in client.enabled_features %}
-                  <a href="{% url "orgunit-list" organization.slug %}"
+                  <a href="{% url 'orgunit-list' organization.slug %}"
                      class="button button--small button--grey"
-                     title="{% trans "View organizational units." %}">
+                     title="{% trans 'View organizational units.' %}">
                     {% include "../components/svg-icons/org.svg" %}
                   </a>
                 {% endif %}

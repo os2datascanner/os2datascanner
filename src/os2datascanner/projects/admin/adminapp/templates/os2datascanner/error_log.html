@@ -21,7 +21,7 @@
 
       {% include "os2datascanner/scanner_tabs.html" with page="scan-status" %}
 
-      <div class="aside">
+      <div class="content-header">
         <h1 class="page-title">{% trans "Error Log" %}</h1>
       </div>
 
@@ -250,7 +250,7 @@
         </form>
       </div>
     {% else %}
-      <p class="error_content">{% trans "no errors found."|capfirst %}</p>
+      <p class="error_content no-results">{% trans "no errors found."|capfirst %}</p>
     {% endif %}
   </div>
 

@@ -61,7 +61,23 @@ body {
   }
 }
 
-.content-header,
+.content-header {
+  padding: 1rem;
+
+  @media (min-width: $break-lg) {
+    padding: 0rem;
+  }
+}
+
+.content-body, 
+.content-footer {
+  padding: 0 1rem;
+
+  @media (min-width: $break-lg) {
+    padding: 0rem;
+  }
+}
+
 .no-results {
   padding: 2rem;
 
@@ -73,20 +89,12 @@ body {
 .aside {
   display: flex;
   align-items: center;
-  margin-bottom: 0.5rem;
 
   h1 {
-    // width: 100%;
     flex-grow: 2;
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: normal;
-  }
-
-  .btn {
-    // display: flex;
-    // justify-content: flex-end;
-    // width: 50%;
   }
 }
 

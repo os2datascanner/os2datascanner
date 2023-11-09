@@ -6,12 +6,12 @@
 {% load utility_tags %}
 
 {% block scripts %}
-  <script src="{% url "jsi18n" %}"></script>
+  <script src="{% url 'jsi18n' %}"></script>
   <script src="{% static '3rdparty/htmx.min.js' %}"></script>
   <script src="{% static 'js/tableBehavior.js' %}"></script>
-  <script src="{% static "3rdparty/chart-4.0.1.min.js" %}"></script>
-  <script src="{% static "3rdparty/chartjs-plugin-datalabels.min.js" %}"></script>
-  <script src="{% static "js/statusTimelines.js" %}"></script>
+  <script src="{% static '3rdparty/chart-4.0.1.min.js' %}"></script>
+  <script src="{% static '3rdparty/chartjs-plugin-datalabels.min.js' %}"></script>
+  <script src="{% static 'js/statusTimelines.js' %}"></script>
 {% endblock %}
 
 {% block body %}
@@ -26,7 +26,7 @@
 
       {% include "os2datascanner/scanner_tabs.html" with page="scan-status" %}
 
-      <div class="aside">
+      <div class="content-header">
         <h1 class="page-title">{% trans "Completed scans" %}</h1>
       </div>
 
@@ -60,7 +60,7 @@
                                 hx-trigger="click"
                                 hx-target=".content"
                                 hx-select=".content"
-                                hx-confirm="{% trans "You are about to delete" %} {{ page_obj.paginator.count }}{% trans " scan status data. This action cannot be reverted. Are you sure?" %}">
+                                hx-confirm="{% trans 'You are about to delete' %} {{ page_obj.paginator.count }}{% trans ' scan status data. This action cannot be reverted. Are you sure?' %}">
                           <svg class="icon">
                             <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
                           </svg>
@@ -168,7 +168,7 @@
                   </tr>
                   <tr class="statistic_row" hidden>
                     <td colspan="7"
-                        hx-get="{% url "status-timeline" status.pk %}"
+                        hx-get="{% url 'status-timeline' status.pk %}"
                         hx-trigger="intersect"
                         hx-swap="outerHTML"
                         hx-target="this"
