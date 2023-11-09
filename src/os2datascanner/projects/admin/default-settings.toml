@@ -176,6 +176,7 @@ LANGUAGE_CODE = "da-dk"
 # absolute paths should start with "/"
 _LOCALE_PATHS = [
     ["*", "src", "os2datascanner", "projects", "admin", "locale"],
+    ["*", "src", "os2datascanner", "core_organizational_structure", "locale"],
 ]
 _LANGUAGES = [
     ["da", "Danish"],
