@@ -46,6 +46,8 @@
 - A timeout is now enforced when retrieving OAuth 2.0 client credentials
   tokens.
 
+- Added "content-" classes to handle content layout on smaller screens.
+
 ## 3.21.1, 6th November 2023
 
 "Quick Rewrite It"
