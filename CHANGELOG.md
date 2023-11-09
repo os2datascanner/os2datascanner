@@ -4,6 +4,13 @@
 
 "LMGTFY"
 
+### New in this release
+
+- New setting on all scanner types allows for retaining the resolution status
+  of DocumentReports marked as false positives in the report module, even for
+  scans without the "check last modified"-setting. This setting is toggled on 
+  by default.
+
 ### General improvements
 
 - Added some information about categorization in Outlook to the manual in the
@@ -35,7 +42,7 @@
 
 - Microsoft Graph tokens can once again be refreshed properly.
 
-## 3.21.0, 2nd November 2023
+## Version 3.21.0, 2nd November 2023
 
 "Folie à Tous"
 
@@ -123,7 +130,7 @@ and proceed.
 
 - No error occurs when an already deleted e-mail, in Outlook, is deleted from the reportmodule.
 
-## 3.20.6, 2nd October 2023
+## Version 3.20.6, 2nd October 2023
 
 "Purple Orchid in my Windowsill"
 
@@ -199,7 +206,7 @@ and proceed.
 - Matches found in an Exchange mail account that is later deleted will now be
   correctly treated as though they had been deleted.
 
-## 3.20.5, 11th September 2023
+## Version 3.20.5, 11th September 2023
 
 "Mo' Code Less Problems"
 
@@ -249,7 +256,7 @@ and proceed.
   - Suggestions for further heuristics to add are welcome; this function is new
     and by no means complete.
 
-## 3.20.4, 16th August 2023
+## Version 3.20.4, 16th August 2023
 
 "To Prevent Arthritis"
 
@@ -293,7 +300,7 @@ and proceed.
 - Ordering by match count in the leader overview now reevaluates match counts 
   for all accounts, without having to scroll to the bottom of the page first.
 
-## 3.20.3, 3rd August 2023
+## Version 3.20.3, 3rd August 2023
 
 "Check My Scans"
 

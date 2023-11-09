@@ -78,6 +78,7 @@ obj = {
             "name": "Magenta",
             "pk": SCANNER_PK,
             "test": False,
+            "keep_fp": True
         },
         "user": None,
         "organisation": {"name": "Magenta", "uuid": None},
@@ -122,6 +123,7 @@ class CronTest(django.test.TestCase):
             validation_status=WebScanner.VALID,
             download_sitemap=False,
             do_last_modified_check=False,
+            keep_false_positives=True,
             do_link_check=False,
             pk=SCANNER_PK,
             schedule=[],
@@ -132,6 +134,7 @@ class CronTest(django.test.TestCase):
             organization=self.magenta_org,
             validation_status=WebScanner.VALID,
             do_link_check=False,
+            keep_false_positives=True,
             pk=SCANNER_PK + 1,
             schedule=[],
         )
@@ -141,6 +144,7 @@ class CronTest(django.test.TestCase):
             organization=self.magenta_org,
             validation_status=WebScanner.VALID,
             do_link_check=False,
+            keep_false_positives=True,
             pk=SCANNER_PK + 2,
             schedule=[],
         )

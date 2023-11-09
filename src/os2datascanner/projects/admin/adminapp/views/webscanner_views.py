@@ -44,7 +44,8 @@ class WebScannerCreate(ScannerCreate):
     fields = ['name', 'schedule', 'url', 'exclusion_rules',
               'download_sitemap', 'sitemap_url', 'sitemap', 'do_ocr',
               'do_link_check', 'only_notify_superadmin', 'do_last_modified_check',
-              'rules', 'organization', 'exclude_urls', 'reduce_communication']
+              'rules', 'organization', 'exclude_urls', 'reduce_communication',
+              'keep_false_positives']
 
     def get_form(self, form_class=None):
         if form_class is None:
@@ -78,7 +79,8 @@ class WebScannerCopy(ScannerCopy):
     fields = ['name', 'schedule', 'url', 'exclusion_rules',
               'download_sitemap', 'sitemap_url', 'sitemap', 'do_ocr',
               'do_link_check', 'only_notify_superadmin', 'do_last_modified_check',
-              'rules', 'organization', 'exclude_urls', 'reduce_communication']
+              'rules', 'organization', 'exclude_urls', 'reduce_communication',
+              'keep_false_positives']
 
 
 class WebScannerUpdate(ScannerUpdate):
@@ -89,7 +91,8 @@ class WebScannerUpdate(ScannerUpdate):
     fields = ['name', 'schedule', 'url', 'exclusion_rules',
               'download_sitemap', 'sitemap_url', 'sitemap', 'do_ocr',
               'do_link_check', 'only_notify_superadmin', 'do_last_modified_check',
-              'rules', 'organization', 'exclude_urls', 'reduce_communication']
+              'rules', 'organization', 'exclude_urls', 'reduce_communication',
+              'keep_false_positives']
 
     def form_valid(self, form):
         if url_contains_spaces(form):
