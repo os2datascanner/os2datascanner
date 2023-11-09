@@ -117,7 +117,9 @@ class Scanner(models.Model):
 
     keep_false_positives = models.BooleanField(
         default=True,
-        verbose_name=_('keep false positives')
+        verbose_name=_('keep false positives'),
+        help_text=_('Retain false positives in the report module, regardless '
+                    'of the current state of the matched sources.')
     )
 
     columns = models.CharField(validators=[validate_comma_separated_integer_list],
