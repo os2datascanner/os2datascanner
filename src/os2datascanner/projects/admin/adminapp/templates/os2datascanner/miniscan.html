@@ -39,14 +39,14 @@
               hx-target="div#response"
               hx-encoding="multipart/form-data"
               hx-indicator="div.spinner">
-            
+ 
           <h2>{% trans "File to scan" %}</h2>
           {% with limit=settings.MINISCAN_FILE_SIZE_LIMIT %}
             <input name="file"
-                  id="upload-file"
-                  type="file"
-                  class="upload"
-                  onchange="checkFileSize(this, '{{ limit }}' )" />
+                   id="upload-file"
+                   type="file"
+                   class="upload"
+                   onchange="checkFileSize(this, '{{ limit }}' )" />
 
             <div hidden id="file-upload-error-response">
               {% trans "The selected file is too big!" %}
@@ -63,9 +63,9 @@
           </h4>
           <p>
             <a href="#show-rules-modal"
-              data-modal="modal:open"
-              class="button button"
-              title="{% trans 'Load rule' %}">{% trans "Load rule" %}</a>
+               data-modal="modal:open"
+               class="button button"
+               title="{% trans 'Load rule' %}">{% trans "Load rule" %}</a>
           </p>
           <div id="ruleWidget">{% include "components/admin-widgets/rule-builder.html" with hidden=True %}</div>
           <button id="run-miniscan-btn"
@@ -80,11 +80,9 @@
           <div id="response">{% trans "(none yet)" %}</div>
         </form>
       </div>
-
     </div>
-    <div class="spinner" /></div>
-</div>
-</main>
+    <div class="spinner" />
+  </main>
 {% endblock %}
 
 {% block modal %}
