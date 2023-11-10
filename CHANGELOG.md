@@ -44,6 +44,9 @@
 
 - Optimizations for querying remediator bound matches.
 
+- Both the administration system and the report module now have a database
+  query helper management command.
+
 ### Bugfixes
 
 - The GmailScanner class no longer references a non-existant attribute.
