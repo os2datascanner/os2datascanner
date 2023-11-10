@@ -21,6 +21,8 @@
 
 - Added bin_check to the cpr rule, which decreases the amount of false positives 
   in files with many 10 digit numbers
+  
+- The Gmail scanner dynamically discovers labels for each users mailbox.
 
 ### Bugfixes
 
