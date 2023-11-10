@@ -46,28 +46,39 @@ class GmailSource(Source):
 
     def handles(self, sm):
         service = sm.open(self)
-        # Call the Gmail API to fetch INBOX
-        results = service.users().messages().list(userId=self._user_email_gmail,
-                                                  labelIds=['INBOX'], maxResults=500).execute()
-        messages = []
-        if 'messages' in results:
-            messages.extend(results['messages'])
-            while 'nextPageToken' in results:
-                page_token = results['nextPageToken']
-                results = service.users().messages().list(userId=self._user_email_gmail,
-                                                          labelIds=['INBOX'], maxResults=500,
-                                                          pageToken=page_token).execute()
-                messages.extend(results['messages'])
 
-            for message in messages:
-                # Fetch info on specific email
-                msgId = message.get("id")
-                email = service.users().messages().get(userId=self._user_email_gmail,
-                                                       id=msgId).execute()
-                headers = email["payload"]["headers"]
-                subject = [i['value'] for i in headers if i["name"] == "Subject"]
-                # Id of given email is set to be path.
-                yield GmailHandle(self, msgId, mail_subject=subject)
+        # Call the Gmail API to retrieve all labels
+        labels = service.users().labels().list(
+            userId=self._user_email_gmail).execute()
+
+        # Filter 'DRAFT' and 'TRASH' from the labels
+        label_ids = [label['id'] for label in labels["labels"]
+                     if label['id'] not in ('TRASH', 'DRAFT')]
+
+        for label_id in label_ids:
+            # Call the Gmail API to fetch INBOX
+            results = service.users().messages().list(userId=self._user_email_gmail,
+                                                      labelIds=[label_id], maxResults=500).execute()
+
+            messages = []
+            if 'messages' in results:
+                messages.extend(results['messages'])
+                while 'nextPageToken' in results:
+                    page_token = results['nextPageToken']
+                    results = service.users().messages().list(userId=self._user_email_gmail,
+                                                              labelIds=[label_id], maxResults=500,
+                                                              pageToken=page_token).execute()
+                    messages.extend(results['messages'])
+
+                for message in messages:
+                    # Fetch info on specific email
+                    msgId = message.get("id")
+                    email = service.users().messages().get(userId=self._user_email_gmail,
+                                                           id=msgId).execute()
+                    headers = email["payload"]["headers"]
+                    subject = [i['value'] for i in headers if i["name"] == "Subject"]
+                    # Id of given email is set to be path.
+                    yield GmailHandle(self, msgId, mail_subject=subject)
 
     # Censoring service account details
     def censor(self):
