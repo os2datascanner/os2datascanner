@@ -200,7 +200,6 @@ class CPRRule(RegexRule):
 
         if self._bin_check:
             cpr_numbers = self._check_bins(numbers, cpr_numbers)
-        print(len(cpr_numbers))
 
         for m in cpr_numbers:
             cpr = m.group(1).replace(" ", "") + m.group(2)

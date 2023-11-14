@@ -67,12 +67,13 @@
               {% trans "A rule consists one or more regular expressions and defines which text strings are searched in a scannerjob" %}
             </p>
 
-            <div id="{{ form.pattern_0.auto_id }}_container"
-                 class="form__group {% if form.pattern_0.errors %}has-error{% endif %}">
+            <div id="{{ form.rule.auto_id }}_container"
+                 class="form__group {% if form.rule.errors %}has-error{% endif %}">
               <script src="{% static 'js/rule-builder.js' %}"></script>
 
               {% include "components/admin-widgets/rule-builder.html" with widget=form.rule %}
 
+              {% if form.rule.errors %}{{ form.rule.errors }}{% endif %}
             </div>
           </fieldset>
         </section>

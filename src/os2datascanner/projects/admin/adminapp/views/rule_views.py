@@ -11,9 +11,12 @@
 # OS2datascanner is developed by Magenta in collaboration with the OS2 public
 # sector open source network <https://os2.eu/>.
 #
+import re
+
 from django import forms
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
+from django.forms import ValidationError
 
 from os2datascanner.projects.admin.organizations.models import Organization
 
@@ -56,8 +59,22 @@ class RuleCreate(RestrictedCreateView):
         rule.name = form.cleaned_data['name']
         rule.sensitivity = form.cleaned_data['sensitivity']
         rule.description = form.cleaned_data['description']
+
+        def validate_exceptions_field(rule):
+            ex_string = rule.get('exceptions')
+            # Checks that the "exceptions"-string constists of comma-separated
+            # 10-digit numbers or an empty string.
+            validated = bool(re.match(r'^(\d{10},?)*$', ex_string))
+            return validated
+
         if crule := form.cleaned_data.get('rule'):
-            rule._rule = crule
+            if validate_exceptions_field(crule):
+                rule._rule = crule
+            else:
+                form.add_error(
+                    'rule', _("The 'exceptions'-string must be a "
+                              "comma-separated list of 10-digit numbers."))
+                raise ValidationError(_("Formatting error"), code="formatting")
         rule.save()
         return rule
 
