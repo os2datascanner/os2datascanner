@@ -73,6 +73,7 @@ class CPRRule(RegexRule):
                  bin_check: bool = True,
                  whitelist: Optional[List[str]] = None,
                  blacklist: Optional[List[str]] = None,
+                 exceptions: Optional[List[str]] = None,
                  **super_kwargs):
         super().__init__(cpr_regex, **super_kwargs)
         self._modulus_11 = modulus_11
@@ -81,6 +82,7 @@ class CPRRule(RegexRule):
         self._bin_check = bin_check
         self._whitelist = self.WHITELIST_WORDS if whitelist is None else set(whitelist)
         self._blacklist = self.BLACKLIST_WORDS if blacklist is None else set(blacklist)
+        self._exceptions = frozenset(exceptions) if exceptions else frozenset()
         self._blacklist_pattern = re.compile("|".join(self._blacklist))
 
     @property
@@ -148,7 +150,7 @@ class CPRRule(RegexRule):
             bin_storage[i] for i in range(1, num_bins+1) if bin_accepted[i])
         return list(filtered_cprs)
 
-    def match(self, content: str) -> Optional[Iterator[dict]]:  # noqa: CCR001,E501 too high cognitive complexity
+    def match(self, content: str) -> Optional[Iterator[dict]]:  # noqa: CCR001,E501,C901 too high cognitive complexity
         if content is None:
             return
 
@@ -157,8 +159,11 @@ class CPRRule(RegexRule):
                 logger.debug("Blacklist matched content", matches=m.group(0))
                 return
 
-        def _is_cpr(candidate: Match[str]):
+        def _is_cpr(candidate: Match[str]):  # noqa: CCR001 Cognitive complexity is too high
             cpr = candidate.group(1).replace(" ", "") + candidate.group(2)
+
+            if cpr in self._exceptions:
+                return False
 
             if self._modulus_11:
                 mod11, reason = modulus11_check(cpr)
@@ -345,6 +350,7 @@ class CPRRule(RegexRule):
             ignore_irrelevant=self._ignore_irrelevant,
             whitelist=list(self._whitelist),
             blacklist=list(self._blacklist),
+            exceptions=",".join(self._exceptions)
         )
 
     @staticmethod
@@ -364,14 +370,22 @@ class CPRRule(RegexRule):
             blacklist = ()
 
         return CPRRule(
-            modulus_11=obj.get("modulus_11", True),
-            ignore_irrelevant=obj.get("ignore_irrelevant", True),
-            examine_context=obj.get("examine_context", True),
+            modulus_11=obj.get(
+                "modulus_11",
+                True),
+            ignore_irrelevant=obj.get(
+                "ignore_irrelevant",
+                True),
+            examine_context=obj.get(
+                "examine_context",
+                True),
             sensitivity=Sensitivity.make_from_dict(obj),
             name=obj.get("name"),
             whitelist=whitelist,
             blacklist=blacklist,
-        )
+            exceptions=obj.get("exceptions").split(",") if isinstance(
+                    obj.get("exceptions"), str)
+            else obj.get("exceptions"))
 
 
 def is_number(s: str) -> bool:

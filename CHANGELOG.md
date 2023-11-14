@@ -11,6 +11,9 @@
   scans without the "check last modified"-setting. This setting is toggled on 
   by default.
 
+- When adding a CPR rule to a custom rule, a list of exceptions can be defined,
+  which will not cause a match if found in the scanned source.
+
 ### General improvements
 
 - Added some information about categorization in Outlook to the manual in the

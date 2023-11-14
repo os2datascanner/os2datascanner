@@ -19,6 +19,12 @@ function setCheckbox(index, value, selector) {
   }
 }
 
+function setTextbox(id, value, selector) {
+  if (value) {
+    selector.querySelector("#"+id).setAttribute("value", value);
+  }
+}
+
 function selectOptions(obj, selector) {
   /*jshint camelcase: false */
 
@@ -67,6 +73,7 @@ function selectOptions(obj, selector) {
       setCheckbox(0, obj.modulus_11, selector);
       setCheckbox(1, obj.ignore_irrelevant, selector);
       setCheckbox(2, obj.examine_context, selector);
+      setTextbox("exceptions_input", obj.exceptions, selector);
       break;
     case "name":
       setCheckbox(0, obj.expansive, selector);
@@ -179,11 +186,13 @@ function makeRule(elem) {
       };
     case "CPRRule":
       tickboxes = elem.querySelectorAll("input[type='checkbox']");
+      exceptions = elem.querySelector("#exceptions_input");
       return {
         "type": "cpr",
         "modulus_11": tickboxes[0].checked,
         "ignore_irrelevant": tickboxes[1].checked,
         "examine_context": tickboxes[2].checked,
+        "exceptions": exceptions.value
       };
     case "RegexRule":
       return {
