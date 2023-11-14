@@ -1,20 +1,27 @@
 .message-popup-area {
   position: fixed;
-  width: 600px;
-  margin: 5%;
-  right: 5%;
-  top: 0px;
   z-index: 1000;
-  padding: 3rem 3rem 0 3rem;
   max-height: 100vh;
-  overflow-y: scroll;
+  overflow-y: auto;
+
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
 
   .message-popup {
     border-radius: var(--border-radius-widget);
     box-shadow: var(--box-shadow-widget);
     background-color: var(--color-widget-bg);
-    text-align: center;
     padding: 2rem;
-    margin: 1rem 2rem;
+    margin: 1rem 3rem;
+    width: 27.5rem;
+  }
+
+  .message-popup:nth-of-type(1) {
+    margin-top: 4.5rem; // give room for box-shadow + top nav bar
+  }
+
+  .message-popup:nth-last-of-type(1) {
+    margin-bottom: 2rem; // give room for box-shadow
   }
 }
