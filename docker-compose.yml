@@ -271,6 +271,7 @@ services:
     environment:
       - SCHEDULE_ON_CPU=0
       - QUEUE_SUFFIX
+      - ENABLE_RUSAGE=true
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
