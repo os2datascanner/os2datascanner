@@ -74,6 +74,25 @@ label+.dropdown {
   }
 }
 
+.dropdown-container-active {
+  display: none;
+  position: static;
+  top: 3rem;
+  z-index: 100;
+
+  @media (min-width: $break-lg) {
+    top: 2rem;
+  }
+
+  // Apply this to make z-index work on iPad OS
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+
+  &:active {
+    display: block;
+  }
+}
+
 .handle-dropdown {
   position: relative;
   width: 16rem;
@@ -119,6 +138,22 @@ label+.dropdown {
 
     &:focus+.dropdown-container,
     &:hover+.dropdown-container {
+      display: block;
+    }
+  }
+}
+
+.expand-active {
+
+  &.expand {
+
+    cursor: default;
+
+    &+.dropdown-container-active {
+      left: -4rem;
+    }
+
+    &:focus+.dropdown-container-active {
       display: block;
     }
   }

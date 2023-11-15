@@ -4,6 +4,8 @@
 
 .datatable-wrapper {
   clear: both;
+  height: inherit;
+  overflow-y: scroll;
 
   &.sm,
   &.md,
@@ -175,6 +177,18 @@
   tr.highlighted+.matches-list>td,
   tr.highlighted+.matches-list>th {
     background-color: var(--color-primary-lightest);
+  }
+
+  tr.clickable {
+    &:focus {
+      background-color: var(--color-primary-lightest);
+    }
+
+    &:hover {
+      background-color: var(--color-primary-dark);
+      color: var(--color-primary-lightest);
+      cursor: pointer;
+    }
   }
 
   &--wide {

@@ -31,6 +31,8 @@
   installation-wide settings, as well as presenting the settings and contact
   information of all Organization-objects.
 
+- It is now possible to choose predefined rules for scans in the miniscanner
+
 ### Bugfixes
 
 - The GmailScanner class no longer references a non-existant attribute.

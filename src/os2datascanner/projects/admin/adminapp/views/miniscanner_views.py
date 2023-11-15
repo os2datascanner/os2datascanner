@@ -4,6 +4,9 @@ import structlog
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import F
+
+from ..models.rules.customrule import CustomRule
 
 from os2datascanner.engine2.rules.rule import Rule
 from os2datascanner.engine2.model.core import SourceManager
@@ -27,6 +30,12 @@ class MiniScanner(TemplateView, LoginRequiredMixin):
             return self.handle_no_permission()
         else:
             return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        context["customrule_list"] = CustomRule.objects.annotate(rule_field=F("_rule"))
+
+        return context
 
 
 def execute_mini_scan(request):  # noqa:CCR001

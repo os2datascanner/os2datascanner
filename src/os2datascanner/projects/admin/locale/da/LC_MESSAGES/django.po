@@ -1164,10 +1164,22 @@ msgstr "Vælg venligst at scanne en anden (mindre) fil."
 msgid "Rule to execute"
 msgstr "Definér regel"
 
+#: adminapp/templates/os2datascanner/miniscan.html:58
+msgid "Selected rule: "
+msgstr "Valgte regel: "
+
+#: adminapp/templates/os2datascanner/miniscan.html:62
+msgid "Load rule..."
+msgstr "Indlæs regel..."
+
 #: adminapp/templates/os2datascanner/miniscan.html:59
-#: adminapp/templates/os2datascanner/scanners.html:141
+#: adminapp/templates/os2datascanner/scanners.html:126
 msgid "Run"
 msgstr "Kør"
+
+#: adminapp/templates/os2datascanner/miniscan.html:86
+msgid "Clear"
+msgstr "Ryd"
 
 #: adminapp/templates/os2datascanner/miniscan.html:61
 msgid "Scan result"
