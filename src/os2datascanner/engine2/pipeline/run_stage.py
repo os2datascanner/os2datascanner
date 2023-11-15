@@ -171,6 +171,10 @@ restarting = False
 @click.option('--profile/--no-profile', 'enable_profiling',
               default=False, envvar='ENABLE_PROFILING',
               is_flag=True, help='record and print profiling output')
+@click.option('--rusage/--no-rusage', 'enable_rusage',
+              default=False, envvar='ENABLE_RUSAGE',
+              is_flag=True,
+              help='print resource usage statistics on exit or SIGUSR1')
 @click.option('--enable-metrics/--disable-metrics', 'enable_metrics',
               default=False, envvar='EXPORT_METRICS',
               help='enable exporting of metrics')
@@ -198,7 +202,7 @@ restarting = False
                                    "tagger",
                                    "exporter",
                                    "worker"]))
-def main(log_level, enable_profiling, enable_metrics,
+def main(log_level, enable_profiling, enable_rusage, enable_metrics,
          prometheus_port, width, single_cpu, restart_after, queue_suffix, stage):
     debug.register_debug_signal()
     module = _module_mapping[stage]
@@ -211,6 +215,9 @@ def main(log_level, enable_profiling, enable_metrics,
     root_logger = logging.getLogger("os2datascanner")
     root_logger.setLevel(log_levels[log_level])
     root_logger.info("starting pipeline {0}".format(stage))
+
+    if enable_rusage:
+        debug.add_debug_function(debug.rusage_dbg_func)
 
     if enable_metrics:
         i = Info(f"os2datascanner_pipeline_{stage}", "version number")
@@ -254,6 +261,9 @@ def main(log_level, enable_profiling, enable_metrics,
             restart_process()
     finally:
         profiling.print_stats(pstats.SortKey.CUMULATIVE, silent=True)
+
+        if enable_rusage:
+            debug.rusage_dbg_func(None, None)
 
 
 if __name__ == "__main__":
