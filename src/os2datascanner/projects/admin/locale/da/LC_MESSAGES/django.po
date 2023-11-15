@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-09 08:26+0100\n"
+"POT-Creation-Date: 2023-11-15 09:46+0100\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -251,8 +251,8 @@ msgid ""
 "Retain false positives in the report module, regardless of the current state "
 "of the matched sources."
 msgstr ""
-"Bevar falske positiver i rapportmodulet, uanset den nuværende tilstand "
-"af de matchede kilder."
+"Bevar falske positiver i rapportmodulet, uanset den nuværende tilstand af de "
+"matchede kilder."
 
 #: adminapp/models/scannerjobs/scanner.py:133
 msgid "rules"
@@ -587,7 +587,7 @@ msgstr "helbredsinformation (Turbo)"
 
 #: adminapp/templates/components/admin-widgets/rule-builder.html:44
 #: adminapp/templates/components/admin-widgets/rule-builder.html:85
-#: adminapp/templates/components/admin-widgets/rule-builder.html:118
+#: adminapp/templates/components/admin-widgets/rule-builder.html:122
 #: adminapp/templatetags/utility_tags.py:62
 msgid "and"
 msgstr "og"
@@ -597,13 +597,13 @@ msgid "or"
 msgstr "eller"
 
 #: adminapp/templates/components/admin-widgets/rule-builder.html:76
-#: adminapp/templates/components/admin-widgets/rule-builder.html:97
-#: adminapp/templates/components/admin-widgets/rule-builder.html:113
+#: adminapp/templates/components/admin-widgets/rule-builder.html:101
+#: adminapp/templates/components/admin-widgets/rule-builder.html:117
 msgid "with"
 msgstr "med"
 
 #: adminapp/templates/components/admin-widgets/rule-builder.html:79
-#: adminapp/templates/components/admin-widgets/rule-builder.html:116
+#: adminapp/templates/components/admin-widgets/rule-builder.html:120
 msgid "modulus 11-,"
 msgstr "modulus 11-,"
 
@@ -612,26 +612,33 @@ msgid "probability,-"
 msgstr "sandsynligheds-,"
 
 #: adminapp/templates/components/admin-widgets/rule-builder.html:88
-#: adminapp/templates/components/admin-widgets/rule-builder.html:121
-msgid "context check"
-msgstr "konteksttjek"
+msgid "context check."
+msgstr "konteksttjek."
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:93
+#: adminapp/templates/components/admin-widgets/rule-builder.html:91
+msgid "Exceptions:"
+msgstr "Undtagelser:"
+
+#: adminapp/templates/components/admin-widgets/rule-builder.html:97
 msgid "Regular expression"
 msgstr "Regulært udtryk"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:100
+#: adminapp/templates/components/admin-widgets/rule-builder.html:104
 msgid "expanded matching"
 msgstr "udvidet søgning"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:106
+#: adminapp/templates/components/admin-widgets/rule-builder.html:110
 msgid "field name"
 msgstr "navn på felt"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:108
+#: adminapp/templates/components/admin-widgets/rule-builder.html:112
 msgctxt "verb"
 msgid "matches"
 msgstr "resultater fundet"
+
+#: adminapp/templates/components/admin-widgets/rule-builder.html:125
+msgid "context check"
+msgstr "konteksttjek"
 
 #: adminapp/templates/components/analysis-template.html:9
 #: adminapp/templates/components/navigation.html:34
@@ -1019,17 +1026,17 @@ msgstr ""
 "En regel består af et eller flere regulære udtryk og definerer hvilke "
 "tekststrenge der søges efter i et scannerjob"
 
-#: adminapp/templates/os2datascanner/customrule_form.html:83
+#: adminapp/templates/os2datascanner/customrule_form.html:84
 #: adminapp/templates/os2datascanner/regexrule_form.html:191
 msgid "Assess the sensitivity of the rule"
 msgstr "Vurder reglens følsomhed"
 
-#: adminapp/templates/os2datascanner/customrule_form.html:133
+#: adminapp/templates/os2datascanner/customrule_form.html:134
 #: adminapp/templates/os2datascanner/regexrule_form.html:241
 msgid "Description of rule"
 msgstr "Beskrivelse af regel"
 
-#: adminapp/templates/os2datascanner/customrule_form.html:146
+#: adminapp/templates/os2datascanner/customrule_form.html:147
 #: adminapp/templates/os2datascanner/regexrule_form.html:254
 #: adminapp/templates/os2datascanner/scanner_form.html:724
 msgid "Save changes"
@@ -2059,8 +2066,18 @@ msgstr "f.eks. //network-domain/top-folder"
 msgid "Drive letter"
 msgstr "Drevbogstav"
 
-#: adminapp/views/rule_views.py:112 adminapp/views/rule_views.py:222
-#: adminapp/views/rule_views.py:229
+#: adminapp/views/rule_views.py:75
+msgid ""
+"The 'exceptions'-string must be a comma-separated list of 10-digit numbers."
+msgstr ""
+"Listen af undtagelser skal være adskilt af kommaer og bestå af ticifrede tal."
+
+#: adminapp/views/rule_views.py:77
+msgid "Formatting error"
+msgstr "Formateringsfejl"
+
+#: adminapp/views/rule_views.py:129 adminapp/views/rule_views.py:239
+#: adminapp/views/rule_views.py:246
 msgid "Expression"
 msgstr "Udtryk"
 

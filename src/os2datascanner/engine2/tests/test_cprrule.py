@@ -228,6 +228,13 @@ class RuleTests(unittest.TestCase):
                 [ALL_MATCHES[i] for i in [0, 1, 2, 3, 4, 5, 6, 19]],
                 "match setting `whitelist=['anders', 'and']`"
             ),
+            (
+                CPRRule(modulus_11=True, ignore_irrelevant=False, examine_context=True,
+                        bin_check=True, blacklist=[], whitelist=[],
+                        exceptions=["0303800018", "0606800002"]),
+                [ALL_MATCHES[i] for i in [0, 3, 6, 19]],
+                "match with some exceptions"
+            ),
         ]
 
         for rule, expected, description in rules:
