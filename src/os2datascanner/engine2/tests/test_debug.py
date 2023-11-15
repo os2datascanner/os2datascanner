@@ -3,8 +3,8 @@ import unittest
 
 
 from os2datascanner.utils.debug import (
-        _backtrace, debug_helper, add_debug_function, remove_debug_function,
-        register_debug_signal)
+        backtrace_dbg_func, debug_helper, add_debug_function,
+        remove_debug_function, register_debug_signal)
 
 
 class Counter:
@@ -24,7 +24,7 @@ class DebugTests(unittest.TestCase):
         register_debug_signal(signal.SIGTRAP)
 
         # Avoid console spam by deregistering the default debug function
-        remove_debug_function(_backtrace)
+        remove_debug_function(backtrace_dbg_func)
 
     def test_debug_function(self):
         """Functions can be registered as debug functions."""
