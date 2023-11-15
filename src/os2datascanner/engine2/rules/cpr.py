@@ -382,6 +382,8 @@ class CPRRule(RegexRule):
             name=obj.get("name"),
             whitelist=whitelist,
             blacklist=blacklist,
+            # Sometimes, for whatever reason, a list is passed here instead of
+            # a comma-separated string. A TODO would be to figure out why.
             exceptions=obj.get("exceptions").split(",") if isinstance(
                     obj.get("exceptions"), str)
             else obj.get("exceptions"))

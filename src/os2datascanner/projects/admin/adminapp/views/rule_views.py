@@ -64,7 +64,7 @@ class RuleCreate(RestrictedCreateView):
             ex_string = rule.get('exceptions')
             # Checks that the "exceptions"-string constists of comma-separated
             # 10-digit numbers or an empty string.
-            validated = bool(re.match(r'^(\d{10},?)*$', ex_string))
+            validated = ex_string == "" or bool(re.match(r'^\d{10}(,\d{10})*$', ex_string))
             return validated
 
         if crule := form.cleaned_data.get('rule'):
