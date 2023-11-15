@@ -15,9 +15,11 @@
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
 import json
+from os import environ
 
 from django.core.management.base import BaseCommand
 from django.db.models import Count
+from django.conf import settings
 
 from ....organizations.models import Account, Alias, OrganizationalUnit, Organization
 from ...models.usererrorlog import UserErrorLog
@@ -30,7 +32,7 @@ class Command(BaseCommand):
     help = __doc__
 
     choice_list = ["Account", "Alias", "UserErrorLog", "OrganizationalUnit",
-                   "Organization", "Rule"]
+                   "Organization", "Rule", "Settings"]
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -90,18 +92,36 @@ class Command(BaseCommand):
 
     def diagnose_organizations(self):
         print("\n\n>> Running diagnostics on organizations ...")
-        orgs = Organization.objects.values("pk", "name", "email_notification_schedule")
+        orgs = Organization.objects.all()
 
         print(f"Found {len(orgs)} organizations.")
 
         if os2 := orgs.filter(name="OS2datascanner").first():
             print(
-                f"The organization with UUID {os2['pk']} is called 'OS2datascanner'."
+                f"The organization with UUID {os2.pk} is called 'OS2datascanner'."
                 " Should this be changed?'")
 
+        print("\nOverview of organizations:")
         for org in orgs:
+            print(org.name)
             print(
-                f"  Notification schedule for {org['name']}: {org['email_notification_schedule']}")
+                f"  Notification schedule: {org.email_notification_schedule}")
+            print("  Contact information:")
+            print("  * Email:", org.contact_email)
+            print("  * Phone:", org.contact_phone)
+            print("  Settings:")
+            print("  * MSGraph Write Permissions:", org.get_msgraph_write_permissions_display())
+            print("  * Leadertab access:", org.get_leadertab_access_display())
+            print(
+                "  * DPO-tab access:",
+                org.get_dpotab_access_display())
+            print("  * Show Support Button:", org.show_support_button)
+            print("  * Support Contact Method:", org.get_support_contact_method_display())
+            print("  * Support Name:", org.support_name)
+            print("  * Support Value:", org.support_value)
+            print("  * DPO Contact Method:", org.get_dpo_contact_method_display())
+            print("  * DPO Name:", org.dpo_name)
+            print("  * DPO Value:", org.dpo_value)
 
     def diagnose_rules(self):
         print("\n\n>> Running diagnostics on rules ...")
@@ -128,6 +148,43 @@ class Command(BaseCommand):
             print("\nRule JSON:")
             print(json.dumps(rule._rule, indent=2))
 
+    def diagnose_settings(self):
+        print("\n\n>> Running diagnostics on settings ...")
+        if settings.DEBUG:
+            print("\nWARNING: DEBUG is ON for this installation!")
+
+        def print_settings(*attributes):
+            for attribute in attributes:
+                print(f"{attribute} = {getattr(settings, attribute)!r}")
+
+        print("\n//INSTALLATION-WIDE SETTINGS//")
+
+        print("\n# [functionality]")
+        print_settings("EXCLUSION_RULES", "ANALYSIS_PAGE",
+                       "AUTOMATIC_IMPORT_CLEANUP", "MANUAL_PAGE",
+                       "USERERRORLOG")
+
+        print("\n# [scans]")
+        print_settings("ENABLE_FILESCAN", "ENABLE_WEBSCAN",
+                       "ENABLE_EXCHANGESCAN", "ENABLE_DROPBOXSCAN",
+                       "ENABLE_MSGRAPH_MAILSCAN", "ENABLE_MSGRAPH_FILESCAN",
+                       "ENABLE_MSGRAPH_CALENDARSCAN",
+                       "ENABLE_MSGRAPH_TEAMS_FILESCAN",
+                       "ENABLE_GOOGLEDRIVESCAN", "ENABLE_GMAILSCAN",
+                       "ENABLE_SBSYSSCAN")
+
+        print("\n# [logging]")
+        print_settings("DJANGO_LOG_LEVEL")
+
+        print("\n# [other]")
+        print_settings("ENABLE_MINISCAN", "MINISCAN_REQUIRES_LOGIN",
+                       "MINISCAN_FILE_SIZE_LIMIT")
+
+        print("\n//ENVIRONMENT VARIABLES//")
+
+        for key, val in dict(environ).items():
+            print(f"{key} = {val!r}")
+
     def handle(self, only, **options):
 
         if not only:
@@ -147,3 +204,5 @@ class Command(BaseCommand):
                     self.diagnose_organizations()
                 case "Rule":
                     self.diagnose_rules()
+                case "Settings":
+                    self.diagnose_settings()

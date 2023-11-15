@@ -15,10 +15,12 @@
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
 import termplotlib as tpl
+from os import environ
 
 from django.core.management.base import BaseCommand
 from django.db.models import Count, F
 from django.db.models.functions import Lower
+from django.conf import settings
 
 from ....organizations.models import Account, Alias, OrganizationalUnit, Organization
 from ...models.documentreport import DocumentReport
@@ -30,7 +32,7 @@ class Command(BaseCommand):
     help = __doc__
 
     choice_list = ["Account", "Alias", "DocumentReport", "OrganizationalUnit",
-                   "Organization", "Problem"]
+                   "Organization", "Problem", "Settings"]
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -192,18 +194,66 @@ class Command(BaseCommand):
 
     def diagnose_organizations(self):
         print("\n\n>> Running diagnostics on organizations ...")
-        orgs = Organization.objects.values("pk", "name", "email_notification_schedule")
+        orgs = Organization.objects.all()
 
         print(f"Found {len(orgs)} organizations.")
 
         if os2 := orgs.filter(name="OS2datascanner").first():
             print(
-                f"The organization with UUID {os2['pk']} is called 'OS2datascanner'."
+                f"The organization with UUID {os2.pk} is called 'OS2datascanner'."
                 " Should this be changed?'")
 
+        print("\nOverview of organizations:")
         for org in orgs:
+            print(org.name)
             print(
-                f"  Notification schedule for {org['name']}: {org['email_notification_schedule']}")
+                f"  Notification schedule: {org.email_notification_schedule}")
+            print("  Contact information:")
+            print("  * Email:", org.contact_email)
+            print("  * Phone:", org.contact_phone)
+            print("  Settings:")
+            print("  * MSGraph Write Permissions:", org.get_msgraph_write_permissions_display())
+            print("  * Leadertab access:", org.get_leadertab_access_display())
+            print("  * DPO-tab access:", org.get_dpotab_access_display())
+            print("  * Show Support Button:", org.show_support_button)
+            print("  * Support Contact Method:", org.get_support_contact_method_display())
+            print("  * Support Name:", org.support_name)
+            print("  * Support Value:", org.support_value)
+            print("  * DPO Contact Method:", org.get_dpo_contact_method_display())
+            print("  * DPO Name:", org.dpo_name)
+            print("  * DPO Value:", org.dpo_value)
+
+    def diagnose_settings(self):
+        print("\n\n>> Running diagnostics on settings ...")
+        if settings.DEBUG:
+            print("\nWARNING: DEBUG is ON for this installation!")
+
+        def print_settings(*attributes):
+            for attribute in attributes:
+                print(f"{attribute} = {getattr(settings, attribute)!r}")
+
+        print("\n//INSTALLATION-WIDE SETTINGS//")
+
+        print("\n# [mode]")
+        print_settings("KEYCLOAK_ENABLED", "SAML2_ENABLED")
+
+        print("\n# [functionality]")
+        print_settings("HANDLE_DROPDOWN", "ALLOW_CONTACT_MAGENTA",
+                       "ARCHIVE_TAB")
+
+        print("\n# [msgraph]")
+        print_settings("MSGRAPH_ALLOW_WRITE")
+
+        print("\n# [logging]")
+        print_settings("DJANGO_LOG_LEVEL")
+
+        print("\n# [other]")
+        print_settings()
+
+        print("\n//ENVIRONMENT VARIABLES//")
+
+        for key, val in dict(environ).items():
+            print(f"{key} = {val!r}")
 
     def handle(self, only, **options):
 
@@ -224,3 +274,5 @@ class Command(BaseCommand):
                     self.diagnose_units()
                 case "Organization":
                     self.diagnose_organizations()
+                case "Settings":
+                    self.diagnose_settings()
