@@ -33,8 +33,12 @@
 
 - It is now possible to choose predefined rules for scans in the miniscanner
 
+<<<<<<< HEAD
 - Pipeline stages can now optionally print resource accounting information
   when they receive the `SIGUSR1` debug signal and at shutdown time.
+=======
+- Added "content-" classes to handle content layout on smaller screens.
+>>>>>>> de1baa069 ([#58249] update CHANGELOG.md)
 
 ### Bugfixes
 

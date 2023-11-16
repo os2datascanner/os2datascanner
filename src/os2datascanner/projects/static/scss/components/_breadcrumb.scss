@@ -1,6 +1,11 @@
 .breadcrumb {
+  margin-top: 1rem;
   display: flex;
   align-items: center;
+
+  @media (min-width: $break-lg) {
+    margin-top: 0;
+  }
 
   .link-color {
     font-weight: 600;

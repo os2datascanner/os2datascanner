@@ -9,75 +9,80 @@
   {{ block.super }}
   <script defer src="{% static 'js/validateFileSize.js' %}"></script>
   <script defer src="{% static 'js/ruleInput.js' %}"></script>
-  <script src="{% static "3rdparty/jquery.modal.js" %} "></script>
+  <script src="{% static '3rdparty/jquery.modal.js' %} "></script>
 {% endblock %}
 {% block body %}
   {% include "partials/header.html" %}
   <main class="wrapper" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     {% include "partials/main.html" with active_tab="miniscan" %}
     <div class="content">
-      <h1>{% trans "OS2datascanner mini-scanner" %}</h1>
-      <p>
-        {% with limit=settings.MINISCAN_FILE_SIZE_LIMIT %}
-          {% blocktranslate trimmed %}
-            The mini-scanner lets you execute any OS2datascanner rule on a single
-            file, and returns the results directly to this page.
-          {% endblocktranslate %}
-          <br />
-          <br />
-          {% trans "Maximum allowed file size is: " %} {{ limit|filesizeformat }}
-        {% endwith %}
-      </p>
-      <form class="form"
-            role="form"
-            hx-post="{% url 'miniscan_run' %}"
-            hx-swap="innerHTML"
-            hx-target="div#response"
-            hx-encoding="multipart/form-data"
-            hx-indicator="div.spinner">
-        <h2>{% trans "File to scan" %}</h2>
-        {% with limit=settings.MINISCAN_FILE_SIZE_LIMIT %}
-          <input name="file"
-                 id="upload-file"
-                 type="file"
-                 class="upload"
-                 onchange="checkFileSize(this, '{{ limit }}' )" />
-
-          <div hidden id="file-upload-error-response">
-            {% trans "The selected file is too big!" %}
+      <div class="content-header">
+        <h1>{% trans "OS2datascanner mini-scanner" %}</h1>
+        <p>
+          {% with limit=settings.MINISCAN_FILE_SIZE_LIMIT %}
+            {% blocktranslate trimmed %}
+              The mini-scanner lets you execute any OS2datascanner rule on a single
+              file, and returns the results directly to this page.
+            {% endblocktranslate %}
+            <br />
             <br />
             {% trans "Maximum allowed file size is: " %} {{ limit|filesizeformat }}
-            <br />
-            {% trans "Please, select another (smaller) file to scan." %}
-          </div>
-        {% endwith %}
-        <h2>{% trans "Rule to execute" %}</h2>
-        <h4>
-          {% trans "Selected rule: " %}
-          <span id="selectedRule">{% trans "None" %}</span>
-        </h4>
-        <p>
-          <a href="#show-rules-modal"
-             data-modal="modal:open"
-             class="button button"
-             title="{% trans 'Load rule' %}">{% trans "Load rule" %}</a>
+          {% endwith %}
         </p>
-        <div id="ruleWidget">{% include "components/admin-widgets/rule-builder.html" with hidden=True %}</div>
-        <button id="run-miniscan-btn"
-                class="button button--cta"
-                type="submit"
-                style="margin-top: 1em">{% trans "Run" %}</button>
+      </div>
+
+      <div class="content-body">
+        <form class="form"
+              role="form"
+              hx-post="{% url 'miniscan_run' %}"
+              hx-swap="innerHTML"
+              hx-target="div#response"
+              hx-encoding="multipart/form-data"
+              hx-indicator="div.spinner">
  
-        <button onClick="window.location.reload();"
-                class="button--clear"
-                type="button">{% trans "Clear" %}</button>
-        <h3>{% trans "Scan result" %}</h3>
-        <div id="response">{% trans "(none yet)" %}</div>
-      </form>
+          <h2>{% trans "File to scan" %}</h2>
+          {% with limit=settings.MINISCAN_FILE_SIZE_LIMIT %}
+            <input name="file"
+                   id="upload-file"
+                   type="file"
+                   class="upload"
+                   onchange="checkFileSize(this, '{{ limit }}' )" />
+
+            <div hidden id="file-upload-error-response">
+              {% trans "The selected file is too big!" %}
+              <br />
+              {% trans "Maximum allowed file size is: " %} {{ limit|filesizeformat }}
+              <br />
+              {% trans "Please, select another (smaller) file to scan." %}
+            </div>
+          {% endwith %}
+          <h2>{% trans "Rule to execute" %}</h2>
+          <h4>
+            {% trans "Selected rule: " %}
+            <span id="selectedRule">{% trans "None" %}</span>
+          </h4>
+          <p>
+            <a href="#show-rules-modal"
+               data-modal="modal:open"
+               class="button button"
+               title="{% trans 'Load rule' %}">{% trans "Load rule" %}</a>
+          </p>
+          <div id="ruleWidget">{% include "components/admin-widgets/rule-builder.html" with hidden=True %}</div>
+          <button id="run-miniscan-btn"
+                  class="button button--cta"
+                  type="submit"
+                  style="margin-top: 1em">{% trans "Run" %}</button>
+
+          <button onClick="window.location.reload();"
+                  class="button--clear"
+                  type="button">{% trans "Clear" %}</button>
+          <h3>{% trans "Scan result" %}</h3>
+          <div id="response">{% trans "(none yet)" %}</div>
+        </form>
+      </div>
     </div>
-    <div class="spinner" /></div>
-</div>
-</main>
+    <div class="spinner" />
+  </main>
 {% endblock %}
 
 {% block modal %}

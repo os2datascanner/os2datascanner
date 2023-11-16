@@ -2,7 +2,7 @@
 {% load l10n %}
 {% load handle_extras %}
 
-<div class="content-header">
+<div class="content-body">
   <form id="filter_form"
         name='filter_form'
         hx-target=".content"
@@ -134,7 +134,7 @@
               {% trans "All resolution statuses" %}
             </option>
             {% for method in resolution_status|first %}
-              <option value="{{ method.resolution_status|stringformat:"i" }}"
+              <option value="{{ method.resolution_status|stringformat:'i' }}"
                       {% if resolution_status|last == method.resolution_status|stringformat:"i" %}selected="selected"{% endif %}>
                 {{ method.resolution_label }} ({{ method.total }})
               </option>

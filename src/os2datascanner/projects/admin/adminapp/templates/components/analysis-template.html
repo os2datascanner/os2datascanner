@@ -5,18 +5,18 @@
   {% load static %}
   {% include "os2datascanner/scanner_tabs.html" with page="analysis"  %}
 
-  <div class="aside">
+  <div class="content-header">
     <h1 class="page-title">{% trans "Analysis" %}</h1>
   </div>
 
   {% if scanners %}
     <form name="analysis_page"
-          hx-get="{% url "analysis" %}"
+          hx-get="{% url 'analysis' %}"
           hx-target=".content"
           hx-select=".content"
           hx-swap="outerHTML"
           hx-trigger="change">
-      <div class="dropdown stats_dropdown">
+      <div class="dropdown stats_dropdown content-body">
         <select name="scannerjob" id="scannerjobs" data-compareto="none">
           <option value="none"
                   {% if scanners|last == "none" %}selected="selected"{% endif %}>-</option>
@@ -40,17 +40,19 @@
           </span>
         </div>
       </div>
-      <a
-        href="#run-analysis-modal" {# This needs creation, backend not ready #}
-        data-modal="modal:open"
-        data-src="/webscanners/{{ selected_scanner.first.pk }}/askrun/"
-        class="button button--small button--grey"
-        title="{% trans 'Run analysis scan' %}">
-        <svg class="icon">
-          <use xlink:href="/static/svg/symbol-defs.svg#icon-play"></use>
-        </svg>
-        {% trans 'Run analysis scan' %}
-      </a>
+      <div class="content-body">
+        <a
+          href="#run-analysis-modal" {# This needs creation, backend not ready #}
+          data-modal="modal:open"
+          data-src="/webscanners/{{ selected_scanner.first.pk }}/askrun/"
+          class="button button--small button--grey"
+          title="{% trans 'Run analysis scan' %}">
+          <svg class="icon">
+            <use xlink:href="/static/svg/symbol-defs.svg#icon-play"></use>
+          </svg>
+          {% trans 'Run analysis scan' %}
+        </a>
+      </div>
 
       <div class="charts-container-box">
         <h2 class="page-title__sub">{% trans "Storage" %}</h2>
@@ -88,7 +90,7 @@
       </div>
  
     {% else %}
-      <p>{% trans "Choose a scannerjob to start a new scan or view analysis" %}</p>
+      <p class="no-results">{% trans "Choose a scannerjob to start a new scan or view analysis" %}</p>
     {% endif %}
   {% endif %}
 </div>

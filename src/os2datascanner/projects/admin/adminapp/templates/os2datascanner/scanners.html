@@ -5,10 +5,10 @@
 {% load utility_tags %}
 
 {% block scripts %}
-  <script src="{% static "3rdparty/jquery.modal.js" %} "></script>
-  <script src="{% static "3rdparty/htmx.min.js" %}"></script>
-  <script src="{% static "js/index.js" %}"></script>
-  <script src="{% static "js/cleanupAccounts.js" %}"></script>
+  <script src="{% static '3rdparty/jquery.modal.js' %} "></script>
+  <script src="{% static '3rdparty/htmx.min.js' %}"></script>
+  <script src="{% static 'js/index.js' %}"></script>
+  <script src="{% static 'js/cleanupAccounts.js' %}"></script>
 {% endblock %}
 
 {% block body %}
@@ -19,19 +19,21 @@
     <div class="content">
 
       {% include "os2datascanner/scanner_tabs.html" with page="scannerjob" %}
-
-      <div class="aside">
-        <h1 class="page-title">{% trans "Scannerjob" %}</h1>
-
-        <div class="btn">
-          <a class="button button--cta"
-             href="/{{ view.type }}scanners/add/"
-             title="{% trans 'Add scannerjob' %}">
-            <svg class="icon icon--white">
-              <use xlink:href="/static/svg/symbol-defs.svg#icon-plus"></use>
-            </svg>
-            <span>{% trans "Add scannerjob" %}</span>
-          </a>
+ 
+      <div class="content-header">
+        <div class="aside">
+          <h1 class="page-title">{% trans "Scannerjob" %}</h1>
+ 
+          <div class="btn">
+            <a class="button button--cta"
+               href="/{{ view.type }}scanners/add/"
+               title="{% trans 'Add scannerjob' %}">
+              <svg class="icon icon--white">
+                <use xlink:href="/static/svg/symbol-defs.svg#icon-plus"></use>
+              </svg>
+              <span>{% trans "Add scannerjob" %}</span>
+            </a>
+          </div>
         </div>
       </div>
 
@@ -185,7 +187,7 @@
         </div>
 
       {% else %}
-        <p>{% trans "No scannerjob added" %}</p>
+        <p class="no-results">{% trans "No scannerjob added" %}</p>
       {% endif %}
     </div>
   </main>

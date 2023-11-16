@@ -4,8 +4,12 @@
   flex-wrap: wrap;
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   white-space: nowrap;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
   position: relative;
+
+  @media (min-width: $break-lg) {
+    margin-bottom: 1.5rem;
+  }
 
   &__control {
     display: inline-block;
