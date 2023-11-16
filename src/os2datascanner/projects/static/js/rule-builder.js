@@ -46,6 +46,7 @@ function selectOptions(obj, selector) {
     "cpr_turbo": "TurboCPRRule",
     "health_turbo": "TurboHealthRule",
     "email-header": "EmailHeader",
+    "passport": "PassportRule",
   };
 
   selectElem.value = valueMap[type];
@@ -224,6 +225,10 @@ function makeRule(elem) {
         "type": "email-header",
         "property": inputs[0].value,
         "rule": children.map(makeRule).filter(c => c !== null)[0],
+      };
+    case "PassportRule":
+      return {
+        "type": "passport"
       };
 
     case "TurboCPRRule":
