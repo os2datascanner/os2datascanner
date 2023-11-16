@@ -8,14 +8,13 @@ from .rule import Rule, Sensitivity
 
 logger = structlog.get_logger(__name__)
 
-# dk_passport_regex = r"P<DNK[A-Z<]{39}[\n \t,]?(\d{9})(\d)DNK(\d{6})(\d)[MF<](\d{6})(\d)([A-Z\d<]{14})(\d)(\d)"  # noqa: E501 line too long
 passport_regex = (r"P[A-Z<]([A-Z]{3})[A-Z<]{39}[\n \t,\-]?"
                   r"([\dA-Z]{9})(\d)[A-Z]{3}(\d{6})(\d)[MF<]"
                   r"(\d{6})(\d)([A-Z\d<]{14})(\d)(\d)")
 
 
 class PassportRule(RegexRule):
-    type_label = "passport MRZ"
+    type_label = "passport"
 
     def __init__(self, **super_kwargs):
         super().__init__(passport_regex, **super_kwargs)
@@ -46,12 +45,10 @@ class PassportRule(RegexRule):
             yield {
                 "match": f"Passport number {passport_number} (issued by {country_issued})",
                 **make_context(match, content),
-
                 "sensitivity": (
                     self.sensitivity.value
                     if self.sensitivity else None
                 ),
-
             }
 
     def to_json_object(self):
