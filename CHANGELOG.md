@@ -33,6 +33,9 @@
 
 - It is now possible to choose predefined rules for scans in the miniscanner
 
+- Pipeline stages can now optionally print resource accounting information
+  when they receive the `SIGUSR1` debug signal and at shutdown time.
+
 ### Bugfixes
 
 - The GmailScanner class no longer references a non-existant attribute.

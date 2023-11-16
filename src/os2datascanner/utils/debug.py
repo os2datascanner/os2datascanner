@@ -1,5 +1,6 @@
 import sys
 import signal
+import resource
 import traceback
 from contextlib import contextmanager
 
@@ -8,9 +9,15 @@ debug_functions = []
 
 
 def make_caller(functions):
-    def _runner(*args, **kwargs):
+    def _runner(signum, frame):
+        print(
+                f"Got signal {signal.Signals(signum)!r},"
+                " running debug functions:", file=sys.stderr)
+        print("--", file=sys.stderr)
         for function in functions:
-            function(*args, **kwargs)
+            function(signum, frame)
+            print("--", file=sys.stderr)
+        print("Done running debug functions", file=sys.stderr)
     return _runner
 
 
@@ -64,11 +71,53 @@ def debug_helper(func):
 
 
 @add_debug_function
-def _backtrace(signal, frame):
-    print("Got SIGUSR1, printing stacktrace:", file=sys.stderr)
+def backtrace_dbg_func(signum, frame):
     traceback.print_stack()
+
+
+# The fields in the underlying C "struct rusage" object that Python exposes
+# through the resource package, with descriptive labels taken from
+# https://docs.python.org/3.11/library/resource.html#resource-usage
+_field_descriptions = {
+    "ru_utime": "time in user mode (float seconds)",
+    "ru_stime": "time in system mode (float seconds)",
+    "ru_maxrss": "maximum resident set size",
+    "ru_ixrss": "shared memory size",
+    "ru_idrss": "unshared memory size",
+    "ru_isrss": "unshared stack size",
+    "ru_minflt": "page faults not requiring I/O",
+    "ru_majflt": "page faults requiring I/O",
+    "ru_nswap": "number of swap outs",
+    "ru_inblock": "block input operations",
+    "ru_oublock": "block output operations",
+    "ru_msgsnd": "messages sent",
+    "ru_msgrcv": "messages received",
+    "ru_nsignals": "signals received",
+    "ru_nvcsw": "voluntary context switches",
+    "ru_nivcsw": "involuntary context switches",
+}
+
+
+def print_rusage(robj):
+    longest = (max(len(v) for v in _field_descriptions.values()) + 1)
+    for field, descr in _field_descriptions.items():
+        print(
+                f"{descr.rjust(longest)}:"
+                f" {getattr(robj, field, None)}", file=sys.stderr)
+
+
+def rusage_dbg_func(signum, frame):
+    usage_info = {
+        tl: resource.getrusage(getattr(resource, tl))
+        for tl in ("RUSAGE_CHILDREN", "RUSAGE_SELF",)
+    }
+    for k, v in usage_info.items():
+        print(f"{k}:", file=sys.stderr)
+        print_rusage(v)
 
 
 __all__ = (
         "register_debug_signal", "add_debug_function",
-        "remove_debug_function", "debug_helper",)
+        "remove_debug_function", "debug_helper",
+
+        "rusage_dbg_func")
