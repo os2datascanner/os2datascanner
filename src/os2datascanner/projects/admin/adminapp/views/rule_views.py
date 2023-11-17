@@ -61,6 +61,8 @@ class RuleCreate(RestrictedCreateView):
         rule.description = form.cleaned_data['description']
 
         def validate_exceptions_field(rule):
+            if "exceptions" not in rule:
+                return True
             ex_string = rule.get('exceptions')
             # Checks that the "exceptions"-string constists of comma-separated
             # 10-digit numbers or an empty string.
@@ -68,7 +70,7 @@ class RuleCreate(RestrictedCreateView):
             return validated
 
         if crule := form.cleaned_data.get('rule'):
-            if ('exceptions' not in crule) or validate_exceptions_field(crule):
+            if validate_exceptions_field(crule):
                 rule._rule = crule
             else:
                 form.add_error(
