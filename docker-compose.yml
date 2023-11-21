@@ -13,7 +13,13 @@ services:
     image: postgres:12
     ports:
         - "8035:5432"
-    shm_size: '256mb'
+    shm_size: '2GB'
+    command: >-
+      postgres
+       -c shared_buffers=1GB
+       -c work_mem=64MB
+       -c maintenance_work_mem=499MB
+       -c effective_cache_size=8GB
     env_file:
       - dev-environment/db.env
     volumes:
