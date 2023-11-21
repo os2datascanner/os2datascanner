@@ -156,6 +156,23 @@ msgstr "Fjern"
 msgid "Calendar"
 msgstr "Kalender"
 
+#: dist/js/recurrence.js:466 dist/js/recurrence.js:478 js/recurrence.js:466
+#: js/recurrence.js:478
+msgid "th"
+msgstr "."
+
+#: dist/js/recurrence.js:470 js/recurrence.js:470
+msgid "st"
+msgstr "."
+
+#: dist/js/recurrence.js:473 js/recurrence.js:473
+msgid "nd"
+msgstr "."
+
+#: dist/js/recurrence.js:476 js/recurrence.js:476
+msgid "rd"
+msgstr "."
+
 #: dist/js/recurrence.js:1069 js/recurrence.js:1069
 msgid "midnight"
 msgstr "midnat"

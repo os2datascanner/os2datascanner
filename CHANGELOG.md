@@ -67,6 +67,8 @@
 - The `application/csv` MIME type is now correctly treated as an alias for
   `text/csv`.
 
+- Dates in the recurrence widget now translates correctly. 
+
 ## 3.21.1, 6th November 2023
 
 "Quick Rewrite It"
