@@ -176,12 +176,11 @@ class Account(Core_Account):
     def _count_matches(self):
         """Counts the number of unhandled matches associated with the account."""
         from ...reportapp.models.documentreport import DocumentReport
+        aliases = self.aliases.exclude(_alias_type=AliasType.REMEDIATOR)
         reports = DocumentReport.objects.filter(  # noqa: ECE001
-            alias_relation__account=self,
+            alias_relation__in=aliases,
             number_of_matches__gte=1,
-            resolution_status__isnull=True).exclude(
-                alias_relation___alias_type=AliasType.REMEDIATOR
-            ).values(
+            resolution_status__isnull=True).values(
                 "only_notify_superadmin").order_by(
                     "only_notify_superadmin").annotate(
             count=Count("only_notify_superadmin")).values(
@@ -229,12 +228,12 @@ class Account(Core_Account):
         # This is placed here to avoid circular import
         from os2datascanner.projects.report.reportapp.models.documentreport import DocumentReport
 
+        aliases = self.aliases.exclude(_alias_type=AliasType.REMEDIATOR)
+
         all_matches = DocumentReport.objects.filter(
             number_of_matches__gte=1,
-            alias_relation__account=self,
+            alias_relation__in=aliases,
             only_notify_superadmin=False,
-        ).exclude(
-            alias_relation___alias_type=AliasType.REMEDIATOR
         ).values(
             "created_timestamp",
             "resolution_time",

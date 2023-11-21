@@ -40,6 +40,8 @@
 
 - Documentation about roles, special roles, and aliases has been added.
 
+- Optimizations for querying remediator bound matches.
+
 ### Bugfixes
 
 - The GmailScanner class no longer references a non-existant attribute.
