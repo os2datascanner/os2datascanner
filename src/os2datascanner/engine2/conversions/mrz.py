@@ -10,5 +10,6 @@ def image_processor(r):
     with r.make_path() as p:
         return tesseract(p, "stdout",
                          "--oem", "1",
-                         "--tessdata-dir", str(get_resource_folder() / "tessdata"),
+                         "--tessdata-dir",
+                         str(get_resource_folder() / "downloads" / "tessdata"),
                          "-l", "mrz")

@@ -5,16 +5,44 @@ from itertools import pairwise
 from .regex import RegexRule
 from .utilities.context import make_context
 from .rule import Rule, Sensitivity
+from ..conversions.types import OutputType
 
 logger = structlog.get_logger(__name__)
 
-passport_regex = (r"P[A-Z<]([A-Z]{3})[A-Z<]{39}[\n \t,\-]?"
-                  r"([\dA-Z]{9})(\d)[A-Z]{3}(\d{6})(\d)[MF<]"
-                  r"(\d{6})(\d)([A-Z\d<]{14})(\d)(\d)")
+passport_regex = (r"P[A-Z<]"           # Passport and optional type identifier
+                  r"(D<<|[A-Z]{3})"    # Issuing country code
+                                       # (ISO 3166-1 alpha-3 for most countries,
+                                       # but D<< for Germany; some territories
+                                       # have special codes)
+                  r"[A-Z<]{39}"        # Name
+
+                  r"[\n \t,\-]?"       # (Some kind of line separator)
+
+                  r"([\dA-Z]{9})"      # Passport identifier
+                  r"(\d)"              # Passport identifier check digit
+
+                  r"(?:D<<|[A-Z]{3})"  # Holder's citizenship (same format as
+                                       # issuing country code)
+
+                  r"(\d{6})"           # Holder's date of birth (YYMMDD)
+                  r"(\d)"              # Date of birth check digit
+
+                  r"[MF<]"             # Gender of holder, if specified
+
+                  r"(\d{6})"           # Passport expiry date (YYMMDD)
+                  r"(\d)"              # Expiry date check digit
+
+                  r"([A-Z\d<]{14})"    # Personal number field (can be empty)
+                  r"([\d<])"           # Personal number check digit
+                                       # (can be either 0 or < if field empty)
+
+                  r"(\d)"             # Second line check digit
+                  )
 
 
 class PassportRule(RegexRule):
     type_label = "passport"
+    operates_on = OutputType.MRZ
 
     def __init__(self, **super_kwargs):
         super().__init__(passport_regex, **super_kwargs)
@@ -42,6 +70,10 @@ class PassportRule(RegexRule):
                 logger.debug(f"{MRZ} Failed checksum")
                 continue
 
+            if country_issued == "D<<":
+                # Convert Germany's weird code into a normal country code for
+                # the match description
+                country_issued = "DEU"
             yield {
                 "match": f"Passport number {passport_number} (issued by {country_issued})",
                 **make_context(match, content),
@@ -64,6 +96,11 @@ class PassportRule(RegexRule):
 
 
 def checksum(string: str, digit) -> bool:  # noqa: CCR001 too high cognitive complexity
+    # Special treatment for the personal number field: if the field has no
+    # content, the check digit can be given as "<" instead
+    if digit == "<" and all(c == "<" for c in string):
+        return True
+
     sum = 0
     for i, char in enumerate(string):
         value = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".index(char) if char != '<' else 0
