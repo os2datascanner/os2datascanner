@@ -15,15 +15,18 @@ expected = ["Passport number 000000000 (issued by DNK)",
 
 
 class TestPassportImages(unittest.TestCase):
-    def test_passport_images(self):
-        fs = FilesystemSource(test_data_path)
-        content = ""
-        rule = PassportRule()
-        with SourceManager() as sm:
-            for h in fs.handles(sm):
-                resource = h.follow(sm)
-                passport = convert(resource, OutputType.MRZ)
-                content += passport
-        matches = rule.match(content)
-        print(content)
-        self.assertEqual([match["match"] for match in matches], expected)
+    fs = FilesystemSource(test_data_path)
+    content = ""
+    rule = PassportRule()
+    with SourceManager() as sm:
+        for h in fs.handles(sm):
+            resource = h.follow(sm)
+            passport = convert(resource, OutputType.MRZ)
+            content += passport
+    matches = [match["match"] for match in rule.match(content)]
+
+    def test_all_matches_found(self):
+        self.assertEqual(len(self.matches), len(expected))
+
+    def test_correct_matches_found(self):
+        self.assertTrue(all(match in expected for match in self.matches))
