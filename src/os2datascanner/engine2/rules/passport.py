@@ -16,9 +16,9 @@ passport_regex = (r"P[A-Z<]"           # Passport and optional type identifier
                                        # have special codes)
                   r"[A-Z<]{39}"        # Name
 
-                  r"[\n \t,\-]?"       # (Some kind of line separator)
+                  r"[\n \t,\-]*"       # (Some kind of line separator)
 
-                  r"([\dA-Z]{9})"      # Passport identifier
+                  r"([\dA-Z<]{9})"     # Passport identifier
                   r"(\d)"              # Passport identifier check digit
 
                   r"(?:D<<|[A-Z]{3})"  # Holder's citizenship (same format as
@@ -36,7 +36,7 @@ passport_regex = (r"P[A-Z<]"           # Passport and optional type identifier
                   r"([\d<])"           # Personal number check digit
                                        # (can be either 0 or < if field empty)
 
-                  r"(\d)"             # Second line check digit
+                  r"(\d)"              # Second line check digit
                   )
 
 
