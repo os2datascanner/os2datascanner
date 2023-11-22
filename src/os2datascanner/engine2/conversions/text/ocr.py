@@ -7,9 +7,9 @@ from ..types import OutputType
 from ..registry import conversion
 
 
-def tesseract(path, dest="stdout"):
+def tesseract(path, dest="stdout", *args):
     result = run_custom(
-            ["tesseract", path, dest],
+            ["tesseract", *args, path, dest],
             universal_newlines=True,
             stdout=PIPE,
             stderr=DEVNULL,

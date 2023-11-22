@@ -37,6 +37,7 @@ class OutputType(Enum):
     Links = "links"  # list[Link]
     Manifest = "manifest"  # list[Handle]
     EmailHeaders = "email-headers"  # dict[str, str]
+    MRZ = "mrz"  # str
 
     AlwaysTrue = "fallback"  # True
     NoConversions = "dummy"
@@ -48,7 +49,7 @@ class OutputType(Enum):
             return None
 
         match self:
-            case OutputType.Text:
+            case OutputType.Text | OutputType.MRZ:
                 return str(v)
             case OutputType.LastModified:
                 return unparse_datetime(v)
@@ -76,7 +77,7 @@ class OutputType(Enum):
             return None
 
         match self:
-            case OutputType.Text:
+            case OutputType.Text | OutputType.MRZ:
                 return v
             case OutputType.LastModified:
                 return parse_datetime(v)

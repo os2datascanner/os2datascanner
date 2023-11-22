@@ -20,6 +20,7 @@ from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.engine2.rules.wordlists import OrderedWordlistRule
 from os2datascanner.engine2.rules.rule import Sensitivity
 from os2datascanner.engine2.rules.dict_lookup import EmailHeaderRule
+from os2datascanner.engine2.rules.passport import PassportRule
 
 from os2datascanner.engine2.conversions.types import OutputType
 
@@ -173,6 +174,27 @@ more!""",
                 ),
                 dict(field="This is a test subject"),
                 [],
+            ),
+            (
+                PassportRule(),
+                """
+P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<< L898902C36UTO7408122F1204159ZE184226B<<<<<10
+P<GBRMASTERSON<<EDMUND<<<<<<<<<<<<<<<<<<<<<<4145681380GBR5110205M1601013<<<<<<<<<<<<<<00
+P<NLDDE<BRUIJN<<WILLEKE<LISELOTTE<<<<<<<<<<<,SPECI20142NLD6503101F2403096999999990<<<<<84
+P<AUSCITIZEN<<JANE<<<<<<<<<<<<<<<<<<<<<<<<<<	PX09153981AUS8406077F1503014<61047007L<<<<24
+P<USATRAVELER<<HAPPY<<<<<<<<<<<<<<<<<<<<<<<<-1500000035USA5609165M0811150<<<<<<<<<<<<<<08
+
+P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<< L898902C37UTO7408122F1204159ZE184226B<<<<<10
+P<GBRMASTERSON<<EDMUND<<<<<<<<<<<<<<<<<<<<<<4145681380GBR5110204M1601013<<<<<<<<<<<<<<00
+P<NLDDE<BRUIJN<<WILLEKE<LISELOTTE<<<<<<<<<<<,SPECI20142NLD6503101F2403097999999990<<<<<84
+P<AUSCITIZEN<<JANE<<<<<<<<<<<<<<<<<<<<<<<<<<	PX09153981AUS8406077F1503014<61047007L<<<<34
+P<USATRAVELER<<HAPPY<<<<<<<<<<<<<<<<<<<<<<<<-1500000035USA5609165M0811150<<<<<<<<<<<<<<09
+""",
+                ["Passport number L898902C3 (issued by UTO)",
+                    "Passport number 414568138 (issued by GBR)",
+                    "Passport number SPECI2014 (issued by NLD)",
+                    "Passport number PX0915398 (issued by AUS)",
+                    "Passport number 150000003 (issued by USA)", ],
             ),
         ]
 

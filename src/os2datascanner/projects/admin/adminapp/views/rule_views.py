@@ -70,7 +70,7 @@ class RuleCreate(RestrictedCreateView):
             return validated
 
         if crule := form.cleaned_data.get('rule'):
-            if validate_exceptions_field(crule):
+            if ('exceptions' not in crule) or validate_exceptions_field(crule):
                 rule._rule = crule
             else:
                 form.add_error(

@@ -66,6 +66,10 @@ RUN set -ex \
   && pip install --no-cache-dir -r python-requirements/requirements-all.txt \
   && apt-get -y autoremove
 
+WORKDIR /code/resources
+COPY resources ./
+RUN set -ex && /code/resources/prepare.sh
+
 # Copy frontend dist folder to static
 WORKDIR /code/src/os2datascanner/projects/static
 COPY --from=frontend /code/src/os2datascanner/projects/static/dist ./dist
