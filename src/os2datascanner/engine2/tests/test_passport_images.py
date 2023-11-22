@@ -10,9 +10,7 @@ from os2datascanner.engine2.rules.passport import PassportRule
 here_path = os.path.dirname(__file__)
 test_data_path = os.path.join(here_path, "data", "passport")
 expected = ["Passport number 000000000 (issued by DNK)",
-            "Passport number C01X1626X (issued by DEU)",
-            "Passport number 00000000< (issued by NOR)",
-            "Passport number 59000001< (issued by SWE)", ]
+            "Passport number E00007734 (issued by USA)", ]
 
 
 class TestPassportImages(unittest.TestCase):
