@@ -67,7 +67,7 @@
 - The `application/csv` MIME type is now correctly treated as an alias for
   `text/csv`.
 
-- Dates in the recurrence widget now translates correctly. 
+- General translations across the Admin- and Report-module.
 
 ## 3.21.1, 6th November 2023
 
