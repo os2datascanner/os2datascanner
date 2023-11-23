@@ -37,7 +37,7 @@
 
 - Pipeline stages can now optionally print resource accounting information
   when they receive the `SIGUSR1` debug signal and at shutdown time.
-  
+
 - Added "content-" classes to handle content layout on smaller screens.
 
 - Documentation about roles, special roles, and aliases has been added.
@@ -46,6 +46,9 @@
 
 - Both the administration system and the report module now have a database
   query helper management command.
+
+- Snackbar element is now displayed at the top of the page, instead of at the 
+  bottom of the page. 
 
 ### Bugfixes
 
