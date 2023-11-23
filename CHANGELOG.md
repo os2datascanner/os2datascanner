@@ -67,7 +67,7 @@
 - The `application/csv` MIME type is now correctly treated as an alias for
   `text/csv`.
 
-- General translations across the Admin- and Report-module.
+- Added missing translations in the admin and report modules.
 
 ## 3.21.1, 6th November 2023
 

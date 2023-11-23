@@ -154,7 +154,7 @@ msgstr "Vælg tilladelse(r) du ønsker at tillade for din organisation."
 
 #: models/organization.py:110
 msgid "Leadertab access"
-msgstr "Leaderfane adgang"
+msgstr "Lederfane adgang"
 
 #: models/organization.py:116
 msgid "Dpotab access"
