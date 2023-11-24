@@ -6,7 +6,7 @@ from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner import Sc
 class AnalysisPageView(LoginRequiredMixin, TemplateView):
     context_object_name = 'scanner_list'
     scanners = None
-    template_name = "components/analysis.html"
+    template_name = "analysis.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -17,7 +17,7 @@
        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
        hx-push-url='true'>
 
-    {% include "partials/breadcrumb.html" with page="orgunit_list" %}
+    {% include "components/common/breadcrumb.html" with page="orgunit_list" %}
 
     {% if FEATURES.ORG_STRUCTURE in organization.client.enabled_features %}
       <h1>{% trans "organizational hierarchy for"|capfirst %} {{ organization }}</h1>
@@ -170,7 +170,7 @@
               </tr>
             {% endif %}
           </tbody>
-          {% include "components/pagination.html" %}
+          {% include "components/pagination/pagination.html" %}
         </table>
       </div>
     {% else %}

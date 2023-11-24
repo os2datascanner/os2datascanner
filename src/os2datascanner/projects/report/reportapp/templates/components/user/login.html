@@ -1,0 +1,61 @@
+{% load i18n %}
+{% include "components/common/header.html" %}
+
+<section class="login-card">
+  <form method="post" action="{% url 'login' %}" class="form">
+    {% csrf_token %}
+    <h2>
+      {% trans "Log in" %}
+      <br>
+      {% trans "report module" %}
+    </h2>
+
+    <fieldset>
+      <div class="form__group{% if form.username.errors %} has-error{% endif %}">
+        <label for="id_{{ form.username.name }}">{% trans "Username" %}</label>
+        <input type="text"
+               name="{{ form.username.name }}"
+               id="id_{{ form.username.name }}"
+               autofocus>
+        <label>
+          {% if form.username.errors %}{{ form.username.errors }}{% endif %}
+        </label>
+      </div>
+
+      <div class="form__group{% if form.password.errors %} has-error{% endif %}">
+        <label for="id_{{ form.password.name }}">{% trans "Password" %}</label>
+        <input type="password"
+               name="{{ form.password.name }}"
+               id="id_{{ form.password.name }}">
+        <label>
+          {% if form.password.errors %}{{ form.password.errors }}{% endif %}
+        </label>
+      </div>
+
+      {% for error in form.non_field_errors %}<div class="form__error">{{ error }}</div>{% endfor %}
+
+      <div class="form__group">
+        <div class="ds-checkbox">
+          <input type="checkbox" name="remember-me" id="remember-me">
+          <label class="width" for="remember-me">{% trans "Remember me" %}</label>
+        </div>
+      </div>
+
+      <div class="form__group">
+        <button type="submit" class="login-btn">{% trans "Login" %}</button>
+      </div>
+
+      <div class="form__group">
+        <label class="info">
+          {% trans "Did you forget your password?" %}
+          <a class="link" href="{% url 'password_reset' %}">{% trans "Click here" %}</a>
+        </label>
+      </div>
+
+      <div class="form__group logo">{% include "components/common/logo-o.html" %}</div>
+    </fieldset>
+  </form>
+</section>
+
+</body>
+</html>

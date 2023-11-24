@@ -80,7 +80,7 @@ class StatusBase(RestrictedListView):
 
 
 class StatusOverview(StatusBase):
-    template_name = "os2datascanner/scan_status.html"
+    template_name = "scan_status.html"
     model = ScanStatus
 
     # Function for sending message to socket
@@ -127,17 +127,17 @@ class StatusOverview(StatusBase):
         if is_htmx:
             htmx_trigger = self.request.headers.get("HX-Trigger-Name")
             if htmx_trigger == "status_tabs_poll":
-                return "os2datascanner/scanner_tabs.html"
+                return "components/navigation/scanner_tabs.html"
             elif htmx_trigger == "status_table_poll":
-                return "os2datascanner/scan_status_table.html"
+                return "components/scanstatus/scan_status_table.html"
         else:
-            return"os2datascanner/scan_status.html"
+            return"scan_status.html"
 
 
 class StatusCompleted(StatusBase):
     paginate_by = 10
     paginator_class = EmptyPagePaginator
-    template_name = "os2datascanner/scan_completed.html"
+    template_name = "components/scanner/scan_completed.html"
     model = ScanStatus
     paginate_by_options = [10, 20, 50, 100, 250]
 
@@ -207,7 +207,7 @@ class StatusCompleted(StatusBase):
 
 class StatusTimeline(RestrictedDetailView):
     model = ScanStatus
-    template_name = "components/status-timeline.html"
+    template_name = "components/scanstatus/status_timeline.html"
     context_object_name = "status"
     fields = "__all__"
 
@@ -251,7 +251,7 @@ class StatusDelete(RestrictedDeleteView):
 
 class UserErrorLogView(RestrictedListView):
     """Displays list of errors encountered."""
-    template_name = 'os2datascanner/error_log.html'
+    template_name = 'error_log.html'
     model = UserErrorLog
     paginate_by = 10
     paginator_class = EmptyPagePaginator
@@ -362,12 +362,12 @@ class UserErrorLogCSVView(CSVExportMixin, UserErrorLogView):
 class ScannerList(RestrictedListView):
     """Displays list of scanners."""
 
-    template_name = 'os2datascanner/scanners.html'
+    template_name = 'scanners.html'
     context_object_name = 'scanner_list'
 
 
 class ScannerBase(object):
-    template_name = 'os2datascanner/scanner_form.html'
+    template_name = 'components/scanner/scanner_form.html'
 
     def get_form(self, form_class=None):
         """Get the form for the view.
@@ -570,7 +570,7 @@ class ScannerRun(RestrictedDetailView):
     """Base class for view that handles starting of a scanner run."""
 
     fields = []
-    template_name = 'os2datascanner/scanner_run.html'
+    template_name = 'components/scanner/scanner_run.html'
     model = Scanner
 
     def __init__(self):
@@ -601,7 +601,7 @@ class ScannerCleanupStaleAccounts(RestrictedDetailView):
     associated with a scanner."""
 
     fields = []
-    template_name = 'os2datascanner/scanner_cleanup_stale_accounts.html'
+    template_name = 'components/scanner/scanner_cleanup_stale_accounts.html'
     model = Scanner
     context_object_name = 'scanner'
 
@@ -638,7 +638,7 @@ class ScannerCleanupStaleAccounts(RestrictedDetailView):
 
             return render(
                 request,
-                "os2datascanner/scanner_cleanup_response.html",
+                "components/scanner/scanner_cleanup_response.html",
                 context=self.get_context_data())
 
     def get_context_data(self, **kwargs):

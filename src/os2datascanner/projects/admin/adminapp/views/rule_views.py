@@ -35,7 +35,7 @@ class RuleList(RestrictedListView):
 
     model = Rule
     context_object_name = 'rules'
-    template_name = 'os2datascanner/rules.html'
+    template_name = 'rules.html'
 
     def get_context_data(self):
         context = super().get_context_data()
@@ -105,6 +105,7 @@ class RuleCreate(RestrictedCreateView):
 
 class CustomRuleCreate(RuleCreate):
     model = CustomRule
+    template_name = "components/rules/customrule_form.html"
     fields = ['name', 'description', 'sensitivity', 'organization']
 
     def get_form(self, form_class=None):
@@ -116,6 +117,7 @@ class CustomRuleCreate(RuleCreate):
 
 class RegexRuleCreate(RuleCreate):
     model = RegexRule
+    template_name = "components/rules/regexrule_form.html"
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
@@ -209,6 +211,7 @@ class RuleUpdate(RestrictedUpdateView):
 class CustomRuleUpdate(RuleUpdate):
     model = CustomRule
     fields = ['name', 'description', 'sensitivity', 'organization']
+    template_name = "components/rules/customrule_form.html"
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
@@ -219,6 +222,7 @@ class CustomRuleUpdate(RuleUpdate):
 
 class RegexRuleUpdate(RuleUpdate):
     model = RegexRule
+    template_name = "components/rules/regexrule_form.html"
 
     def get_form(self, form_class=None):
         """Get the form for the view.

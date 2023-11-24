@@ -1,0 +1,20 @@
+{% load i18n %}
+{% load static %}
+{% include "components/common/header.html" %}
+{% include "components/common/banner.html" %}
+
+<main class="wrapper error-page">
+  <div class="content">
+
+    <img src="{% static 'svg/errorpage.svg' %}" alt="" class="error-splash">
+
+    <h1 class="page-title">
+      {% block error_heading %}{% endblock %}
+    </h1>
+
+    {% block error_content %}{% endblock %}
+  </div>
+</main>
+
+</body>
+</html>

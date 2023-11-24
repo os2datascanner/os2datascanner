@@ -63,7 +63,7 @@ class RestrictedListView(LoginRequiredMixin, ListView):
 
 
 class GuideView(TemplateView):
-    template_name = "os2datascanner/guide.html"
+    template_name = "guide.html"
 
     def dispatch(self, request, *args, **kwargs):
         if settings.MANUAL_PAGE:
@@ -174,7 +174,7 @@ class RestrictedDeleteView(DeleteView, OrgRestrictedMixin):
 class DialogSuccess(TemplateView):
     """View that handles success for iframe-based dialogs."""
 
-    template_name = 'os2datascanner/dialogsuccess.html'
+    template_name = 'components/modals/dialogsuccess.html'
 
     type_map = {
         'webscanners': WebScanner,

@@ -1,0 +1,112 @@
+{% extends "components/common/base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% block rendertype %}regular{% endblock %}
+
+{% block scripts %}
+  {{ block.super }}
+  <script defer src="{% static 'js/scannerjob/validateFileSize.js' %}"></script>
+  <script defer src="{% static 'js/scannerjob/ruleInput.js' %}"></script>
+  <script src="{% static '3rdparty/jquery.modal.js' %} "></script>
+{% endblock %}
+{% block body %}
+  {% include "components/common/header.html" %}
+  <main class="wrapper" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    {% include "components/common/main.html" with active_tab="miniscan" %}
+    <div class="content">
+      <div class="content-header">
+        <h1>{% trans "OS2datascanner mini-scanner" %}</h1>
+        <p>
+          {% with limit=settings.MINISCAN_FILE_SIZE_LIMIT %}
+            {% blocktranslate trimmed %}
+              The mini-scanner lets you execute any OS2datascanner rule on a single
+              file, and returns the results directly to this page.
+            {% endblocktranslate %}
+            <br />
+            <br />
+            {% trans "Maximum allowed file size is: " %} {{ limit|filesizeformat }}
+          {% endwith %}
+        </p>
+      </div>
+
+      <div class="content-body">
+        <form class="form"
+              role="form"
+              hx-post="{% url 'miniscan_run' %}"
+              hx-swap="innerHTML"
+              hx-target="div#response"
+              hx-encoding="multipart/form-data"
+              hx-indicator="div.spinner">
+ 
+          <h2>{% trans "File to scan" %}</h2>
+          {% with limit=settings.MINISCAN_FILE_SIZE_LIMIT %}
+            <input name="file"
+                   id="upload-file"
+                   type="file"
+                   class="upload"
+                   onchange="checkFileSize(this, '{{ limit }}' )" />
+
+            <div hidden id="file-upload-error-response">
+              {% trans "The selected file is too big!" %}
+              <br />
+              {% trans "Maximum allowed file size is: " %} {{ limit|filesizeformat }}
+              <br />
+              {% trans "Please, select another (smaller) file to scan." %}
+            </div>
+          {% endwith %}
+          <h2>{% trans "Rule to execute" %}</h2>
+          <h4>
+            {% trans "Selected rule: " %}
+            <span id="selectedRule">{% trans "None" %}</span>
+          </h4>
+          <p>
+            <a href="#show-rules-modal"
+               data-modal="modal:open"
+               class="button button"
+               title="{% trans 'Load rule' %}">{% trans "Load rule" %}</a>
+          </p>
+          <div id="ruleWidget">{% include "components/admin_widgets/rule_builder.html" with hidden=True %}</div>
+          <button id="run-miniscan-btn"
+                  class="button button--cta"
+                  type="submit"
+                  style="margin-top: 1em">{% trans "Run" %}</button>
+
+          <button onClick="window.location.reload();"
+                  class="button--clear"
+                  type="button">{% trans "Clear" %}</button>
+          <h3>{% trans "Scan result" %}</h3>
+          <div id="response">{% trans "(none yet)" %}</div>
+        </form>
+      </div>
+    </div>
+    <div class="spinner" />
+  </main>
+{% endblock %}
+
+{% block modal %}
+  <div class="modal__content"
+       id="show-rules-modal"
+       tabindex="-1"
+       role="dialog"
+       aria-labelledby="show-rules-modal-title"
+       aria-hidden="true"
+       data-modal="modal:close">
+    <h1>{% trans "Upload a rule from the list" %}</h1>
+    <div class="datatable-wrapper">
+      <table class="datatable">
+        {% for rule in customrule_list %}
+          <tr id="ruleRow"
+              tabindex="-1"
+              title="{{ rule.description }}"
+              class="clickable"
+              onclick="saveName('{{ rule }}')">
+            <td>{{ rule.name }}{{ rule.rule_field|json_script:"json" }}</td>
+            <td>{{ rule.description|truncatewords:5 }}{{ rule.rule_field|json_script:"json" }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+{% endblock %}

@@ -1,7 +1,7 @@
 {%  load i18n %}
 {% load static %}
-{% include "partials/header.html" %}
-{% include "components/banner.html" %}
+{% include "components/common/header.html" %}
+{% include "components/common/banner.html" %}
 
 <main class="wrapper">
 
@@ -11,7 +11,7 @@
        hx-push-url="true"
        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
 
-    {% include "components/index_navigation.html" %}
+    {% include "components/navigation/index_navigation.html" %}
 
     {% include "content.html" %}
 
@@ -19,6 +19,6 @@
 
 </main>
 
-{% include "partials/scripts.html" %}
+{% include "components/common/scripts.html" %}
 </body>
 </html>

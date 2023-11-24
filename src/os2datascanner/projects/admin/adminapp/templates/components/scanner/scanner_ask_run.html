@@ -1,0 +1,83 @@
+{% extends 'components/common/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block topnav %}{% endblock %}
+{% block rendertype %}iframe-modal{% endblock %}
+
+{% block scripts %}
+  <script src="{% static "3rdparty/jquery.modal.js" %} "></script>
+  <script src="{% static '3rdparty/htmx.min.js' %}"></script>
+  <script src="{% static "js/index.js" %}"></script>
+{% endblock %}
+
+{% block body %}
+
+  <div class="runner-container">
+    {% if ok %}
+
+
+      <div class="runner-content">
+        <span class="icon">{% include "components/svg-icons/scan_run.svg" %}</span>
+
+        <h1>{% trans "Run scanner" %}</h1>
+
+        <h3>{% trans "Are you sure you want to start the scanner?" %}</h3>
+
+        <p>
+          {% if webscanner.pk %}
+            <a href="/webscanners/{{ webscanner.pk }}/run/"
+               class="button button--cta button--large run-scan-button">{% trans "Let's go!" %}</a>
+          {% elif filescanner.pk %}
+            <a href="/filescanners/{{ filescanner.pk }}/run/"
+               class="button button--cta button--large run-scan-button">{% trans "Let's go!" %}</a>
+          {% elif exchangescanner.pk %}
+            <a href="/exchangescanners/{{ exchangescanner.pk }}/run/"
+               class="button button--cta button--large run-scan-button">{% trans "Let's go!" %}</a>
+          {% elif dropboxscanner.pk %}
+            <a href="/dropboxscanners/{{ dropboxscanner.pk }}/run/"
+               class="button button--cta button--large run-scan-button">{% trans "Let's go!" %}</a>
+          {% elif msgraphmailscanner.pk %}
+            <a href="/msgraph-mailscanners/{{ msgraphmailscanner.pk }}/run/"
+               class="button button--cta button--large run-scan-button">{% trans "Let's go!" %}</a>
+          {% elif msgraphfilescanner.pk %}
+            <a href="/msgraph-filescanners/{{ msgraphfilescanner.pk }}/run/"
+               class="button button--cta button--large run-scan-button">{% trans "Let's go!" %}</a>
+          {% elif msgraphcalendarscanner.pk %}
+            <a href="/msgraph-calendarscanners/{{ msgraphcalendarscanner.pk }}/run/"
+               class="button button--cta button--large run-scan-button">{% trans "Let's go!" %}</a>
+          {% elif msgraphteamsfilescanner.pk %}
+            <a href="/msgraph-teams-filescanners/{{ msgraphteamsfilescanner.pk }}/run/"
+               class="button button--cta button--large run-scan-button">{% trans "Let's go!" %}</a>
+          {% elif googledrivescanner.pk %}
+            <a href="/googledrivescanners/{{ googledrivescanner.pk }}/run/"
+               class="button button--cta button--large run-scan-button">{% trans "Let's go!" %}</a>
+          {% elif gmailscanner.pk %}
+            <a href="/gmailscanners/{{ gmailscanner.pk }}/run/"
+               class="button button--cta button--large run-scan-button">{% trans "Let's go!" %}</a>
+          {% elif sbsysscanner.pk %}
+            <a href="/sbsysscanners/{{ sbsysscanner.pk }}/run/"
+               class="button button--cta button--large run-scan-button">{% trans "Let's go!" %}</a>
+          {% endif %}
+
+          {#     Setting style=".." here is not best practice, but we want to still have the styling from #}
+          {#      assigned classes when element is shown. Hidden will not work because display is set in css #}
+          <a id="waiting-scanner-run-btn"
+             class="button button--cta button--large"
+             style="display: none">{% trans "Waiting..." %}</a>
+
+        </p>
+      </div>
+
+    {% else %}
+      <div class="runner-content">
+        <span class="icon">{% include "components/svg-icons/scan_warning.svg" %}</span>
+
+        <h1>{% trans "Run scanner" %}</h1>
+
+        <h3>{{ error_message }}</h3>
+      </div>
+
+    {% endif %}
+  </div>
+{% endblock %}

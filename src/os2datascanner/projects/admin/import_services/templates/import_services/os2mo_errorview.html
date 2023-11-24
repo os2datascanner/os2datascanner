@@ -1,14 +1,14 @@
-{% extends 'partials/base.html' %}
+{% extends 'components/common/base.html' %}
 {% load i18n %}
 
 {% block body %}
-  {% include "partials/header.html" %}
+  {% include "components/common/header.html" %}
   <div class="wrapper">
 
-    {% include "partials/main.html" with active_tab="organizations" %}
+    {% include "components/common/main.html" with active_tab="organizations" %}
 
     <div class="content">
-      {% include "partials/breadcrumb.html" with page="os2mo" %}
+      {% include "components/common/breadcrumb.html" with page="os2mo" %}
       <section>
         <div class="aside">
           <h1 class="page-title">{% trans "Configure OS2mo" %}</h1>

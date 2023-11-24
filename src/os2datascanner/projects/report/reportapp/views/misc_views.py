@@ -26,23 +26,7 @@ logger = structlog.get_logger()
 
 
 class LogoutPageView(TemplateView, View):
-    template_name = 'logout.html'
-
-
-class ApprovalPageView(TemplateView):
-    template_name = 'approval.html'
-
-
-class StatsPageView(TemplateView):
-    template_name = 'stats.html'
-
-
-class SettingsPageView(TemplateView):
-    template_name = 'settings.html'
-
-
-class AboutPageView(TemplateView):
-    template_name = 'about.html'
+    template_name = 'components/user/logout.html'
 
 
 def oidc_op_logout_url_method(request):

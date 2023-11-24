@@ -1,35 +1,35 @@
 {% load static %}
 
-{% include "partials/header.html" %}
-{% include "components/banner.html" %}
+{% include "components/common/header.html" %}
+{% include "components/common/banner.html" %}
 
 <body>
   <main class="wrapper">
     {% if request.path == "/statistics/dpo/" %}
-      {% include "components/dpo-statistics-template.html" %}
+      {% include "components/statistics/dpo_statistics_template.html" %}
     {% elif request.path == "/statistics/leader/" %}
-      {% include "components/leader-statistics-template.html" %}
+      {% include "components/statistics/leader_statistics_template.html" %}
     {% elif "/statistics/user/" in request.path %}
-      {% include "components/user-overview-template.html" %}
+      {% include "components/statistics/user_overview_template.html" %}
     {% endif %}
   </main>
 </body>
 
 {% block scripts %}
   <script src="{% static "3rdparty/htmx.min.js" %}"></script>
-  <script src="{% static "js/options.js" %}"></script>
+  <script src="{% static "js/filters/options.js" %}"></script>
   <script src="{% static "3rdparty/jquery-3.6.0.min.js" %} "></script>
   <script src="{% static "3rdparty/chart-4.0.1.min.js" %}"></script>
   <script src="{% static "3rdparty/chartjs-plugin-datalabels.min.js" %}"></script>
-  <script src="{% static "js/tableBehavior.js" %}"></script>
+  <script src="{% static "js/tables/tableBehavior.js" %}"></script>
   {% if request.path == "/statistics/dpo/" %}
-    <script src="{% static "js/chartHelpers.js" %}"></script>
+    <script src="{% static "js/charts/chartHelpers.js" %}"></script>
   {% elif request.path == "/statistics/leader/" %}
-    <script src="{% static "js/leaderOverview.js" %}"></script>
+    <script src="{% static "js/leaderview/leaderOverview.js" %}"></script>
   {% endif %}
-  <script src="{% static "js/pieCharts.js" %}"></script>
-  <script src="{% static "js/doughnutCharts.js" %}"></script>
-  <script src="{% static "js/lineCharts.js" %}"></script>
-  <script src="{% static 'js/userCharts.js' %}"></script>
+  <script src="{% static "js/charts/pieCharts.js" %}"></script>
+  <script src="{% static "js/charts/doughnutCharts.js" %}"></script>
+  <script src="{% static "js/charts/lineCharts.js" %}"></script>
+  <script src="{% static 'js/charts/userCharts.js' %}"></script>
 
 {% endblock %}

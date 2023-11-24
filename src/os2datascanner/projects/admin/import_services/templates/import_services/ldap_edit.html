@@ -10,16 +10,16 @@
   {{ block.super }}
   <script type="text/javascript" src="/jsi18n/"></script>
   <script type="text/javascript" src="/admin/jsi18n/"></script>
-  <script src="{% static 'js/addInput.js' %}"></script>
+  <script src="{% static 'js/ldap/addInput.js' %}"></script>
   <script>
         var urlConnection = "{% url 'test-ldap-connection' %}"
         var urlAuth = "{% url 'test-ldap-authentication' %}"
   </script>
-  <script src="{% static 'js/ldapConfig.js' %}"></script>
+  <script src="{% static 'js/ldap/ldapConfig.js' %}"></script>
 {% endblock %}
 
 {% block content %}
-  {% include "partials/breadcrumb.html" with page="ldap"  %}
+  {% include "components/common/breadcrumb.html" with page="ldap"  %}
 
   <div class="aside">
     <h1>

@@ -473,7 +473,7 @@ class UserStatisticsPageView(LoginRequiredMixin, DetailView):
 class EmployeeView(LoginRequiredMixin, DetailView):
     model = Account
     context_object_name = "employee"
-    template_name = "components/employee_template.html"
+    template_name = "components/statistics/employee_template.html"
 
     def get(self, request, *args, **kwargs):
         response = super().get(request, *args, **kwargs)

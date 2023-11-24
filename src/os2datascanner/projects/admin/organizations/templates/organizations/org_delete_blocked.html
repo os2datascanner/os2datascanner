@@ -1,5 +1,5 @@
 
-{% extends 'partials/base.html' %}
+{% extends 'components/common/base.html' %}
 {% load static %}
 {% load i18n %}
 
@@ -7,7 +7,7 @@
 {% block rendertype %}iframe-modal{% endblock %}
 
 {% block scripts %}
-  <script src="{% static 'js/redirectFromModal.js' %}"></script>
+  <script src="{% static 'js/modals/redirectFromModal.js' %}"></script>
   <script src="{% static "3rdparty/jquery.modal.js" %} "></script>
   <script src="{% static '3rdparty/htmx.min.js' %}"></script>
   <script src="{% static "js/index.js" %}"></script>
