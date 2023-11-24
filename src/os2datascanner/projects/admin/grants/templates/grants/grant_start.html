@@ -1,22 +1,22 @@
-{% extends 'partials/base.html' %}
+{% extends 'components/common/base.html' %}
 {% load i18n %}
 
 {% block body %}
-  {% include "partials/header.html" %}
+  {% include "components/common/header.html" %}
   <div class="wrapper">
     {% if request.resolver_match.url_name == 'msgraphmailscanner_add' %}
-      {% include "partials/main.html" with active_tab="home" %}
+      {% include "components/common/main.html" with active_tab="home" %}
     {% else %}
-      {% include "partials/main.html" with active_tab="organizations" %}
+      {% include "components/common/main.html" with active_tab="organizations" %}
     {% endif %}
 
     <div class="content">
 
       {% if request.resolver_match.url_name == 'msgraphmailscanner_add' %}
-        {% include "partials/breadcrumb.html" with page="scannerjob"  %}
+        {% include "components/common/breadcrumb.html" with page="scannerjob"  %}
 
       {% else %}
-        {% include "partials/breadcrumb.html" with page="msgraph" %}
+        {% include "components/common/breadcrumb.html" with page="msgraph" %}
       {% endif %}
 
       <div class="aside">

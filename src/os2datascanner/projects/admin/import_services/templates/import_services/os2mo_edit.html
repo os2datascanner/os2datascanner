@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-  {% include "partials/breadcrumb.html" with page="os2mo"  %}
+  {% include "components/common/breadcrumb.html" with page="os2mo"  %}
 
   <form class="form" method="post">
     {% csrf_token %}

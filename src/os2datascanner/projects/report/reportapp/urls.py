@@ -10,8 +10,7 @@ from os2datascanner import __version__
 
 from .views.api import JSONAPIView
 from .views.saml import metadata
-from .views.misc_views import (
-    ApprovalPageView, StatsPageView, SettingsPageView, AboutPageView, LogoutPageView)
+from .views.misc_views import LogoutPageView
 from .views.statistics_views import (
     LeaderStatisticsPageView, DPOStatisticsPageView, UserStatisticsPageView,
     EmployeeView)
@@ -43,10 +42,6 @@ urlpatterns = [
     path('statistics/user/<uuid:pk>', UserStatisticsPageView.as_view(),
          name='statistics-user-id'),
     path('statistics/employee/<uuid:pk>', EmployeeView.as_view(), name='employee'),
-    re_path('approval', ApprovalPageView.as_view(), name="about"),
-    re_path('stats',    StatsPageView.as_view(),    name="about"),
-    re_path('settings', SettingsPageView.as_view(), name="settings"),
-    re_path('about',    AboutPageView.as_view(),    name="about"),
     re_path(r'^health/', lambda r: HttpResponse()),
     re_path(r'^version/?$', lambda r: HttpResponse(__version__)),
     re_path(r'^help/$', ManualMainView.as_view(), name="guide"),
@@ -66,51 +61,51 @@ if settings.KEYCLOAK_ENABLED:
     urlpatterns.append(path('oidc/', include('mozilla_django_oidc.urls'))),
     urlpatterns.append(re_path(r'^accounts/logout/',
                                LogoutPageView.as_view(
-                                   template_name='logout.html',
+                                   template_name='components/user/logout.html',
                                    extra_context={'body_class': 'login-bg'}
                                    ),
                                name='logout'))
 else:
     urlpatterns.append(re_path(r'^accounts/login/',
                                django.contrib.auth.views.LoginView.as_view(
-                                   template_name='login.html',
+                                   template_name='components/user/login.html',
                                    extra_context={'body_class': 'login-bg'}
                                    ),
                                name='login'))
     urlpatterns.append(re_path(r'^accounts/logout/',
                                django.contrib.auth.views.LogoutView.as_view(
-                                   template_name='logout.html',
+                                   template_name='components/user/logout.html',
                                    extra_context={'body_class': 'login-bg'}
                                    ),
                                name='logout'))
     urlpatterns.append(re_path(r'^accounts/password_change/',
                                django.contrib.auth.views.PasswordChangeView.as_view(
-                                   template_name='password_change.html',
+                                   template_name='components/password/password_change.html',
                                    ),
                                name='password_change'))
     urlpatterns.append(re_path(r'^accounts/password_change_done/',
                                django.contrib.auth.views.PasswordChangeDoneView.as_view(
-                                   template_name='password_change_done.html',
+                                   template_name='components/password/password_change_done.html',
                                    ),
                                name='password_change_done'))
     urlpatterns.append(re_path(r'^accounts/password_reset/$',
                                django.contrib.auth.views.PasswordResetView.as_view(
-                                   template_name='password_reset_form.html',
+                                   template_name='components/password/password_reset_form.html',
                                    ),
                                name='password_reset'))
     urlpatterns.append(re_path(r'^accounts/password_reset/done/',
                                django.contrib.auth.views.PasswordResetDoneView.as_view(
-                                   template_name='password_reset_done.html',
+                                   template_name='components/password/password_reset_done.html',
                                    ),
                                name='password_reset_done'))
     urlpatterns.append(re_path(r'^accounts/reset/(?P<uidb64>[0-9A-Za-z_\-]+)/' +
                                '(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]*)/',
                                django.contrib.auth.views.PasswordResetConfirmView.as_view(
-                                   template_name='password_reset_confirm.html',
+                                   template_name='components/password/password_reset_confirm.html',
                                    ),
                                name='password_reset_confirm'))
     urlpatterns.append(re_path(r'^accounts/reset/complete',
                                django.contrib.auth.views.PasswordResetCompleteView.as_view(
-                                   template_name='password_reset_complete.html',
+                                   template_name='components/password/password_reset_complete.html',
                                    ),
                                name='password_reset_complete'))

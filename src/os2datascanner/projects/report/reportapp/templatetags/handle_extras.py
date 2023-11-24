@@ -151,7 +151,7 @@ def merge_renderable_match_fragments(match_fragments: list):
     that these contain matches of renderable rules.
     Merges together matches to one result if there are multiple MatchFragments objects."""
 
-    # TODO: Refactor hit.html and this. It is a bit hacky and fragile.
+    # TODO: Refactor match.html and this. It is a bit hacky and fragile.
     match_fragments = [frag for frag in match_fragments
                        if frag.rule.type_label in RENDERABLE_RULES
                        and frag.matches]

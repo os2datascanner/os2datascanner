@@ -133,7 +133,7 @@ urlpatterns = [
             name='exchangescanner_run'),
     re_path(r'^exchangescanners/(?P<pk>\d+)/askrun/$',
             ExchangeScannerAskRun.as_view(
-                template_name='os2datascanner/scanner_askrun.html',
+                template_name='components/scanner/scanner_ask_run.html',
                 model=ExchangeScanner),
             name='scanner_askrun'),
     re_path(r'^exchangescanners/(?P<pk>\d+)/copy/$', ExchangeScannerCopy.as_view(),
@@ -152,7 +152,7 @@ urlpatterns = [
             name='webscanner_run'),
     re_path(r'^webscanners/(?P<pk>\d+)/askrun/$',
             WebScannerAskRun.as_view(
-                template_name='os2datascanner/scanner_askrun.html',
+                template_name='components/scanner/scanner_ask_run.html',
                 model=WebScanner),
             name='webscanner_askrun'),
     re_path(r'^webscanners/(?P<pk>\d+)/$', WebScannerUpdate.as_view(),
@@ -170,7 +170,7 @@ urlpatterns = [
             name='filescanner_run'),
     re_path(r'^filescanners/(?P<pk>\d+)/askrun/$',
             FileScannerAskRun.as_view(
-                template_name='os2datascanner/scanner_askrun.html',
+                template_name='components/scanner/scanner_ask_run.html',
                 model=FileScanner),
             name='filescanner_askrun'),
     re_path(r'^filescanners/(?P<pk>\d+)/copy/$',
@@ -188,7 +188,7 @@ urlpatterns = [
             name='dropboxscanner_run'),
     re_path(r'^dropboxscanners/(?P<pk>\d+)/askrun/$',
             DropboxScannerAskRun.as_view(
-                template_name='os2datascanner/scanner_askrun.html',
+                template_name='components/scanner/scanner_ask_run.html',
                 model=DropboxScanner),
             name='dropboxscanner_askrun'),
 
@@ -205,7 +205,7 @@ urlpatterns = [
             name='googledrivescanner_run'),
     re_path(r'^googledrivescanners/(?P<pk>\d+)/askrun/$',
             GoogleDriveScannerAskRun.as_view(
-                template_name='os2datascanner/scanner_askrun.html',
+                template_name='components/scanner/scanner_ask_run.html',
                 model=GoogleDriveScanner),
             name='googledrivescanner_askrun'),
     re_path(r'^googledrivescanners/(?P<pk>\d+)/copy/$', GoogleDriveScannerCopy.as_view(),
@@ -222,7 +222,7 @@ urlpatterns = [
             name='gmailscanner_run'),
     re_path(r'^gmailscanners/(?P<pk>\d+)/askrun/$',
             GmailScannerAskRun.as_view(
-                template_name='os2datascanner/scanner_askrun.html',
+                template_name='components/scanner/scanner_ask_run.html',
                 model=GmailScanner),
             name='gmailscanner_askrun'),
     re_path(r'^gmailscanners/(?P<pk>\d+)/copy/$',
@@ -240,7 +240,7 @@ urlpatterns = [
             name='sbsysscanner_run'),
     re_path(r'^sbsysscanners/(?P<pk>\d+)/askrun/$',
             SbsysScannerAskRun.as_view(
-                template_name='os2datascanner/scanner_askrun.html',
+                template_name='components/scanner/scanner_ask_run.html',
                 model=SbsysScanner),
             name='sbsysscanner_askrun'),
 
@@ -265,7 +265,7 @@ urlpatterns = [
             name='msgraphcalendarscanner_run'),
     re_path(r'^msgraph-calendarscanners/(?P<pk>\d+)/askrun/$',
             MSGraphCalendarAskRun.as_view(
-                template_name='os2datascanner/scanner_askrun.html',
+                template_name='components/scanner/scanner_ask_run.html',
                 model=MSGraphCalendarScanner),
             name='msgraphcalendarscanner_askrun'),
     re_path(r'^(msgraph-calendarscanners)/(\d+)/(created|saved)/$',
@@ -298,7 +298,7 @@ urlpatterns = [
             name='msgraphfilescanner_run'),
     re_path(r'^msgraph-filescanners/(?P<pk>\d+)/askrun/$',
             MSGraphFileAskRun.as_view(
-                template_name='os2datascanner/scanner_askrun.html',
+                template_name='components/scanner/scanner_ask_run.html',
                 model=MSGraphFileScanner),
             name='msgraphfilescanner_askrun'),
 
@@ -321,7 +321,7 @@ urlpatterns = [
             name='msgraphmailscanner_run'),
     re_path(r'^msgraph-mailscanners/(?P<pk>\d+)/askrun/$',
             MSGraphMailAskRun.as_view(
-                template_name='os2datascanner/scanner_askrun.html',
+                template_name='components/scanner/scanner_ask_run.html',
                 model=MSGraphMailScanner),
             name='msgraphmailscanner_askrun'),
     re_path(r'^(msgraph-mailscanners|msgraph-filescanners)/(\d+)/(created|saved)/$',
@@ -346,7 +346,7 @@ urlpatterns = [
             name='msgraphteamsfilescanner_run'),
     re_path(r'^msgraph-teams-filescanners/(?P<pk>\d+)/askrun/$',
             MSGraphTeamsFileAskRun.as_view(
-                template_name='os2datascanner/scanner_askrun.html',
+                template_name='components/scanner/scanner_ask_run.html',
                 model=MSGraphTeamsFileScanner),
             name='msgraphteamsfilescanner_askrun'),
     re_path(r'^(msgraph-teams-filescanners|msgraph-filescanners)/(\d+)/(created|saved)/$',
@@ -372,43 +372,43 @@ urlpatterns = [
     # Login/logout stuff
     re_path(r'^accounts/login/',
             django.contrib.auth.views.LoginView.as_view(
-                template_name='login.html',
+                template_name='components/user/login.html',
             ),
             name='login'),
     re_path(r'^accounts/logout/',
             django.contrib.auth.views.LogoutView.as_view(
-                template_name='logout.html',
+                template_name='components/user/logout.html',
             ),
             name='logout'),
     re_path(r'^accounts/password_change/',
             django.contrib.auth.views.PasswordChangeView.as_view(
-                template_name='password_change.html',
+                template_name='components/password/password_change.html',
             ),
             name='password_change'),
     re_path(r'^accounts/password_change_done/',
             django.contrib.auth.views.PasswordChangeDoneView.as_view(
-                template_name='password_change_done.html',
+                template_name='components/password/password_change_done.html',
             ),
             name='password_change_done'),
     re_path(r'^accounts/password_reset/$',
             django.contrib.auth.views.PasswordResetView.as_view(
-                template_name='password_reset_form.html',
+                template_name='components/password/password_reset_form.html',
             ),
             name='password_reset'),
     re_path(r'^accounts/password_reset/done/',
             django.contrib.auth.views.PasswordResetDoneView.as_view(
-                template_name='password_reset_done.html',
+                template_name='components/password/password_reset_done.html',
             ),
             name='password_reset_done'),
     re_path(r'^accounts/reset/(?P<uidb64>[0-9A-Za-z_\-]+)/' +
             '(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]*)/',
             django.contrib.auth.views.PasswordResetConfirmView.as_view(
-                template_name='password_reset_confirm.html',
+                template_name='components/password/password_reset_confirm.html',
             ),
             name='password_reset_confirm'),
     re_path(r'^accounts/reset/complete',
             django.contrib.auth.views.PasswordResetCompleteView.as_view(
-                template_name='password_reset_complete.html',
+                template_name='components/password/password_reset_complete.html',
             ),
             name='password_reset_complete'),
 

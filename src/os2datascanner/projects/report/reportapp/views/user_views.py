@@ -45,7 +45,7 @@ class AccountOutlookSettingForm(forms.ModelForm):
 
 
 class AccountOutlookSettingView(LoginRequiredMixin, DetailView):
-    template_name = "components/outlook_category_settings.html"
+    template_name = "components/user/outlook_category_settings.html"
     context_object_name = "account"
     model = Account
 
@@ -243,7 +243,7 @@ class AccountOutlookSettingView(LoginRequiredMixin, DetailView):
         response = HttpResponse()
         response.write(
             render_to_string(
-                template_name="components/snackbar.html",
+                template_name="components/modals/snackbar.html",
                 context={"messages": get_messages(request)},
                 request=request
             )

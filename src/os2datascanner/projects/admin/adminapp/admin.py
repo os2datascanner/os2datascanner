@@ -64,7 +64,7 @@ class RuleAdmin(admin.ModelAdmin):
 
 # Used to create custom field for customrule in django-changeform
 class CustomRuleWidget(forms.widgets.Widget):
-    template_name = "components/admin-widgets/rule-builder.html"
+    template_name = "components/admin_widgets/rule_builder.html"
 
     class Media:
         # Css is only caught when using --force-recreate on admin

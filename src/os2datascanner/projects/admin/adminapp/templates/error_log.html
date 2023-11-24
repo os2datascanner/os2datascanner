@@ -1,0 +1,258 @@
+{% extends 'components/common/base.html' %}
+{% load static %}
+{% load l10n %}
+{% load i18n %}
+{% load tz %}
+
+{% block scripts %}
+  <script src="{% static '3rdparty/htmx.min.js' %}"></script>
+  <script src="{% static 'js/tables/tableBehavior.js' %}"></script>
+  <script src="{% static 'js/scannerjob/highlightSearch.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+  {% include "components/common/header.html" %}
+  <main class="wrapper"
+        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+        hx-push-url="true">
+    {% include "components/common/main.html" with active_tab="status" %}
+
+    <div class="content">
+
+      {% include "components/navigation/scanner_tabs.html" with page="scan-status" %}
+
+      <div class="content-header">
+        <h1 class="page-title">{% trans "Error Log" %}</h1>
+      </div>
+
+      <form name="errorlog_filters"
+            id="errorlog_filters"
+            class="errorlog_filtering_wrapper"
+            onsubmit="return false"
+            hx-get="{% url "error-log" %}"
+            hx-trigger="keyup delay:200ms from:#search_field, search from:#search_field, change from:#show_seen"
+            hx-swap="outerHTML"
+            hx-include="[id='dropdown_options']"
+            hx-target=".error_content"
+            hx-select=".error_content">
+        <div class="search_field_wrapper">
+          <input type="search"
+                 name="search_field"
+                 id="search_field"
+                 placeholder="{% trans "Search for error message" %}"
+                 value="{{ request.GET.search_field }}"
+                 autocomplete="off" />
+        </div>
+        <div class="show_seen_wrapper">
+          <input type="checkbox"
+                 name="show_seen"
+                 id="show_seen"
+                 value="on"
+                 {% if show_seen %}checked{% endif %}
+                 autocomplete="off" />
+          <label for="show_seen">{% trans "Show seen error messages" %}</label>
+        </div>
+        <input type="hidden" name="order_by" id="order_by" value="{{ order_by }}">
+        <input type="hidden" name="order" id="order" value="{{ order }}">
+ 
+      </form>
+ 
+      {% if object_list %}
+        <div class="datatable-wrapper card error_content"
+             role="region"
+             tabindex="0"
+             aria-label="{% trans "Error Log" %}">
+          <form id="table_checkboxes">
+            <table class="datatable">
+              <colgroup>
+                <col class="datatable__column--checkbox">
+                <col class="datatable__column--automatic">
+                <col class="datatable__column--starttime">
+                <col class="datatable__column--path">
+                <col class="datatable__column--scan">
+                <col class="datatable__column--actions">
+              </colgroup>
+              <thead>
+                <tr class="table-topbar topbar-stick sticky">
+                  <th colspan="6">
+                    {% include "components/scanstatus/remove_error.html" %}
+                    <div class="view-options button-group">
+                      {% if new_error_logs > 0 %}
+                        <button type="button"
+                                class="button"
+                                name="see_all"
+                                hx-post=""
+                                hx-swap="outerHTML"
+                                hx-trigger="click"
+                                hx-target=".content"
+                                hx-select=".content"
+                                hx-confirm="{% trans "You are about to mark all error log messages as seen. This action cannot be reverted. Are you sure?" %}">
+                          <span>{% trans "Mark all as seen" %}</span>
+                        </button>
+                      {% endif %}
+                      <button type="button"
+                              class="button button--has-icon"
+                              name="remove_all"
+                              hx-post=""
+                              hx-swap="outerHTML"
+                              hx-trigger="click"
+                              hx-target=".content"
+                              hx-select=".content"
+                              hx-confirm="{% trans "You are about to remove" %} {{ page_obj.paginator.count }}{% trans " error logs. This action cannot be reverted. Are you sure?" %}">
+                        <svg class="icon">
+                          <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
+                        </svg>
+                        <span>{% trans "Remove all" %}</span>
+                      </button>
+                      <a class="button button--has-icon"
+                         title="{% trans "Export to CSV" %}"
+                         href='{% url "export-error-log" %}'>
+                        <span class="material-icons">file_download</span>
+                      {% trans "Export to CSV" %}</a>
+                    </div>
+                  </th>
+                </tr>
+                <tr class="column-headings sticky">
+                  <th class="datatable__column--checkbox">
+                    <div class="ds-checkbox">
+                      <input id="select-all" type="checkbox">
+                      <label for="select-all" title="{% trans "Select all" %}">
+                        <span class="screen-reader-only">{% trans 'Select all results' %}</span>
+                      </label>
+                    </div>
+                  </th>
+                  <th class="datatable__column--automatic">
+                    <label for="error-caret">
+                      <span>{% trans "Error" %}</span>
+                    </label>
+                    <button type="button"
+                            name="error_message"
+                            id="error-caret"
+                            class="order-by button button-caret button--has-icon{% if order_by == 'error_message' and order == 'descending' %} up{% endif %}"
+                            value="{% if order_by == 'error_message' and order == 'descending' %}ascending{% else %}descending{% endif %}"
+                            hx-get="{% url "error-log" %}"
+                            hx-swap="outerHTML"
+                            hx-trigger="click delay:100ms"
+                            hx-include="[id='dropdown_options'], [id='errorlog_filters']"
+                            hx-target=".error_content"
+                            hx-select=".error_content">
+                      <i class="material-icons" aria-hidden="true">expand_more</i>
+                    </button>
+                  </th>
+                  <th class="datatable__column--starttime">
+                    {% trans "Started" %}
+                    <button type="button"
+                            name="scan_status"
+                            id="scan-caret"
+                            class="order-by button button-caret button--has-icon{% if order_by == 'scan_status' and order == 'descending' %} up{% endif %}"
+                            value="{% if order_by == 'scan_status' and order == 'descending' %}ascending{% else %}descending{% endif %}"
+                            hx-get="{% url "error-log" %}"
+                            hx-swap="outerHTML"
+                            hx-trigger="click delay:100ms"
+                            hx-include="[id='dropdown_options'], [id='errorlog_filters']"
+                            hx-target=".error_content"
+                            hx-select=".error_content">
+                      <i class="material-icons" aria-hidden="true">expand_more</i>
+                    </button>
+                  </th>
+                  <th class="datatable__column--path">
+                    <label for="path-caret">
+                      <span>{% trans "Path" %}</span>
+                    </label>
+                    <button type="button"
+                            name="path"
+                            id="path-caret"
+                            class="order-by button button-caret button--has-icon{% if order_by == 'path' and order == 'descending' %} up{% endif %}"
+                            value="{% if order_by == 'path' and order == 'descending' %}ascending{% else %}descending{% endif %}"
+                            hx-get="{% url "error-log" %}"
+                            hx-swap="outerHTML"
+                            hx-trigger="click delay:100ms"
+                            hx-include="[id='dropdown_options'], [id='errorlog_filters']"
+                            hx-target=".error_content"
+                            hx-select=".error_content">
+                      <i class="material-icons" aria-hidden="true">expand_more</i>
+ 
+                    </button>
+                  </th>
+                  <th class="datatable__column--scan">
+                    <label for="scan-caret">
+                      <span>{% trans "Scan" %}</span>
+                    </label>
+                  </th>
+                  <th class="datatable__column--actions">{% trans "Actions" %}</th>
+                </tr>
+              </thead>
+ 
+              <tbody>
+                {% for error_log in object_list %}
+                  <tr id="usererrorlog_entry__{{ error_log.pk|unlocalize }}">
+                    <td class="datatable__column--checkbox">
+                      <div class="ds-checkbox">
+                        <input type="checkbox"
+                               id="table-checkbox-{{ error_log.pk|unlocalize }}"
+                               value="{{ error_log.pk|unlocalize }}"
+                               name="table-checkbox"
+                               class="datatable-checkbox"
+                               data-report-pk="{{ error_log.pk|unlocalize }}">
+                        <label for="table-checkbox-{{ error_log.pk|unlocalize }}">
+                          <span class="screen-reader-only">{% trans "Select results" %}</span>
+                        </label>
+                      </div>
+                    </td>
+                    <td class="datatable__column--name">
+                      {{ error_log.user_friendly_error_message }}
+                      {% if error_log.is_new %}
+ 
+                        <span class="bubble">{% trans "New" %}</span>
+                      {% endif %}
+                    </td>
+                    <td class="datatable__column--starttime">
+                      {% timezone "Europe/Copenhagen" %}
+                      {{ error_log.scan_status.start_time }}
+                    {% endtimezone %}
+                  </td>
+                  <td class="datatable__column--path">{{ error_log.path }}</td>
+                  <td class="datatable__column--automatic">{{ error_log.scan_status.scanner.name }}</td>
+                  <td class="datatable__column--actions">
+                    <div class="action-wrapper">
+                      <button type="button"
+                              class="button"
+                              name="remove_errorlog"
+                              hx-post=""
+                              hx-swap="outerHTML"
+                              hx-trigger="click"
+                              hx-target=".content"
+                              hx-select=".content"
+                              hx-vals='{"pk": "{{ error_log.pk|unlocalize }}"}'
+                              hx-indicator="closest tr">
+                        <svg class="icon">
+                          <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
+                        </svg>
+                      </button>
+                      {% if error_log.is_new %}
+                        <button type="button"
+                                class="button"
+                                name="see_errorlog"
+                                hx-post=""
+                                hx-swap="outerHTML"
+                                hx-trigger="click"
+                                hx-target=".content"
+                                hx-vals='{"pk": "{{ error_log.pk|unlocalize }}"}'
+                                hx-select=".content">{% trans "Mark as seen" %}</button>
+                      {% endif %}
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+            {% include "components/pagination/pagination.html" %}
+          </table>
+        </form>
+      </div>
+    {% else %}
+      <p class="error_content no-results">{% trans "no errors found."|capfirst %}</p>
+    {% endif %}
+  </div>
+
+</main>
+{% endblock %}

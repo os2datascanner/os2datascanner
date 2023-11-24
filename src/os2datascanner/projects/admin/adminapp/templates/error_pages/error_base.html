@@ -1,0 +1,24 @@
+{% extends 'components/common/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block error_page_title %}{% endblock %}
+
+{% block body %}
+  {% include "components/common/header.html" %}
+  <main class="wrapper error-page">
+    {% if request.user.is_authenticated %}
+      {% include "components/common/main.html" %}
+    {% endif %}
+    <div class="content">
+
+      <img src="{% static 'svg/errorpage.svg' %}" alt="" class="error-splash">
+
+      <h1 class="page-title">
+        {% block error_heading %}{% endblock %}
+      </h1>
+
+      {% block error_content %}{% endblock %}
+    </div>
+  </main>
+{% endblock %}

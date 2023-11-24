@@ -10,7 +10,7 @@ from os2datascanner.core_organizational_structure.models.organization import (
 
 
 class SupportButtonView(TemplateView):
-    template_name = "components/service.html"
+    template_name = "components/common/support_button.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.org = request.user.account.organization

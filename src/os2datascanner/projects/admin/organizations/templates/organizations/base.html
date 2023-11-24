@@ -1,4 +1,4 @@
-{% extends 'partials/base.html' %}
+{% extends 'components/common/base.html' %}
 {% load static %}
 {% load i18n %}
 
@@ -6,7 +6,7 @@
   <script src="{% static '3rdparty/htmx.min.js' %}"></script>
   <script src="{% static "3rdparty/jquery.modal.js" %} "></script>
   <script src="{% static "js/index.js" %}"></script>
-  <script src="{% static 'js/options.js' %}"></script>
+  <script src="{% static 'js/filters/options.js' %}"></script>
   <link href="{% static 'recurrence/css/recurrence.css' %}" rel="stylesheet" />
   <script type="text/javascript" src="/jsi18n/"></script>
   <script type="text/javascript" src="/admin/jsi18n/"></script>
@@ -14,17 +14,17 @@
   <script type="text/javascript"
           src="{% static 'admin/js/vendor/jquery/jquery.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'admin/js/jquery.init.js' %}"></script>
-  <script src="{% static 'js/recurrence.js' %}"></script>
-  <script src="{% static 'js/recurrence-widget.js' %}"></script>
+  <script src="{% static 'js/recurrence_widget/recurrence.js' %}"></script>
+  <script src="{% static 'js/recurrence_widget/recurrence-widget.js' %}"></script>
   <script type="text/javascript"
           src="{% static 'recurrence/js/recurrence-widget.init.js' %}"></script>
-  <script src="{% static 'js/orgUnitOverview.js' %}"></script>
+  <script src="{% static 'js/organization/orgUnitOverview.js' %}"></script>
 {% endblock %}
 
 {% block body %}
   <!-- override with empty block to remove header -->
   {% block header %}
-    {% include 'partials/header.html' %}
+    {% include 'components/common/header.html' %}
   {% endblock %}
   <meta name="htmx-config"
         content='{"historyEnabled": "false", "historyCacheSize": "0"}'>
@@ -33,7 +33,7 @@
     {% block sidenav %}
       <section class="sidemenu" id="sidemenu" aria-labelledby="navigation-toggle">
         <!-- TODO: does it make sense to separate the tag from the rest? -->
-        {% include "components/navigation.html" with active_tab="organizations" %}
+        {% include "components/navigation/navigation.html" with active_tab="organizations" %}
       </section>
     {% endblock %}
 

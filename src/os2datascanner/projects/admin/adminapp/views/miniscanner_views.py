@@ -22,7 +22,7 @@ logger = structlog.get_logger(__name__)
 
 
 class MiniScanner(TemplateView, LoginRequiredMixin):
-    template_name = "os2datascanner/miniscan.html"
+    template_name = "miniscan.html"
 
     def dispatch(self, request, *args, **kwargs):
         if (settings.MINISCAN_REQUIRES_LOGIN
@@ -93,4 +93,4 @@ def execute_mini_scan(request):  # noqa:CCR001
             else:
                 logger.warning("Miniscanner - Rejected file that exceeded the size limit.")
 
-    return render(request, "components/miniscan-results.html", context)
+    return render(request, "components/miniscanner/miniscan_results.html", context)

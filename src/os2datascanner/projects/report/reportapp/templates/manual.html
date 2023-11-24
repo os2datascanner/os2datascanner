@@ -1,10 +1,10 @@
 {%  load i18n %}
 {% load static %}
-{% include "partials/scripts.html" %}
-{% include "partials/header.html" %}
-{% include "components/banner.html" %}
+{% include "components/common/scripts.html" %}
+{% include "components/common/header.html" %}
+{% include "components/common/banner.html" %}
 
-<script src="{% static 'js/manualHighlighting.js' %} "></script>
+<script src="{% static 'js/manual/manualHighlighting.js' %} "></script>
 
 <body>
 
@@ -223,5 +223,5 @@
 
   </main>
 
-  {% include "partials/scripts.html" %}
+  {% include "components/common/scripts.html" %}
 </body>

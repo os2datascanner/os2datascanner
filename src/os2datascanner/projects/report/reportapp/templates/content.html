@@ -51,13 +51,13 @@
 </div>
 
 {% if "/remediator" in request.path and not user.account.is_remediator %}
-  {% include "components/remediator-error-page.html" %}
+  {% include "error_pages/remediator-error-page.html" %}
 {% else %}
-  {% include "components/filters.html" %}
+  {% include "components/reports/filters.html" %}
   {% if page_obj.paginator.count == 0 %}
     <p class="no-results">{% trans "No results were found" %}</p>
   {% else %}
-    {% include "components/hits.html" %}
+    {% include "components/reports/match_table.html" %}
   {% endif %}
 {% endif %}
 
