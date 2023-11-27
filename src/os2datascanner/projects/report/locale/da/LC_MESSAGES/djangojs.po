@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-24 12:56+0100\n"
+"POT-Creation-Date: 2023-11-24 10:55+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,525 +21,515 @@ msgstr ""
 #: dist/js/analysisBar-ChartJS3.js:113 dist/js/analysisChartWrapper.js:83
 #: js/analysisBar-ChartJS3.js:113 js/analysisChartWrapper.js:83
 msgid "Number of files"
-msgstr "Antal filer"
+msgstr ""
 
 #: dist/js/analysisBar-ChartJS3.js:167 dist/js/analysisPie-ChartJS3.js:126
 #: js/analysisBar-ChartJS3.js:167 js/analysisPie-ChartJS3.js:126
 msgid "file"
-msgstr "fil"
+msgstr ""
 
 #: dist/js/analysisBar-ChartJS3.js:170 dist/js/analysisPie-ChartJS3.js:14
 #: dist/js/analysisPie-ChartJS3.js:129 js/analysisBar-ChartJS3.js:170
 #: js/analysisPie-ChartJS3.js:14 js/analysisPie-ChartJS3.js:129
 msgid "files"
-msgstr "filer"
+msgstr ""
 
 #: dist/js/analysisChartWrapper.js:84 js/analysisChartWrapper.js:84
 msgid "Storage space"
-msgstr "Plads"
+msgstr ""
 
 #: dist/js/barCharts.js:23 js/barCharts.js:23
 msgid "No data available"
 msgstr "Ingen data"
 
-#: dist/js/doughnutCharts.js:185 dist/js/pieCharts.js:66
-#: js/doughnutCharts.js:185 js/pieCharts.js:66
-msgid "No data"
-msgstr "Ingen data"
-
 #: dist/js/dropdowntree.js:62 js/dropdowntree.js:62
 msgid "Select one or more organizational units"
-msgstr "Vælg en eller flere organisatoriske enheder"
+msgstr ""
 
 #: dist/js/ldapConfig.js:33 js/ldapConfig.js:33
 msgid "Connection succeeded"
-msgstr "Forbindelse oprettet"
+msgstr ""
 
 #: dist/js/ldapConfig.js:38 js/ldapConfig.js:38
 msgid "Connection failed"
-msgstr "Forbindelsen mislykkedes"
+msgstr ""
 
 #: dist/js/ldapConfig.js:70 js/ldapConfig.js:70
 msgid "Authentication succeeded"
-msgstr "Autentificeret"
+msgstr ""
 
 #: dist/js/ldapConfig.js:75 js/ldapConfig.js:75
 msgid "Authentication failed"
-msgstr "Autentificering mislykkedes"
+msgstr ""
 
 #: dist/js/ldapSync.js:26 js/ldapSync.js:26
 msgid "Pending..."
-msgstr "Afventer..."
+msgstr ""
 
 #: dist/js/ldapSync.js:43 js/ldapSync.js:43
 msgid "Synchronization succeeded"
-msgstr "Synkronisering lykkedes"
+msgstr ""
 
 #: dist/js/ldapSync.js:48 js/ldapSync.js:48
 msgid "Synchronization failed"
-msgstr "Synkronisering fejlede"
-
-#: dist/js/pieCharts.js:103 js/pieCharts.js:103
-msgid "No Data"
-msgstr "Ingen data"
+msgstr ""
 
 #: dist/js/recurrence-widget.js:1962 js/recurrence-widget.js:1962
 msgid "including"
-msgstr "inkluderer"
+msgstr ""
 
 #: dist/js/recurrence-widget.js:1962 js/recurrence-widget.js:1962
 msgid "excluding"
-msgstr "ekskluderer"
+msgstr ""
 
 #: dist/js/recurrence-widget.js:1966 js/recurrence-widget.js:1966
 msgid "Frequency"
-msgstr "Interval"
+msgstr ""
 
 #: dist/js/recurrence-widget.js:1967 js/recurrence-widget.js:1967
 msgid "On the"
-msgstr "den"
+msgstr ""
 
-# Assumed it was "on the 'date'"
 #: dist/js/recurrence-widget.js:1968 js/recurrence-widget.js:1968
 msgid "Each"
-msgstr "Hver"
+msgstr ""
 
 #: dist/js/recurrence-widget.js:1969 js/recurrence-widget.js:1969
 msgid "Every"
-msgstr "Hver"
+msgstr ""
 
 #: dist/js/recurrence-widget.js:1970 js/recurrence-widget.js:1970
 msgid "Until"
-msgstr "Indtil"
+msgstr ""
 
 #: dist/js/recurrence-widget.js:1971 js/recurrence-widget.js:1971
 msgid "Occurs %(number)s time"
-msgstr "Opstår %(number)s gang"
+msgstr ""
 
 #: dist/js/recurrence-widget.js:1972 js/recurrence-widget.js:1972
 msgid "Occurs %(number)s times"
-msgstr "Opstår %(number)s gange"
+msgstr ""
 
 #: dist/js/recurrence-widget.js:1973 js/recurrence-widget.js:1973
 msgid "Date"
-msgstr "Dato"
+msgstr ""
 
 #: dist/js/recurrence-widget.js:1974 js/recurrence-widget.js:1974
 msgid "Time"
-msgstr "Gang"
+msgstr ""
 
 #: dist/js/recurrence-widget.js:1975 js/recurrence-widget.js:1975
 msgid "Repeat until"
-msgstr "Gentag indtil"
+msgstr ""
 
 #: dist/js/recurrence-widget.js:1976 js/recurrence-widget.js:1976
 msgid "Exclude these occurences"
-msgstr "Ekskluder disse hændelser"
+msgstr ""
 
 #: dist/js/recurrence-widget.js:1977 js/recurrence-widget.js:1977
 msgid "Exclude this date"
-msgstr "Ekskluder denne dato"
+msgstr ""
 
 #: dist/js/recurrence-widget.js:1978 js/recurrence-widget.js:1978
 msgid "Add interval"
-msgstr "Tilføj interval"
+msgstr ""
 
 #: dist/js/recurrence-widget.js:1979 js/recurrence-widget.js:1979
 msgid "Add date"
-msgstr "Tilføj dato"
+msgstr ""
 
 #: dist/js/recurrence-widget.js:1980 js/recurrence-widget.js:1980
 msgid "Remove"
-msgstr "Fjern"
+msgstr ""
 
 #: dist/js/recurrence-widget.js:1981 js/recurrence-widget.js:1981
 msgid "Calendar"
-msgstr "Kalender"
+msgstr ""
 
 #: dist/js/recurrence.js:1069 js/recurrence.js:1069
 msgid "midnight"
-msgstr "midnat"
+msgstr ""
 
 #: dist/js/recurrence.js:1070 js/recurrence.js:1070
 msgid "noon"
-msgstr "middag"
+msgstr ""
 
 #: dist/js/recurrence.js:1071 js/recurrence.js:1071
 msgid "on the %(items)s"
-msgstr "den %(items)s"
+msgstr ""
 
 #: dist/js/recurrence.js:1072 js/recurrence.js:1072
 msgid "every %(number)s %(freq)s"
-msgstr "hver %(number)s. %(freq)s"
+msgstr ""
 
 #: dist/js/recurrence.js:1073 js/recurrence.js:1073
 msgid "each %(items)s"
-msgstr "hver %(items)s"
+msgstr ""
 
 #: dist/js/recurrence.js:1074 js/recurrence.js:1074
 msgid "occuring %(number)s time"
-msgstr "opstår %(number)s gang"
+msgstr ""
 
 #: dist/js/recurrence.js:1075 js/recurrence.js:1075
 msgid "occuring %(number)s times"
-msgstr "opstår %(number)s gange"
+msgstr ""
 
 #: dist/js/recurrence.js:1076 js/recurrence.js:1076
 msgid "until %(date)s"
-msgstr "indtil %(date)s"
+msgstr ""
 
 #: dist/js/recurrence.js:1080 js/recurrence.js:1080
 msgid "year"
-msgstr "år"
+msgstr ""
 
 #: dist/js/recurrence.js:1080 js/recurrence.js:1080
 msgid "month"
-msgstr "måned"
+msgstr ""
 
 #: dist/js/recurrence.js:1080 js/recurrence.js:1080
 msgid "week"
-msgstr "uge"
+msgstr ""
 
 #: dist/js/recurrence.js:1080 js/recurrence.js:1080
 msgid "day"
-msgstr "dag"
+msgstr ""
 
 #: dist/js/recurrence.js:1081 js/recurrence.js:1081
 msgid "hour"
-msgstr "time"
+msgstr ""
 
 #: dist/js/recurrence.js:1081 js/recurrence.js:1081
 msgid "minute"
-msgstr "minut"
+msgstr ""
 
 #: dist/js/recurrence.js:1081 js/recurrence.js:1081
 msgid "second"
-msgstr "sekund"
+msgstr ""
 
 #: dist/js/recurrence.js:1084 js/recurrence.js:1084
 msgid "years"
-msgstr "år"
+msgstr ""
 
 #: dist/js/recurrence.js:1084 js/recurrence.js:1084
 msgid "months"
-msgstr "måneder"
+msgstr ""
 
 #: dist/js/recurrence.js:1084 js/recurrence.js:1084
 msgid "weeks"
-msgstr "uger"
+msgstr ""
 
 #: dist/js/recurrence.js:1084 js/recurrence.js:1084
 msgid "days"
-msgstr "dage"
+msgstr ""
 
 #: dist/js/recurrence.js:1085 js/recurrence.js:1085
 msgid "hours"
-msgstr "timer"
+msgstr ""
 
 #: dist/js/recurrence.js:1085 js/recurrence.js:1085
 msgid "minutes"
-msgstr "minutter"
+msgstr ""
 
 #: dist/js/recurrence.js:1085 js/recurrence.js:1085
 msgid "seconds"
-msgstr "sekunder"
+msgstr ""
 
 #: dist/js/recurrence.js:1088 js/recurrence.js:1088
 msgid "annually"
-msgstr "årligt"
+msgstr ""
 
 #: dist/js/recurrence.js:1088 js/recurrence.js:1088
 msgid "monthly"
-msgstr "månedligt"
+msgstr ""
 
 #: dist/js/recurrence.js:1088 js/recurrence.js:1088
 msgid "weekly"
-msgstr "ugentligt"
+msgstr ""
 
 #: dist/js/recurrence.js:1088 js/recurrence.js:1088
 msgid "daily"
-msgstr "dagligt"
+msgstr ""
 
 #: dist/js/recurrence.js:1089 js/recurrence.js:1089
 msgid "hourly"
-msgstr "hver time"
+msgstr ""
 
 #: dist/js/recurrence.js:1089 js/recurrence.js:1089
 msgid "minutely"
-msgstr "hvert minut"
+msgstr ""
 
 #: dist/js/recurrence.js:1089 js/recurrence.js:1089
 msgid "secondly"
-msgstr "hvert sekund"
+msgstr ""
 
 #: dist/js/recurrence.js:1092 js/recurrence.js:1092
 msgid "Monday"
-msgstr "Mandag"
+msgstr ""
 
 #: dist/js/recurrence.js:1092 js/recurrence.js:1092
 msgid "Tuesday"
-msgstr "Tirsdag"
+msgstr ""
 
 #: dist/js/recurrence.js:1092 js/recurrence.js:1092
 msgid "Wednesday"
-msgstr "Onsdag"
+msgstr ""
 
 #: dist/js/recurrence.js:1092 js/recurrence.js:1092
 msgid "Thursday"
-msgstr "Torsdag"
+msgstr ""
 
 #: dist/js/recurrence.js:1093 js/recurrence.js:1093
 msgid "Friday"
-msgstr "Fredag"
+msgstr ""
 
 #: dist/js/recurrence.js:1093 js/recurrence.js:1093
 msgid "Saturday"
-msgstr "Lørdag"
+msgstr ""
 
 #: dist/js/recurrence.js:1093 js/recurrence.js:1093
 msgid "Sunday"
-msgstr "Søndag"
+msgstr ""
 
 #: dist/js/recurrence.js:1096 js/recurrence.js:1096
 msgid "Mon"
-msgstr "Man"
+msgstr ""
 
 #: dist/js/recurrence.js:1096 js/recurrence.js:1096
 msgid "Tue"
-msgstr "Tir"
+msgstr ""
 
 #: dist/js/recurrence.js:1096 js/recurrence.js:1096
 msgid "Wed"
-msgstr "Ons"
+msgstr ""
 
 #: dist/js/recurrence.js:1096 js/recurrence.js:1096
 msgid "Thu"
-msgstr "Tor"
+msgstr ""
 
 #: dist/js/recurrence.js:1097 js/recurrence.js:1097
 msgid "Fri"
-msgstr "Fre"
+msgstr ""
 
 #: dist/js/recurrence.js:1097 js/recurrence.js:1097
 msgid "Sat"
-msgstr "Lør"
+msgstr ""
 
 #: dist/js/recurrence.js:1097 js/recurrence.js:1097
 msgid "Sun"
-msgstr "Søn"
+msgstr ""
 
 #: dist/js/recurrence.js:1100 js/recurrence.js:1100
 msgid "M"
-msgstr "M"
+msgstr ""
 
 #: dist/js/recurrence.js:1100 js/recurrence.js:1100
 msgid "T"
-msgstr "T"
+msgstr ""
 
 #: dist/js/recurrence.js:1100 js/recurrence.js:1100
 msgid "W"
-msgstr "O"
+msgstr ""
 
 #: dist/js/recurrence.js:1101 js/recurrence.js:1101
 msgid "F"
-msgstr "F"
+msgstr ""
 
 #: dist/js/recurrence.js:1101 js/recurrence.js:1101
 msgid "S"
-msgstr "L"
+msgstr ""
 
 #: dist/js/recurrence.js:1104 js/recurrence.js:1104
 msgid "first %(weekday)s"
-msgstr "første %(weekday)s"
+msgstr ""
 
 #: dist/js/recurrence.js:1105 js/recurrence.js:1105
 msgid "second %(weekday)s"
-msgstr "anden %(weekday)s"
+msgstr ""
 
 #: dist/js/recurrence.js:1106 js/recurrence.js:1106
 msgid "third %(weekday)s"
-msgstr "tredje %(weekday)s"
+msgstr ""
 
 #: dist/js/recurrence.js:1107 dist/js/recurrence.js:1115 js/recurrence.js:1107
 #: js/recurrence.js:1115
 msgid "last %(weekday)s"
-msgstr "sidste %(weekday)s"
+msgstr ""
 
 #: dist/js/recurrence.js:1108 js/recurrence.js:1108
 msgid "second last %(weekday)s"
-msgstr "anden sidste %(weekday)s"
+msgstr ""
 
 #: dist/js/recurrence.js:1109 js/recurrence.js:1109
 msgid "third last %(weekday)s"
-msgstr "tredje sidste %(weekday)s"
+msgstr ""
 
 #: dist/js/recurrence.js:1112 js/recurrence.js:1112
 msgid "1st %(weekday)s"
-msgstr "1. %(weekday)s"
+msgstr ""
 
 #: dist/js/recurrence.js:1113 js/recurrence.js:1113
 msgid "2nd %(weekday)s"
-msgstr "2. %(weekday)s"
+msgstr ""
 
 #: dist/js/recurrence.js:1114 js/recurrence.js:1114
 msgid "3rd %(weekday)s"
-msgstr "3. %(weekday)s"
+msgstr ""
 
 #: dist/js/recurrence.js:1116 js/recurrence.js:1116
 msgid "2nd last %(weekday)s"
-msgstr "2. sidste %(weekday)s"
+msgstr ""
 
 #: dist/js/recurrence.js:1117 js/recurrence.js:1117
 msgid "3rd last %(weekday)s"
-msgstr "3. sidste %(weekday)s"
+msgstr ""
 
 #: dist/js/recurrence.js:1120 js/recurrence.js:1120
 msgid "January"
-msgstr "januar"
+msgstr ""
 
 #: dist/js/recurrence.js:1120 js/recurrence.js:1120
 msgid "February"
-msgstr "februar"
+msgstr ""
 
 #: dist/js/recurrence.js:1120 dist/js/recurrence.js:1132 js/recurrence.js:1120
 #: js/recurrence.js:1132
 msgid "March"
-msgstr "marts"
+msgstr ""
 
 #: dist/js/recurrence.js:1121 dist/js/recurrence.js:1133 js/recurrence.js:1121
 #: js/recurrence.js:1133
 msgid "April"
-msgstr "april"
+msgstr ""
 
 #: dist/js/recurrence.js:1121 dist/js/recurrence.js:1127
 #: dist/js/recurrence.js:1133 js/recurrence.js:1121 js/recurrence.js:1127
 #: js/recurrence.js:1133
 msgid "May"
-msgstr "maj"
+msgstr ""
 
 #: dist/js/recurrence.js:1121 dist/js/recurrence.js:1133 js/recurrence.js:1121
 #: js/recurrence.js:1133
 msgid "June"
-msgstr "juni"
+msgstr ""
 
 #: dist/js/recurrence.js:1122 dist/js/recurrence.js:1134 js/recurrence.js:1122
 #: js/recurrence.js:1134
 msgid "July"
-msgstr "juli"
+msgstr ""
 
 #: dist/js/recurrence.js:1122 js/recurrence.js:1122
 msgid "August"
-msgstr "august"
+msgstr ""
 
 #: dist/js/recurrence.js:1122 js/recurrence.js:1122
 msgid "September"
-msgstr "september"
+msgstr ""
 
 #: dist/js/recurrence.js:1123 js/recurrence.js:1123
 msgid "October"
-msgstr "oktober"
+msgstr ""
 
 #: dist/js/recurrence.js:1123 js/recurrence.js:1123
 msgid "November"
-msgstr "november"
+msgstr ""
 
 #: dist/js/recurrence.js:1123 js/recurrence.js:1123
 msgid "December"
-msgstr "december"
+msgstr ""
 
 #: dist/js/recurrence.js:1126 js/recurrence.js:1126
 msgid "Jan"
-msgstr "jan"
+msgstr ""
 
 #: dist/js/recurrence.js:1126 js/recurrence.js:1126
 msgid "Feb"
-msgstr "feb"
+msgstr ""
 
 #: dist/js/recurrence.js:1126 js/recurrence.js:1126
 msgid "Mar"
-msgstr "mar"
+msgstr ""
 
 #: dist/js/recurrence.js:1127 js/recurrence.js:1127
 msgid "Apr"
-msgstr "apr"
+msgstr ""
 
 #: dist/js/recurrence.js:1127 js/recurrence.js:1127
 msgid "Jun"
-msgstr "jun"
+msgstr ""
 
 #: dist/js/recurrence.js:1128 js/recurrence.js:1128
 msgid "Jul"
-msgstr "jul"
+msgstr ""
 
 #: dist/js/recurrence.js:1128 js/recurrence.js:1128
 msgid "Aug"
-msgstr "aug"
+msgstr ""
 
 #: dist/js/recurrence.js:1128 js/recurrence.js:1128
 msgid "Sep"
-msgstr "sep"
+msgstr ""
 
 #: dist/js/recurrence.js:1129 js/recurrence.js:1129
 msgid "Oct"
-msgstr "okt"
+msgstr ""
 
 #: dist/js/recurrence.js:1129 js/recurrence.js:1129
 msgid "Nov"
-msgstr "nov"
+msgstr ""
 
 #: dist/js/recurrence.js:1129 js/recurrence.js:1129
 msgid "Dec"
-msgstr "dec"
+msgstr ""
 
 #: dist/js/recurrence.js:1132 js/recurrence.js:1132
 msgid "Jan."
-msgstr "jan."
+msgstr ""
 
 #: dist/js/recurrence.js:1132 js/recurrence.js:1132
 msgid "Feb."
-msgstr "feb."
+msgstr ""
 
 #: dist/js/recurrence.js:1134 js/recurrence.js:1134
 msgid "Aug."
-msgstr "aug."
+msgstr ""
 
 #: dist/js/recurrence.js:1134 js/recurrence.js:1134
 msgid "Sept."
-msgstr "sep."
+msgstr ""
 
 #: dist/js/recurrence.js:1135 js/recurrence.js:1135
 msgid "Oct."
-msgstr "okt."
+msgstr ""
 
 #: dist/js/recurrence.js:1135 js/recurrence.js:1135
 msgid "Nov."
-msgstr "nov."
+msgstr ""
 
 #: dist/js/recurrence.js:1135 js/recurrence.js:1135
 msgid "Dec."
-msgstr "dec."
+msgstr ""
 
 #: dist/js/recurrence.js:1138 js/recurrence.js:1138
 msgid "a.m."
-msgstr "om morgenen"
+msgstr ""
 
 #: dist/js/recurrence.js:1138 js/recurrence.js:1138
 msgid "p.m."
-msgstr "om eftermiddagen"
+msgstr ""
 
 #: dist/js/recurrence.js:1139 js/recurrence.js:1139
 msgid "AM"
-msgstr "om morgenen"
+msgstr ""
 
 #: dist/js/recurrence.js:1139 js/recurrence.js:1139
 msgid "PM"
-msgstr "om eftermiddagen"
+msgstr ""
 
 #: dist/js/statusTimelines.js:44 js/statusTimelines.js:44
 msgid "Seconds since start of scan"
-msgstr "Sekunder siden scannet blev startet"
+msgstr ""
 
 #: dist/js/statusTimelines.js:50 js/statusTimelines.js:50
 #, javascript-format
 msgid "% scanned"
-msgstr "% scannet"
+msgstr ""

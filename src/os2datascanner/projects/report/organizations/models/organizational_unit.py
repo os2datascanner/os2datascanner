@@ -16,15 +16,37 @@ from os2datascanner.core_organizational_structure.models import \
 from os2datascanner.core_organizational_structure.models import \
     OrganizationalUnitSerializer as Core_OrganizationalUnitSerializer
 
+from django.db import models
 from rest_framework import serializers
 from rest_framework.fields import UUIDField
 from ..seralizer import BaseBulkSerializer, SelfRelatingField
+from django.db.models import Count, Q
+
+
+class OrganizationlUnitManager(models.Manager):
+    def with_match_counts(self):
+        return self.annotate(
+            total_ou_matches=Count(
+                'positions__account__aliases__match_relation',
+                filter=Q(
+                    positions__account__aliases__match_relation__number_of_matches__gte=1,
+                    positions__account__aliases__match_relation__only_notify_superadmin=False),
+                distinct=True),
+            handled_ou_matches=Count(
+                'positions__account__aliases__match_relation',
+                filter=Q(
+                    positions__account__aliases__match_relation__resolution_status__isnull=False,
+                    positions__account__aliases__match_relation__number_of_matches__gte=1,
+                    positions__account__aliases__match_relation__only_notify_superadmin=False),
+                distinct=True))
 
 
 class OrganizationalUnit(Core_OrganizationalUnit):
     """ Core logic lives in the core_organizational_structure app.
       Additional logic can be implemented here, but currently, none needed, hence we pass. """
     serializer_class = None
+
+    objects = OrganizationlUnitManager()
 
 
 class OrganizationalUnitBulkSerializer(BaseBulkSerializer):

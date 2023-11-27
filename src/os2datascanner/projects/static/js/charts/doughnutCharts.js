@@ -1,4 +1,4 @@
-/* exported drawDoughnut */
+	/* exported drawDoughnut */
 
 function makeDoughnutChart(text, data, colors, chartElement) {
 	const doughnutChart = new Chart(chartElement, {
@@ -182,7 +182,7 @@ function drawDoughnut(totalHandledMatches, totalMatches, handledPercentage) {
 	var totalHandledDoughnutChartCtx = document.querySelector("#doughnut_chart_total").getContext('2d');
 	charts.push(makeDoughnutChart(
 		// logic to avoid 0 divided by 0 being NaN
-		isNaN(handledPercentage) ? 0 : handledPercentage.toFixed(0) + '%',
+		isNaN(handledPercentage) ? gettext('No data') : handledPercentage.toFixed(0) + '%',
 		[totalHandledMatches, (totalMatches - totalHandledMatches)],
 		['#21759c', '#f5f5f5'],
 		totalHandledDoughnutChartCtx

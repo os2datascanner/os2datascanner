@@ -10,6 +10,12 @@
 	}
 }
 
+
+.org-unit-text,
+.employee-count-text {
+	color: var(--color-text-secondary);
+}
+
 .stats_dropdown {
 	width: 15rem;
 }
@@ -17,11 +23,129 @@
 .statistic_wrapper {
 	display: flex;
 	flex-wrap: wrap;
+	justify-content: space-around;
+	margin-bottom: 1rem;
 }
 
-.org-unit-text,
-.employee-count-text {
-	color: var(--color-text-secondary);
+.statistic_total_container {
+	display: flex;
+	flex-wrap: wrap;
+	margin-bottom: 1rem;
+	justify-content: start;
+
+	@media (max-width: $break-lg) {
+		justify-content: space-around;
+	}
+
+	.statistic_total_count {
+		font-size: 4rem;
+		font-weight: 600;
+		color: black;
+	}
+}
+
+.dropdown-container {
+	display: none;
+	position: absolute;
+	z-index: 100;
+
+	// Apply this to make z-index work on iPad OS
+	transform: translate3d(0, 0, 0);
+	-webkit-transform: translate3d(0, 0, 0);
+  
+	&:hover {
+	  display: block;
+	}
+}
+
+.graph-zoom-info {
+	background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: inherit;
+	outline: inherit;
+	bottom: 1.45rem;
+	top: 0.8rem;
+	right: 2rem;
+
+	&.expand {
+		cursor: help;
+		float: right;
+
+		&:focus+.dropdown-container,
+		&:hover+.dropdown-container {
+			display: block;
+		}
+	}
+}
+
+.graph-zoom-info-dropdown {
+	position: absolute;
+	width: 12rem;
+	z-index: 100;
+	padding: 0.5rem;
+	border-radius: var(--border-radius-default);
+	background-color: var(--color-widget-bg);
+	box-shadow: var(--box-shadow-widget);
+	font-size: medium;
+	right: 1rem;
+
+	@media (min-width: $break-lg) {
+		width: 18.9rem;
+	}
+  
+	&:hover,
+	&:active {
+	  	display: block;
+	}
+}
+  
+.total-box-info-dropdown {
+	position: relative;
+	width: 12rem;
+	left: 10rem;
+	z-index: 100;
+	padding: 0.5rem;
+	border-radius: var(--border-radius-default);
+	background-color: var(--color-widget-bg);
+	box-shadow: var(--box-shadow-widget);
+	font-size: medium;
+	right: 8rem;
+
+	@media (min-width: $break-lg) {
+		width: 18.9rem;
+	}
+	@media (max-width: $break-lg) {
+		left: 7rem;
+	}
+  
+	&:hover,
+	&:active {
+	  	display: block;
+	}
+}
+  
+.total_box_info {
+	background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: inherit;
+	outline: inherit;
+	bottom: 1.45rem;
+
+	&.expand {
+		cursor: help;
+		float: right;
+
+		&:focus+.dropdown-container,
+		&:hover+.dropdown-container {
+			display: block;
+		}
+	}
 }
 
 .statistic {
@@ -35,11 +159,26 @@
 	width: 100%;
 	height: fit-content;
 	max-width: none;
+	margin-bottom: 1rem;
+	margin: 1.75rem;
 
-	@media (min-width: $break-lg) {
-		border-radius: var(--border-radius-widget);
-		margin: 1.75rem;
-		max-width: fit-content;
+	.statistic_header_total {
+		display: block;
+		margin: -.5rem -.5rem 1.5rem;
+
+		i {
+			float: right;
+		}
+
+		.page-title__sub {
+			margin-bottom: 0;
+		}
+
+		>div {
+			margin: .5rem;
+			flex: 0 1 auto; // make explicit for IE11's sake
+		}
+
 	}
 
 	.statistic_header {
@@ -53,11 +192,17 @@
 			margin-bottom: 0;
 		}
 
+		.statistic_header_nav {
+			display: flex;
+			position: absolute;
+
+			right: 0;
+		}
+
 		>div {
 			margin: .5rem;
 			flex: 0 1 auto; // make explicit for IE11's sake
 		}
-
 	}
 
 	p {
@@ -78,7 +223,6 @@
 }
 
 .scannerjob-list {
-
 	li {
 		display: flex;
 		align-items: center;
@@ -90,11 +234,69 @@
 	}
 }
 
-.chart_container {
-	max-height: 32rem;
+.clear_button_dpo {
+	margin-top: 2rem;
+	font-size: medium;
+}
 
+.data_box {
+	
+	border-radius: var(--border-radius-widget);
+	
+	@media (max-width: $break-lg) {
+		p {
+			width: 27rem;
+		}
+	}
+	
+	&.small {
+		height: 14.5rem;
+		width: 31rem;
+		
+		@media (max-width: $break-lg) {
+			height: 15.4rem;
+			width: 21rem;
+		}
+	}
+
+	&.medium {
+		max-width: 46rem;
+		height: 32rem;
+		width: 46rem;
+	}
+
+	&.large {
+		height: 54rem;
+		width: 100%;
+		@media (max-width: $break-lg) {
+			border-radius: 0;
+			margin: 0;
+		}
+		
+		&.horizontal {
+			height: 49rem;
+		}
+	}
+}
+
+.canvas_size {
+	&.pie_chart {
+		height: 22rem;
+	}
+	&.donut_chart {
+		height: 22rem;
+	}
+	&.bar_chart_vertical {
+		height: 45rem;
+	}
+	&.bar_chart_horizontal {
+		height: 40rem;
+	}
+}
+
+.chart_container {
 	@media (min-width: $break-lg) {
-		max-width: 32rem;
+		width: 100%;
 	}
 
 	&.status-timeline {
@@ -265,6 +467,10 @@
 	}
 
 	@media (min-width: $break-lg) {
+
+		border-radius: var(--border-radius-widget);
+		margin: 1.75rem;
+		// max-width: fit-content;
 		flex-direction: row;
 
 		.statistic {
