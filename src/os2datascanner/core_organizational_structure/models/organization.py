@@ -107,11 +107,13 @@ class Organization(models.Model):
         max_length=1,
         choices=StatisticsPageConfigChoices.choices,
         default=StatisticsPageConfigChoices.MANAGERS,
+        verbose_name=_("Leadertab access")
     )
     dpotab_access = models.CharField(
         max_length=1,
         choices=StatisticsPageConfigChoices.choices,
         default=StatisticsPageConfigChoices.DPOS,
+        verbose_name=_("Dpotab access")
     )
 
     # Support button settings

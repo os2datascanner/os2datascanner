@@ -463,19 +463,19 @@ recurrence.DateFormat.prototype = {
     S: function() {
         var day = this.data.getDate();
         if (day === 11 || day === 12 || day === 13) {
-            return 'th';
+            return gettext('th');
         }
         var last = day % 10;
         if (last === 1) {
-            return 'st';
+            return gettext('st');
         }
         if (last === 2) {
-            return 'nd';
+            return gettext('nd');
         }
         if (last === 3) {
-            return 'rd';
+            return gettext('rd');
         }
-        return 'th';
+        return gettext('th');
     },
 
     t: function() {

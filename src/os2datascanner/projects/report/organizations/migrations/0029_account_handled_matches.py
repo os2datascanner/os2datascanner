@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('organizations', '0027_organization_msgraph_write_permissions'),
+        ('organizations', '0028_alter_organizations'),
     ]
 
     operations = [

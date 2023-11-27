@@ -67,6 +67,8 @@
 - The `application/csv` MIME type is now correctly treated as an alias for
   `text/csv`.
 
+- Added missing translations in the admin and report modules.
+
 ## 3.21.1, 6th November 2023
 
 "Quick Rewrite It"
