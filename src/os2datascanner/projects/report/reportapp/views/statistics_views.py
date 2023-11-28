@@ -109,7 +109,7 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
             self.matches = self.matches.filter(
                 scanner_job_pk=scannerjob)
 
-        if (orgunit := self.request.GET.get('orgunit')) and orgunit != '--':
+        if (orgunit := self.request.GET.get('orgunit')) and orgunit != 'all':
             confirmed_dpo = self.request.user.account.get_dpo_units().filter(uuid=orgunit).exists()
             if self.request.user.is_superuser or confirmed_dpo:
                 self.matches = self.matches.filter(
