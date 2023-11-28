@@ -29,7 +29,8 @@ from django.http import HttpResponseForbidden, Http404, HttpResponse
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.views.generic import TemplateView, DetailView, ListView
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy
 
 from os2datascanner.core_organizational_structure.models.position import Role
 
@@ -165,12 +166,17 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
 
-        if request.user.is_superuser or request.user.account.is_dpo:
-            return super().dispatch(
-                request, *args, **kwargs)
-        else:
-            raise HttpResponseForbidden(
-                _("Only DPOs and superusers have access to the DPO overview."))
+        response = super().dispatch(request, *args, **kwargs)
+
+        try:
+            # Allow the user access, if they are a superuser or has a DPO relation
+            # to at least one organizational unit.
+            if request.user.is_superuser or request.user.account.is_dpo:
+                return response
+        except Exception as e:
+            logger.warning("Exception raised while trying to dispatch to user "
+                           f"{request.user}: {e}")
+        return redirect(reverse_lazy('index'))
 
     def make_data_structures(self, matches):  # noqa C901, CCR001
         """To avoid making multiple separate queries to the DocumentReport
