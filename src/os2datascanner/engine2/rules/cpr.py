@@ -70,7 +70,6 @@ class CPRRule(RegexRule):
                  modulus_11: bool = True,
                  ignore_irrelevant: bool = True,
                  examine_context: bool = True,
-                 bin_check: bool = True,
                  whitelist: Optional[List[str]] = None,
                  blacklist: Optional[List[str]] = None,
                  exceptions: Optional[List[str]] = None,
@@ -79,7 +78,6 @@ class CPRRule(RegexRule):
         self._modulus_11 = modulus_11
         self._ignore_irrelevant = ignore_irrelevant
         self._examine_context = examine_context
-        self._bin_check = bin_check
         self._whitelist = self.WHITELIST_WORDS if whitelist is None else set(whitelist)
         self._blacklist = self.BLACKLIST_WORDS if blacklist is None else set(blacklist)
         self._exceptions = frozenset(exceptions) if exceptions else frozenset()
@@ -94,15 +92,13 @@ class CPRRule(RegexRule):
             properties.append("relevance check")
         if self._examine_context:
             properties.append("context check")
-        if self._bin_check:
-            properties.append("bin check")
 
         if properties:
             return "CPR number (with {0})".format(oxford_comma(properties, "and"))
         else:
             return "CPR number"
 
-    def _check_bins(self, numbers, cprs):  # noqa: CCR001, C901 too high cognitive complexity
+    def _bin_check(self, numbers, cprs):  # noqa: CCR001, C901 too high cognitive complexity
         num_elems = len(numbers)
         num_cprs = len(cprs)
         if num_cprs == 0:
@@ -198,8 +194,8 @@ class CPRRule(RegexRule):
 
         cpr_numbers = [m for m in numbers if _is_cpr(m)]
 
-        if self._bin_check:
-            cpr_numbers = self._check_bins(numbers, cpr_numbers)
+        if self._examine_context:
+            cpr_numbers = self._bin_check(numbers, cpr_numbers)
 
         for m in cpr_numbers:
             cpr = m.group(1).replace(" ", "") + m.group(2)
@@ -347,6 +343,7 @@ class CPRRule(RegexRule):
             **super(RegexRule, self).to_json_object(),
             modulus_11=self._modulus_11,
             ignore_irrelevant=self._ignore_irrelevant,
+            examine_context=self._examine_context,
             whitelist=list(self._whitelist),
             blacklist=list(self._blacklist),
             exceptions=",".join(self._exceptions)
