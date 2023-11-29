@@ -86,18 +86,29 @@ def message_received_raw(body, channel, source_manager, *, _check=True):  # noqa
             return
 
         resource = conversion.handle.follow(source_manager)
+
         representation = None
-        if (required == OutputType.Text
-                and "skip_mime_types" in configuration):
+        if (required in (OutputType.Text, OutputType.MRZ,)
+                and configuration.get("skip_mime_types")):
+            # The requested representation might represent an OCR task, and
+            # there are some OCR exceptions defined in the configuration
+            # object. Let's see if any of them are relevant
             mime_type = resource.compute_type()
             for mt in configuration["skip_mime_types"]:
                 if mt.endswith("*") and mime_type.startswith(mt[:-1]):
+                    # mt is a simple wildcard ("image/*") that matches the
+                    # computed MIME type of this file. Skip the conversion
                     break
                 elif mime_type == mt:
+                    # mt matches the computed MIME type of this file exactly.
+                    # Skip the conversion
                     break
             else:
-                representation = tr.run(convert, resource, OutputType.Text)
+                # We have no reason to skip the conversion, so try to do it
+                representation = tr.run(convert, resource, required)
         else:
+            # This isn't an OCR task (or there are no OCR exceptions defined);
+            # just try to do the conversion
             representation = tr.run(convert, resource, required)
 
         if representation and getattr(representation, "parent", None):
