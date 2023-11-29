@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-29 10:28+0100\n"
+"POT-Creation-Date: 2023-11-29 13:13+0100\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -799,36 +799,36 @@ msgstr "Fordeling af resultater"
 msgid "Results distributed by data sources"
 msgstr "Resultater fordelt på datakilder"
 
-#: reportapp/templates/components/statistics/dpo_statistics_template.html:134
+#: reportapp/templates/components/statistics/dpo_statistics_template.html:133
 msgid "Results distributed by resolution statuses"
 msgstr "Resultater fordelt på håndteringsstatusser"
 
-#: reportapp/templates/components/statistics/dpo_statistics_template.html:140
+#: reportapp/templates/components/statistics/dpo_statistics_template.html:138
 msgid "Data sources"
 msgstr "Datakilder"
 
-#: reportapp/templates/components/statistics/dpo_statistics_template.html:141
+#: reportapp/templates/components/statistics/dpo_statistics_template.html:139
 msgid "Resolution statuses"
 msgstr "Håndteringsstatusser"
 
-#: reportapp/templates/components/statistics/dpo_statistics_template.html:170
+#: reportapp/templates/components/statistics/dpo_statistics_template.html:168
 msgid "Organizational unit distribution"
 msgstr "Fordeling på organisatoriske enheder"
 
-#: reportapp/templates/components/statistics/dpo_statistics_template.html:172
+#: reportapp/templates/components/statistics/dpo_statistics_template.html:170
 msgid "Top ten organizational units with highest number of unhandled matches"
 msgstr "Top ti afdelinger med flest uhåndterede matches"
 
-#: reportapp/templates/components/statistics/dpo_statistics_template.html:176
+#: reportapp/templates/components/statistics/dpo_statistics_template.html:174
 msgid "Top ten organizational units with highest number of handled matches"
 msgstr "Top ti afdelinger med flest håndterede matches"
 
-#: reportapp/templates/components/statistics/dpo_statistics_template.html:180
+#: reportapp/templates/components/statistics/dpo_statistics_template.html:178
 msgid "Top ten organizational units with highest number of total matches"
 msgstr "Top ti afdelinger med flest samlede matches"
 
-#: reportapp/templates/components/statistics/dpo_statistics_template.html:190
-#: reportapp/templates/components/statistics/dpo_statistics_template.html:246
+#: reportapp/templates/components/statistics/dpo_statistics_template.html:188
+#: reportapp/templates/components/statistics/dpo_statistics_template.html:242
 msgid ""
 "Hold and drag your mouse to zoom in on part of the graph. Hold shift while "
 "using the mouse wheel to manually zoom. Use the reset button to return the "
@@ -838,40 +838,40 @@ msgstr ""
 "zoome ind på. Hold shift inde, mens du scroller med musehjulet, for manuelt "
 "at styre zoom. Tryk på nulstil-knappen for at nulstille zoom."
 
-#: reportapp/templates/components/statistics/dpo_statistics_template.html:196
-#: reportapp/templates/components/statistics/dpo_statistics_template.html:253
+#: reportapp/templates/components/statistics/dpo_statistics_template.html:194
+#: reportapp/templates/components/statistics/dpo_statistics_template.html:249
 msgid "Reset"
 msgstr "Nulstil"
 
-#: reportapp/templates/components/statistics/dpo_statistics_template.html:201
+#: reportapp/templates/components/statistics/dpo_statistics_template.html:199
 msgid "Highest unhandled"
 msgstr "Højeste uhåndterede"
 
-#: reportapp/templates/components/statistics/dpo_statistics_template.html:202
+#: reportapp/templates/components/statistics/dpo_statistics_template.html:200
 msgid "Highest handled"
 msgstr "Højeste håndterede"
 
-#: reportapp/templates/components/statistics/dpo_statistics_template.html:203
+#: reportapp/templates/components/statistics/dpo_statistics_template.html:201
 msgid "Highest total"
 msgstr "Højeste samlede"
 
-#: reportapp/templates/components/statistics/dpo_statistics_template.html:230
+#: reportapp/templates/components/statistics/dpo_statistics_template.html:228
 msgid "Development overview"
 msgstr "Udviklingsoverblik"
 
-#: reportapp/templates/components/statistics/dpo_statistics_template.html:233
+#: reportapp/templates/components/statistics/dpo_statistics_template.html:230
 msgid "Unhandled results by month"
 msgstr "Antal uhåndterede resultater per måned"
 
-#: reportapp/templates/components/statistics/dpo_statistics_template.html:236
+#: reportapp/templates/components/statistics/dpo_statistics_template.html:232
 msgid "New results by month"
 msgstr "Antal nye resultater per måned"
 
-#: reportapp/templates/components/statistics/dpo_statistics_template.html:258
+#: reportapp/templates/components/statistics/dpo_statistics_template.html:254
 msgid "Unhandled results"
 msgstr "Uhåndterede resultater"
 
-#: reportapp/templates/components/statistics/dpo_statistics_template.html:259
+#: reportapp/templates/components/statistics/dpo_statistics_template.html:255
 msgid "New results"
 msgstr "Nye resultater"
 
@@ -938,20 +938,20 @@ msgid "No employees found."
 msgstr "Ingen medarbejdere fundet."
 
 #: reportapp/templates/components/statistics/total_source_count.html:10
-msgid "Results from"
-msgstr "Resultater fra"
+msgid "Unhandled results from"
+msgstr "Uhåndterede resultater fra"
 
-#: reportapp/templates/components/statistics/total_source_count.html:15
+#: reportapp/templates/components/statistics/total_source_count.html:16
 msgid "Current total number of unhandled matches from"
 msgstr "Nuværende antal af uhåndterede matches fra"
 
-#: reportapp/templates/components/statistics/total_source_count.html:17
+#: reportapp/templates/components/statistics/total_source_count.html:19
 msgid "Total number of unhandled matches from"
 msgstr "Antal matches fra"
 
-#: reportapp/templates/components/statistics/total_source_count.html:23
 #: reportapp/templates/components/statistics/total_source_count.html:25
 #: reportapp/templates/components/statistics/total_source_count.html:27
+#: reportapp/templates/components/statistics/total_source_count.html:29
 msgid " the last 30 days"
 msgstr " de sidste 30 dage"
 
@@ -1619,6 +1619,9 @@ msgstr "Kunne ikke finde din Microsoft tenant!"
 msgid "You currently have no Outlook reports. Can't create categories!"
 msgstr ""
 "Du har i øjeblikket ingen email resultater. Kan ikke oprette kategorier!"
+
+#~ msgid "Results from"
+#~ msgstr "Resultater fra"
 
 #~ msgid "Mail results"
 #~ msgstr "Mailresultater"
