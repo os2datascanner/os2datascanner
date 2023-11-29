@@ -193,12 +193,12 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
                              for choice in DocumentReport.ResolutionChoices}
 
         source_type = {
-            'other': {'count': 0, 'label': _('Other')},
-            'webscan': {'count': 0, 'label': _('Webscan')},
-            'filescan': {'count': 0, 'label': _('Filescan')},
-            'mailscan': {'count': 0, 'label': _('Mailscan')},
+            'other': {'count': 0, 'label': _('other source')},
+            'webscan': {'count': 0, 'label': _('web scan')},
+            'filescan': {'count': 0, 'label': _('file scan')},
+            'mailscan': {'count': 0, 'label': _('mail scan')},
             'teamsscan': {'count': 0, 'label': _('Teams scan')},
-            'calendarscan': {'count': 0, 'label': _('Calendar scan')},
+            'calendarscan': {'count': 0, 'label': _('calendar scan')},
         }
 
         created_month = {}
