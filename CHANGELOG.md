@@ -69,6 +69,8 @@
 
 - Added missing translations in the admin and report modules.
 
+- Fixed bug preventing users from changing page under errorlogs in admin module.
+
 ## 3.21.1, 6th November 2023
 
 "Quick Rewrite It"

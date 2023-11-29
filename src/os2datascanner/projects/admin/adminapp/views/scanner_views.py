@@ -275,7 +275,10 @@ class UserErrorLogView(RestrictedListView):
                 order := self.request.GET.get('order')):
 
             if sort_key not in allowed_sorting_properties:
-                return
+                logger.warning(
+                        "UserErrorLogView:"
+                        f" ignoring unsupported sort key {sort_key}")
+                return qs
 
             if order != "ascending":
                 sort_key = '-' + sort_key
@@ -298,8 +301,8 @@ class UserErrorLogView(RestrictedListView):
         context['paginate_by'] = int(self.request.GET.get('paginate_by', self.paginate_by))
         context['paginate_by_options'] = self.paginate_by_options
 
-        context['order_by'] = self.request.GET.get('order_by', '-pk')
-        context['order'] = self.request.GET.get('order', 'ascending')
+        context['order_by'] = self.request.GET.get('order_by', 'pk')
+        context['order'] = self.request.GET.get('order', 'descending')
 
         context['show_seen'] = self.request.GET.get('show_seen', 'off') == 'on'
 
