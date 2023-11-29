@@ -127,14 +127,15 @@ function unorderedListLegend(data, colors, chart) {
 
     const percentage = value ? ((value / totalValue) * 100).toFixed(2) + "%" : "0%"; // Calculate percentage based on totalValue
 
-    text.push(`<li><span class="bullet" style="color:${backgroundColor}">&#8226;</span>`);
-    if (label) {
-        text.push(`<span class="legend-txt">${label}</span>`,
-                  `<span class="data-label">${percentage}</span>`);
+    if (value > 0) {
+      text.push(`<li><span class="bullet" style="color:${backgroundColor}">&#8226;</span>`);
+      if (label) {
+          text.push(`<span class="legend-txt">${label}</span>`,
+                    `<span class="data-label">${percentage}</span>`);
+      }
+      text.push('</li>');
     }
-    text.push('</li>');
   });
-
   text.push('</ul>');
   return text.join("");
 }
