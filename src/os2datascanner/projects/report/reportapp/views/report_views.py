@@ -268,7 +268,7 @@ class RemediatorView(ReportView):
     def dispatch(self, request, *args, **kwargs):
         response = super().dispatch(request, *args, **kwargs)
         try:
-            if request.user.account.is_remediator or request.user.is_superuser:
+            if self.request.user.account.is_remediator or request.user.is_superuser:
                 return response
         except Exception as e:
             logger.warning("Exception raised while trying to dispatch to user "
