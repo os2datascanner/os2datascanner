@@ -1,8 +1,8 @@
 # Changelog
 
-## Next release
+## Version 3.21.2, 30th November 2023
 
-"LMGTFY"
+"St Andrew's Day"
 
 ### New in this release
 
@@ -56,7 +56,7 @@
 
 ### Bugfixes
 
-- The GmailScanner class no longer references a non-existant attribute.
+- The GmailScanner class no longer references a non-existent attribute.
 
 - The weekly and total count of matches for each account now ignores matches
   from remediator aliases.
@@ -69,7 +69,7 @@
 
 - Added missing translations in the admin and report modules.
 
-- Fixed bug preventing users from changing page under errorlogs in admin module.
+- Fixed bug preventing users from changing page under error logs in admin module.
 
 ## 3.21.1, 6th November 2023
 
