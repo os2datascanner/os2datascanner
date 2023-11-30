@@ -100,7 +100,7 @@ function drawPie(data, ctxName, colors) {
 
   const filteredData = Object.values(data).filter(obj => obj.count); // Filter out entries with a count of 0
 
-  const labels = totalValue ? filteredData.map(obj => obj.label) : [gettext("No Data")];
+  const labels = totalValue ? filteredData.map(obj => obj.label.charAt(0).toUpperCase() + obj.label.slice(1)) : [gettext("No Data")];
   const values = totalValue ? filteredData.map(obj => obj.count) : [1];
 
   const colorPredicate = (color, index) => Object.values(data)[index].count;
@@ -122,19 +122,20 @@ function unorderedListLegend(data, colors, chart) {
 
   Object.values(data).forEach((obj, index) => {
     const value = obj.count;
-    const label = obj.label;
+    const label = obj.label.charAt(0).toUpperCase() + obj.label.slice(1);
     const backgroundColor = colors[index];
 
     const percentage = value ? ((value / totalValue) * 100).toFixed(2) + "%" : "0%"; // Calculate percentage based on totalValue
 
-    text.push(`<li><span class="bullet" style="color:${backgroundColor}">&#8226;</span>`);
-    if (label) {
-        text.push(`<span class="legend-txt">${label}</span>`,
-                  `<span class="data-label">${percentage}</span>`);
+    if (value > 0) {
+      text.push(`<li><span class="bullet" style="color:${backgroundColor}">&#8226;</span>`);
+      if (label) {
+          text.push(`<span class="legend-txt">${label}</span>`,
+                    `<span class="data-label">${percentage}</span>`);
+      }
+      text.push('</li>');
     }
-    text.push('</li>');
   });
-
   text.push('</ul>');
   return text.join("");
 }

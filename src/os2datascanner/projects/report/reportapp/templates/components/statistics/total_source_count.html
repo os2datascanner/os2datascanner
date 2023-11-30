@@ -1,0 +1,35 @@
+{% load i18n %}
+{% load l10n %}
+
+{% if source.count %}
+  <div class="statistic_total_element">
+    <div>
+      <div class="statistic data_box small data_box small">
+        <div class="statistic_header_total">
+          <div>
+            <h1 class="page-title__sub">{% trans "Unhandled results from" %} {{ source.label }}</h1>
+            <div class="total_box_info expand">
+              <i class="material-icons" aria-hidden="true">help</i>
+            </div>
+            <div class="dropdown-container">
+              <div class="total-box-info-dropdown">
+                {% trans "Current total number of unhandled matches from" %} {{ source.label }}
+              </div>
+            </div>
+            <p class="chart_description">{% trans "Total number of unhandled matches from" %} {{ source.label }}</p>
+          </div>
+        </div>
+        <div class="statistic_total_count">{{ source.count }}</div>
+        <div>
+          {% if total_count < 0 %}
+            <p style="color:green;">{% localize %}{{ total_count }}{% endlocalize %}{% trans " the last 30 days" %}</p>
+          {% elif total_count > 0 %}
+            <p style="color:red;">+{% localize %}{{ total_count }}{% endlocalize %}{% trans " the last 30 days" %}</p>
+          {% else %}
+            <p>{% localize %}{{ total_count }}{% endlocalize %}{% trans " the last 30 days" %}</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
