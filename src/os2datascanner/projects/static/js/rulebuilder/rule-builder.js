@@ -60,7 +60,7 @@ function selectOptions(obj, selector) {
       if (index < components.length - 1) {
         const inserters = selector.querySelectorAll(".inserter");
         const click = new Event("click");
-        inserters[inserters.length - 1].dispatchEvent(click);
+        inserters[0].dispatchEvent(click);
       }
     });
   } else if (["not", "email-header"].includes(type)) {
