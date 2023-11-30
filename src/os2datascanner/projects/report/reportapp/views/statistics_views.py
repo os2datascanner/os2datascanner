@@ -223,10 +223,10 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
                     source_type["other"]["count"] += count
 
             status = obj.get('resolution_status')
-            key = 'handled' if status else 'unhandled'
+            key = 'handled' if status is not None else 'unhandled'
             count = obj.get("count", 0)
             match_data[key] += count
-            if status:
+            if status is not None:
                 resolution_status[status]["count"] += count
 
             created_month[obj["created_month"]] = created_month.get(
