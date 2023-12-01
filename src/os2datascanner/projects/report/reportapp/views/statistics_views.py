@@ -294,11 +294,7 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
         matches_by_month = sort_by_keys(self.created_month)
 
         # We only want data from the last 12 months
-        cutoff_day = timezone.make_aware(
-            timezone.datetime(
-                a_year_ago.year,
-                a_year_ago.month+1,
-                1)).date()
+        cutoff_day = (a_year_ago.replace(day=1) + relativedelta(months=1)).date()
         earlier_months = [month for month in matches_by_month.keys() if month < cutoff_day]
         for month in earlier_months:
             del matches_by_month[month]
