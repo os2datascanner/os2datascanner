@@ -159,7 +159,10 @@
     </div>
   </div>
 
-  <div class="statistic_wrapper">
+  {% comment %} This block is removed for the time being. It is causing
+  considerable issues in production environments, due to unforeseen 
+  organizational structure. {% endcomment %}
+  {% comment %} <div class="statistic_wrapper">
     <!-- bar chart - matches per org unit -->
     {% if request.GET.orgunit == undefined %}
       <div class="statistic data_box large horizontal">
@@ -169,12 +172,10 @@
             <p class="chart_description" data-chartid="org_unit_highest_unhandled">
               {% trans "Top ten organizational units with highest number of unhandled matches" %}
             </p>
-            <p class="hidden chart_description"
-               data-chartid="org_unit_highest_handled">
+            <p class="hidden chart_description" data-chartid="org_unit_highest_handled">
               {% trans "Top ten organizational units with highest number of handled matches" %}
             </p>
-            <p class="hidden chart_description"
-               data-chartid="org_unit_highest_total">
+            <p class="hidden chart_description" data-chartid="org_unit_highest_total">
               {% trans "Top ten organizational units with highest number of total matches" %}
             </p>
           </div>
@@ -204,21 +205,18 @@
           </div>
         </div>
 
-        <div class="chart_container canvas_size bar_chart_horizontal"
-             data-chartid="org_unit_highest_unhandled">
+        <div class="chart_container canvas_size bar_chart_horizontal" data-chartid="org_unit_highest_unhandled">
           <canvas class="bar_chart" id="bar_chart_org_unit_highest_unhandled"></canvas>
         </div>
-        <div class="hidden chart_container canvas_size bar_chart_horizontal"
-             data-chartid="org_unit_highest_handled">
+        <div class="hidden chart_container canvas_size bar_chart_horizontal" data-chartid="org_unit_highest_handled">
           <canvas class="bar_chart" id="bar_chart_org_unit_highest_handled"></canvas>
         </div>
-        <div class="hidden chart_container canvas_size bar_chart_horizontal"
-             data-chartid="org_unit_highest_total">
+        <div class="hidden chart_container canvas_size bar_chart_horizontal" data-chartid="org_unit_highest_total">
           <canvas class="bar_chart" id="bar_chart_org_unit_highest_total"></canvas>
         </div>
       </div>
     {% endif %}
-  </div>
+  </div> {% endcomment %}
 
   <div class="statistic_wrapper">
     <!-- bar chart - new and unhandled matches -->

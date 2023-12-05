@@ -10,6 +10,11 @@
 
 - The bin_check for CPR rule is now turned on/off with the examine_context flag.
 
+### Removed functionality
+
+- The organizational unit overview in the DPO module has been removed, until
+  the overhead caused by importing too much organizational structure is solved.
+
 ### Bugfixes
 
 ## Version 3.21.2, 30th November 2023

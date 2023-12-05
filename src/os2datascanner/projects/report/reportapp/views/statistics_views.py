@@ -134,13 +134,15 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
 
         context['new_matches_by_month'] = self.count_new_matches_by_month(today)
 
-        if self.request.GET.get('orgunit') is None:
-            highest_unhandled_ou, highest_handled_ou, highest_total_ou = (
-                self.count_match_status_by_org_unit())
+        # This is removed, until we make some structural changes, which should
+        # prevent clients from having stupid amounts of organizational data.
+        # if self.request.GET.get('orgunit') is None:
+        #     highest_unhandled_ou, highest_handled_ou, highest_total_ou = (
+        #         self.count_match_status_by_org_unit())
 
-            context['matches_by_org_unit_unhandled'] = highest_unhandled_ou
-            context['matches_by_org_unit_handled'] = highest_handled_ou
-            context['matches_by_org_unit_total'] = highest_total_ou
+        #     context['matches_by_org_unit_unhandled'] = highest_unhandled_ou
+        #     context['matches_by_org_unit_handled'] = highest_handled_ou
+        #     context['matches_by_org_unit_total'] = highest_total_ou
 
         m_by_handled = self.count_matches_by_source_and_handled_status()
         m_last_month = self.count_matches_by_source_since_last_month(today)
