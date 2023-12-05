@@ -121,10 +121,13 @@ services:
       - ./src/os2datascanner:/code/src/os2datascanner
     ports:
       - "8020:5000"
-    depends_on:
-      - db
-      - frontend
-      - queue
+    depends_on: &admin_dependencies
+      admin_migrate:
+        condition: service_completed_successfully
+      frontend:
+        condition: service_started
+      queue:
+        condition: service_healthy
     networks:
       - os2datascanner_default
       - os2mo_default
@@ -141,12 +144,10 @@ services:
     volumes:
       - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
-    depends_on:
-      - db
-      - admin
-      - queue
+    depends_on: *admin_dependencies
 
   admin_status_collector:
+    restart: unless-stopped
     image: magentaaps/os2datascanner-admin:dev
     build:
       context: .
@@ -158,10 +159,7 @@ services:
     volumes:
       - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
-    depends_on:
-      - db
-      - admin
-      - queue
+    depends_on: *admin_dependencies
 
   admin_job_runner:
     restart: unless-stopped
@@ -227,10 +225,13 @@ services:
       #- ./ssl/signing.key:/etc/ssl/certs/signing.key:ro
     ports:
       - "8040:5000"
-    depends_on:
-      - db
-      - frontend
-      - queue
+    depends_on: &report_dependencies
+      report_migrate:
+        condition: service_completed_successfully
+      frontend:
+        condition: service_started
+      queue:
+        condition: service_healthy
 
   redis:
     # Channel layer backend
@@ -248,10 +249,7 @@ services:
     volumes:
       - ./dev-environment/report/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
-    depends_on:
-      - db
-      - report
-      - queue
+    depends_on: *report_dependencies
 
   report_result_collector:
     image: magentaaps/os2datascanner-report:dev
@@ -265,11 +263,7 @@ services:
     volumes:
       - ./dev-environment/report/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
-    depends_on:
-      - db
-      - report
-      - queue
-
+    depends_on: *report_dependencies
 
   report_email_tagger:
     image: magentaaps/os2datascanner-report:dev
@@ -283,10 +277,7 @@ services:
     volumes:
       - ./dev-environment/report/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
-    depends_on:
-      - db
-      - report
-      - queue
+    depends_on: *report_dependencies
 
   explorer:
     image: magentaaps/os2datascanner-engine:dev
@@ -301,8 +292,9 @@ services:
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
-    depends_on:
-      - queue
+    depends_on: &engine_dependencies
+      queue:
+        condition: service_healthy
 
   worker:
     image: magentaaps/os2datascanner-engine:dev
@@ -321,8 +313,7 @@ services:
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
-    depends_on:
-      - queue
+    depends_on: *engine_dependencies
 
   exporter:
     image: magentaaps/os2datascanner-engine:dev
@@ -337,8 +328,7 @@ services:
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
-    depends_on:
-      - queue
+    depends_on: *engine_dependencies
 
   docs:
     image: nicksantamaria/mkdocs
