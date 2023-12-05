@@ -72,6 +72,23 @@ services:
       - ./src/os2datascanner/projects/static:/code/src/os2datascanner/projects/static
       - frontend-bundles:/code/src/os2datascanner/projects/static/dist/
 
+  admin_migrate:
+    image: magentaaps/os2datascanner-admin:dev
+    build:
+      context: .
+      dockerfile: docker/base/Dockerfile
+      target: admin
+    command: ["python", "manage.py", "migrate"]
+    environment:
+      - BARE_MODE=yep
+      - OS2DS_SKIP_DJANGO_MIGRATIONS=yarr
+    volumes:
+      - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
+      - ./src/os2datascanner:/code/src/os2datascanner
+    depends_on:
+      db:
+        condition: service_healthy
+
   admin:
     image: magentaaps/os2datascanner-admin:dev
     build:
@@ -160,14 +177,25 @@ services:
     volumes:
       - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
-    depends_on:
-      - db
-      - admin
-      - queue
+    depends_on: *admin_dependencies
     stop_grace_period: 1m30s
     networks:
       - os2datascanner_default
       - os2mo_default
+
+  report_migrate:
+    image: magentaaps/os2datascanner-report:dev
+    build:
+      context: .
+      dockerfile: docker/base/Dockerfile
+      target: report
+    command: ["python", "manage.py", "migrate"]
+    volumes:
+      - ./dev-environment/report/dev-settings.toml:/user-settings.toml
+      - ./src/os2datascanner:/code/src/os2datascanner
+    depends_on:
+      db:
+        condition: service_healthy
 
   report:
     image: magentaaps/os2datascanner-report:dev
