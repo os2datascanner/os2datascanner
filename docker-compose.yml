@@ -22,12 +22,19 @@ services:
        -c effective_cache_size=8GB
     env_file:
       - dev-environment/db.env
+    environment:
+      - PGUSER=postgres
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./docker/postgres-initdb.d/10-test-for-valid-env-variables.sh:/docker-entrypoint-initdb.d/10-test-for-valid-env-variables.sh
       - ./docker/postgres-initdb.d/20-create-admin-db-and-user.sh:/docker-entrypoint-initdb.d/20-create-admin-db-and-user.sh
       - ./docker/postgres-initdb.d/40-create-report-db-and-user.sh:/docker-entrypoint-initdb.d/40-create-report-db-and-user.sh
       - ./dev-environment/postgres-initdb.d/50-add-createdb-permissions.sh:/docker-entrypoint-initdb.d/50-add-createdb-permissions.sh
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready || false"]
+      interval: 5s
+      start_period: 30s
+      retries: 3
 
   queue:
     # Normally, we expect the `rabbitmq` image. The -management images come
@@ -44,6 +51,11 @@ services:
       - ./docker/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
       - ./docker/rabbitmq/advanced.config:/etc/rabbitmq/advanced.config:ro
       - ./docker/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmqctl await_online_nodes 1 || false"]
+      interval: 5s
+      start_period: 30s
+      retries: 3
 
   frontend:
     build:
