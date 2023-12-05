@@ -116,8 +116,8 @@ Personnummeret for [FORNAVN] [EFTERNAVN] er 111080-0009
 
 class RuleTests(unittest.TestCase):
     def test_cpr_bin_check(self):
-        with_bin_check = CPRRule(modulus_11=True, bin_check=True)
-        without_bin_check = CPRRule(modulus_11=True, bin_check=False)
+        with_bin_check = CPRRule(modulus_11=True, examine_context=True)
+        without_bin_check = CPRRule(modulus_11=True, examine_context=False)
 
         with_expected = ['1010XXXXXX', '1110XXXXXX']
         without_expected = ['1010XXXXXX', '0101XXXXXX', '0707XXXXXX', '0202XXXXXX', '0606XXXXXX',

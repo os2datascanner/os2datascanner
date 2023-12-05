@@ -1,5 +1,17 @@
 # Changelog
 
+## Version 3.21.3
+
+" AMUSNR "
+
+### New in this release
+
+### General improvements
+
+- The bin_check for CPR rule is now turned on/off with the examine_context flag.
+
+### Bugfixes
+
 ## Version 3.21.2, 30th November 2023
 
 "St Andrew's Day"
