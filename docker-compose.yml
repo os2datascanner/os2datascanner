@@ -79,9 +79,6 @@ services:
       dockerfile: docker/base/Dockerfile
       target: admin
     command: ["python", "manage.py", "migrate"]
-    environment:
-      - BARE_MODE=yep
-      - OS2DS_SKIP_DJANGO_MIGRATIONS=yarr
     volumes:
       - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
@@ -138,8 +135,6 @@ services:
       context: .
       dockerfile: docker/base/Dockerfile
       target: admin
-    environment:
-      - OS2DS_SKIP_DJANGO_MIGRATIONS=1
     command: python manage.py checkup_collector
     volumes:
       - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
@@ -153,8 +148,6 @@ services:
       context: .
       dockerfile: docker/base/Dockerfile
       target: admin
-    environment:
-      - OS2DS_SKIP_DJANGO_MIGRATIONS=1
     command: python manage.py status_collector
     volumes:
       - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
@@ -169,7 +162,6 @@ services:
       dockerfile: docker/base/Dockerfile
       target: admin
     environment:
-      - OS2DS_SKIP_DJANGO_MIGRATIONS=1
       - AMQP_BROADCAST_SYNC=false
     command: python manage.py run_background_jobs
     volumes:
@@ -243,8 +235,6 @@ services:
       context: .
       dockerfile: docker/base/Dockerfile
       target: report
-    environment:
-      - OS2DS_SKIP_DJANGO_MIGRATIONS=1
     command: python manage.py event_collector
     volumes:
       - ./dev-environment/report/dev-settings.toml:/user-settings.toml
@@ -257,8 +247,6 @@ services:
       context: .
       dockerfile: docker/base/Dockerfile
       target: report
-    environment:
-      - OS2DS_SKIP_DJANGO_MIGRATIONS=1
     command: python manage.py result_collector
     volumes:
       - ./dev-environment/report/dev-settings.toml:/user-settings.toml
@@ -271,8 +259,6 @@ services:
       context: .
       dockerfile: docker/base/Dockerfile
       target: report
-    environment:
-      - OS2DS_SKIP_DJANGO_MIGRATIONS=1
     command: python manage.py email_tagger
     volumes:
       - ./dev-environment/report/dev-settings.toml:/user-settings.toml
