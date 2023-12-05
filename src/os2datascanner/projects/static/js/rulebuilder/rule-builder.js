@@ -54,13 +54,15 @@ function selectOptions(obj, selector) {
   selectElem.dispatchEvent(event);
 
   if (["and", "or"].includes(type)) {
+    /* Grab the add button immediately and "click" it once for every rule we
+       subsequently add */
+    const add_button = selector.querySelector(".inserter");
+
     let components = obj.components;
     components.forEach((element, index) => {
       getSelectorAndSelect(element, index, selector);
       if (index < components.length - 1) {
-        const inserters = selector.querySelectorAll(".inserter");
-        const click = new Event("click");
-        inserters[0].dispatchEvent(click);
+        add_button.dispatchEvent(new Event("click"));
       }
     });
   } else if (["not", "email-header"].includes(type)) {
