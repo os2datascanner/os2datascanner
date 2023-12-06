@@ -22,12 +22,19 @@ services:
        -c effective_cache_size=8GB
     env_file:
       - dev-environment/db.env
+    environment:
+      - PGUSER=postgres
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./docker/postgres-initdb.d/10-test-for-valid-env-variables.sh:/docker-entrypoint-initdb.d/10-test-for-valid-env-variables.sh
       - ./docker/postgres-initdb.d/20-create-admin-db-and-user.sh:/docker-entrypoint-initdb.d/20-create-admin-db-and-user.sh
       - ./docker/postgres-initdb.d/40-create-report-db-and-user.sh:/docker-entrypoint-initdb.d/40-create-report-db-and-user.sh
       - ./dev-environment/postgres-initdb.d/50-add-createdb-permissions.sh:/docker-entrypoint-initdb.d/50-add-createdb-permissions.sh
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready || false"]
+      interval: 5s
+      start_period: 30s
+      retries: 3
 
   queue:
     # Normally, we expect the `rabbitmq` image. The -management images come
@@ -44,6 +51,11 @@ services:
       - ./docker/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
       - ./docker/rabbitmq/advanced.config:/etc/rabbitmq/advanced.config:ro
       - ./docker/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmqctl await_online_nodes 1 || false"]
+      interval: 5s
+      start_period: 30s
+      retries: 3
 
   frontend:
     build:
@@ -59,6 +71,20 @@ services:
       - /code/src/os2datascanner/projects/static/node_modules/
       - ./src/os2datascanner/projects/static:/code/src/os2datascanner/projects/static
       - frontend-bundles:/code/src/os2datascanner/projects/static/dist/
+
+  admin_migrate:
+    image: magentaaps/os2datascanner-admin:dev
+    build:
+      context: .
+      dockerfile: docker/base/Dockerfile
+      target: admin
+    command: ["python", "manage.py", "migrate"]
+    volumes:
+      - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
+      - ./src/os2datascanner:/code/src/os2datascanner
+    depends_on:
+      db:
+        condition: service_healthy
 
   admin:
     image: magentaaps/os2datascanner-admin:dev
@@ -92,10 +118,13 @@ services:
       - ./src/os2datascanner:/code/src/os2datascanner
     ports:
       - "8020:5000"
-    depends_on:
-      - db
-      - frontend
-      - queue
+    depends_on: &admin_dependencies
+      admin_migrate:
+        condition: service_completed_successfully
+      frontend:
+        condition: service_started
+      queue:
+        condition: service_healthy
     networks:
       - os2datascanner_default
       - os2mo_default
@@ -106,33 +135,24 @@ services:
       context: .
       dockerfile: docker/base/Dockerfile
       target: admin
-    environment:
-      - OS2DS_SKIP_DJANGO_MIGRATIONS=1
     command: python manage.py checkup_collector
     volumes:
       - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
-    depends_on:
-      - db
-      - admin
-      - queue
+    depends_on: *admin_dependencies
 
   admin_status_collector:
+    restart: unless-stopped
     image: magentaaps/os2datascanner-admin:dev
     build:
       context: .
       dockerfile: docker/base/Dockerfile
       target: admin
-    environment:
-      - OS2DS_SKIP_DJANGO_MIGRATIONS=1
     command: python manage.py status_collector
     volumes:
       - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
-    depends_on:
-      - db
-      - admin
-      - queue
+    depends_on: *admin_dependencies
 
   admin_job_runner:
     restart: unless-stopped
@@ -142,20 +162,30 @@ services:
       dockerfile: docker/base/Dockerfile
       target: admin
     environment:
-      - OS2DS_SKIP_DJANGO_MIGRATIONS=1
       - AMQP_BROADCAST_SYNC=false
     command: python manage.py run_background_jobs
     volumes:
       - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
-    depends_on:
-      - db
-      - admin
-      - queue
+    depends_on: *admin_dependencies
     stop_grace_period: 1m30s
     networks:
       - os2datascanner_default
       - os2mo_default
+
+  report_migrate:
+    image: magentaaps/os2datascanner-report:dev
+    build:
+      context: .
+      dockerfile: docker/base/Dockerfile
+      target: report
+    command: ["python", "manage.py", "migrate"]
+    volumes:
+      - ./dev-environment/report/dev-settings.toml:/user-settings.toml
+      - ./src/os2datascanner:/code/src/os2datascanner
+    depends_on:
+      db:
+        condition: service_healthy
 
   report:
     image: magentaaps/os2datascanner-report:dev
@@ -187,10 +217,13 @@ services:
       #- ./ssl/signing.key:/etc/ssl/certs/signing.key:ro
     ports:
       - "8040:5000"
-    depends_on:
-      - db
-      - frontend
-      - queue
+    depends_on: &report_dependencies
+      report_migrate:
+        condition: service_completed_successfully
+      frontend:
+        condition: service_started
+      queue:
+        condition: service_healthy
 
   redis:
     # Channel layer backend
@@ -202,16 +235,11 @@ services:
       context: .
       dockerfile: docker/base/Dockerfile
       target: report
-    environment:
-      - OS2DS_SKIP_DJANGO_MIGRATIONS=1
     command: python manage.py event_collector
     volumes:
       - ./dev-environment/report/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
-    depends_on:
-      - db
-      - report
-      - queue
+    depends_on: *report_dependencies
 
   report_result_collector:
     image: magentaaps/os2datascanner-report:dev
@@ -219,17 +247,11 @@ services:
       context: .
       dockerfile: docker/base/Dockerfile
       target: report
-    environment:
-      - OS2DS_SKIP_DJANGO_MIGRATIONS=1
     command: python manage.py result_collector
     volumes:
       - ./dev-environment/report/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
-    depends_on:
-      - db
-      - report
-      - queue
-
+    depends_on: *report_dependencies
 
   report_email_tagger:
     image: magentaaps/os2datascanner-report:dev
@@ -237,16 +259,11 @@ services:
       context: .
       dockerfile: docker/base/Dockerfile
       target: report
-    environment:
-      - OS2DS_SKIP_DJANGO_MIGRATIONS=1
     command: python manage.py email_tagger
     volumes:
       - ./dev-environment/report/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
-    depends_on:
-      - db
-      - report
-      - queue
+    depends_on: *report_dependencies
 
   explorer:
     image: magentaaps/os2datascanner-engine:dev
@@ -261,8 +278,9 @@ services:
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
-    depends_on:
-      - queue
+    depends_on: &engine_dependencies
+      queue:
+        condition: service_healthy
 
   worker:
     image: magentaaps/os2datascanner-engine:dev
@@ -281,8 +299,7 @@ services:
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
-    depends_on:
-      - queue
+    depends_on: *engine_dependencies
 
   exporter:
     image: magentaaps/os2datascanner-engine:dev
@@ -297,8 +314,7 @@ services:
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
-    depends_on:
-      - queue
+    depends_on: *engine_dependencies
 
   docs:
     image: nicksantamaria/mkdocs

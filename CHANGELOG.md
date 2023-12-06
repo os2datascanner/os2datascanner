@@ -10,6 +10,9 @@
 
 - The bin_check for CPR rule is now turned on/off with the examine_context flag.
 
+- The development environment now uses Compose dependencies in a more
+  principled way.
+
 ### Removed functionality
 
 - The organizational unit overview in the DPO module has been removed, until
