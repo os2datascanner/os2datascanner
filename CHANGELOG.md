@@ -20,6 +20,8 @@
 
 ### Bugfixes
 
+- MSGraph based resources are again able to be properly auto resolved upon deletion.
+
 ## Version 3.21.2, 30th November 2023
 
 "St Andrew's Day"
