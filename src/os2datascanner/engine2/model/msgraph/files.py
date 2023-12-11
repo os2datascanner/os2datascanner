@@ -1,6 +1,7 @@
 from io import BytesIO
 from contextlib import contextmanager
 from dateutil.parser import isoparse
+from requests import HTTPError
 
 from ..core import Handle, Source, Resource, FileResource
 from ..derived.derived import DerivedSource
@@ -74,9 +75,13 @@ DUMMY_MIME = "application/vnd.os2.datascanner.graphdrive"
 
 class MSGraphDriveResource(Resource):
     def check(self) -> bool:
-        response = self._get_cookie().get(
-                "drives/{0}?$select=id".format(self.handle.relative_path))
-        return response.status_code not in (404, 410,)
+        try:
+            self._get_cookie().get("drives/{0}?$select=id".format(self.handle.relative_path))
+            return True
+        except HTTPError as ex:
+            if ex.response.status_code in (404, 410,):
+                return False
+            raise
 
     def compute_type(self):
         return DUMMY_MIME
@@ -167,10 +172,15 @@ class MSGraphFileResource(FileResource):
         yield from super()._generate_metadata()
 
     def check(self) -> bool:
-        response = self._get_cookie().get("drives/{0}/root:/{1}".format(
+        try:
+            self._get_cookie().get("drives/{0}/root:/{1}".format(
                 self.handle.source.handle.relative_path,
                 self.handle.relative_path))
-        return response.status_code not in (404, 410,)
+            return True
+        except HTTPError as ex:
+            if ex.response.status_code in (404, 410,):
+                return False
+            raise
 
     def make_object_path(self):
         return "drives/{0}/root:/{1}".format(

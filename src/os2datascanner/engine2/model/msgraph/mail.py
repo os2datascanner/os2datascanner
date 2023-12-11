@@ -4,6 +4,7 @@ from io import BytesIO
 from urllib.parse import urlsplit
 from contextlib import contextmanager
 from dateutil.parser import isoparse
+from requests import HTTPError
 
 from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource, FileResource
@@ -92,10 +93,15 @@ DUMMY_MIME = "application/vnd.os2.datascanner.graphmailaccount"
 
 class MSGraphMailAccountResource(Resource):
     def check(self) -> bool:
-        response = self._get_cookie().get(
+        try:
+            self._get_cookie().get(
                 "users/{0}/messages?$select=id&$top=1".format(
                         self.handle.relative_path))
-        return response.status_code not in (404, 410,)
+            return True
+        except HTTPError as ex:
+            if ex.response.status_code in (404, 410,):
+                return False
+            raise
 
     def compute_type(self):
         return DUMMY_MIME
@@ -218,9 +224,14 @@ class MSGraphMailMessageResource(FileResource):
         yield from super()._generate_metadata()
 
     def check(self) -> bool:
-        response = self._get_cookie().get(
-                self.make_object_path() + "?$select=id")
-        return response.status_code not in (404, 410,)
+        try:
+            self._get_cookie().get(
+                    self.make_object_path() + "?$select=id")
+            return True
+        except HTTPError as ex:
+            if ex.response.status_code in (404, 410,):
+                return False
+            raise
 
     def make_object_path(self):
         return "users/{0}/messages/{1}".format(
