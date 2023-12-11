@@ -13,7 +13,6 @@
 #
 import os
 import logging
-
 from PIL import Image
 from datetime import timedelta
 from rest_framework import serializers
@@ -27,6 +26,8 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.db.models.signals import post_delete
+
+from functools import cached_property
 
 
 from os2datascanner.core_organizational_structure.models import Account as Core_Account
@@ -344,7 +345,7 @@ class Account(Core_Account):
     def is_dpo(self):
         return self.get_dpo_units().exists()
 
-    @property
+    @cached_property
     def is_remediator(self):
         from .aliases import AliasType  # avoid circular import
         return self.aliases.filter(_alias_type=AliasType.REMEDIATOR).exists()
