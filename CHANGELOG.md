@@ -20,14 +20,6 @@
 - The organizational unit overview in the DPO module has been removed, until
   the overhead caused by importing too much organizational structure is solved.
 
-- The development environment now uses Compose dependencies in a more
-  principled way.
-
-### Removed functionality
-
-- The organizational unit overview in the DPO module has been removed, until
-  the overhead caused by importing too much organizational structure is solved.
-
 ### Bugfixes
 
 - MSGraph based resources are again able to be properly auto resolved upon deletion.
