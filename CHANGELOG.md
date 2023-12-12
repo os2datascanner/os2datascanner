@@ -13,6 +13,8 @@
 - The development environment now uses Compose dependencies in a more
   principled way.
 
+- Dropdowns for assigning leaders and DPOs are now ordered by full name.
+
 ### Removed functionality
 
 - The organizational unit overview in the DPO module has been removed, until

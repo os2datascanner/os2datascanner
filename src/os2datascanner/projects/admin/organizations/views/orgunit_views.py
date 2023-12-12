@@ -65,7 +65,8 @@ class OrganizationalUnitListView(RestrictedListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['organization'] = self.kwargs['org']
-        context['accounts'] = Account.objects.filter(organization=self.kwargs['org'])
+        context['accounts'] = (Account.objects.filter(organization=self.kwargs['org']).
+                               order_by("first_name", "last_name"))
         context['FEATURES'] = Feature.__members__
         context['search_targets'] = [
             unit.uuid for unit in self.object_list] if self.request.GET.get(
