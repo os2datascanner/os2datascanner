@@ -17,9 +17,9 @@ for key, value in get_3_layer_config(
     if not key.startswith('_'):
         # NB! Never log the value for an unspecified key!
         if isinstance(value, list):
-            logger.debug("Converting list value to tuple for %s", key)
+            logger.debug("converting list value to tuple for %s", key)
             value = tuple(value)
-        logger.info("Adding setting: %s", key)
+        logger.debug("adding setting: %s", key)
         globals()[key] = value
 
 

@@ -2,7 +2,6 @@
 Utility functions to support configuration through toml-files for Django.
 """
 
-import logging
 import os
 import sys
 
@@ -25,26 +24,31 @@ def _set_constants(module, configuration):
     # NEVER print or log the config object, as it will expose secrets
     # Only ever print or log explicitly chosen (and safe!) settings!
     for key, value in configuration.items():
-        if key.isupper() and not key.startswith('_'):
+        if key.startswith("_"):
+            logger.info("skipping setting %s", key)
+        elif key.isupper():
             # NB! Never log the value for an unspecified key!
             if isinstance(value, list):
                 logger.debug("Converting list value to tuple for %s", key)
                 value = tuple(value)
-            logger.info("Adding setting: %s", key)
+            logger.debug("adding setting: %s", key)
             setattr(module, key, value)
+        else:
+            logger.error(
+                    'setting "%s" is not a valid Django setting', key)
 
 
 def _process_directory_configuration(configuration, placeholder, directory):
     directories = configuration.get('dirs')
     if not directories:
         logger.error(
-            "The configuration is missing the required list of directories."
+            "the configuration is missing the required list of directories."
         )
         sys.exit(1)
     for key, value in directories.items():
         if configuration.get(key):
             logger.error(
-                "The directory %s has already been configured" % key
+                "the directory %s has already been configured" % key
             )
             sys.exit(1)
         else:
