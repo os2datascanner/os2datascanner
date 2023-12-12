@@ -24,6 +24,8 @@
 
 - MSGraph based resources are again able to be properly auto resolved upon deletion.
 
+- The OAuth 2.0 timeout is now also enforced correctly for Keycloak and OS2mo.
+
 ## Version 3.21.2, 30th November 2023
 
 "St Andrew's Day"

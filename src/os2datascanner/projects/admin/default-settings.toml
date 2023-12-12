@@ -66,6 +66,9 @@ OS2MO_EMAIL_ADDRESS_TYPE = ""
 # Pagination size/limit of results pr. query
 OS2MO_PAGE_SIZE = 1
 
+# The number of seconds to wait for a client credentials response from an OAuth
+# 2.0 token provider before concluding that something has gone wrong
+OAUTH2_TOKEN_TIMEOUT = 180
 
 # [sbsys]
 # Using oauth with grant type client_credentials.
@@ -285,8 +288,3 @@ LOGS_DIR = ["*", "var", "logs"]
 STATIC_ROOT = ["*", 'src', 'os2datascanner', 'projects', 'static', 'admin']
 MEDIA_ROOT = ["*", "uploads", "admin"]
 TEST_OUTPUT_FILE_NAME = ["*", "build", "test-results.xml"]
-
-[utils.oauth2]
-# The number of seconds to wait for a client credentials response from an OAuth
-# 2.0 token provider before concluding that something has gone wrong
-cc_token_timeout = 180

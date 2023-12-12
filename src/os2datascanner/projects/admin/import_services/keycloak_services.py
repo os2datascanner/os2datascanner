@@ -86,7 +86,7 @@ def request_access_token():
         f"{settings.KEYCLOAK_BASE_URL}/auth/realms/master/protocol/openid-connect/token",
         settings.KEYCLOAK_ADMIN_CLIENT, settings.KEYCLOAK_ADMIN_SECRET,
         wrapper=WebRetrier().run,
-        post_timeout=settings.utils["oauth2"]["cc_token_timeout"]
+        post_timeout=settings.OAUTH2_TOKEN_TIMEOUT
     )
 
 

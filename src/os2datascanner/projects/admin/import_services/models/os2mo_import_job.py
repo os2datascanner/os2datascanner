@@ -56,7 +56,7 @@ def make_token():
     return mint_cc_token(
             settings.OS2MO_TOKEN_URL, settings.OS2MO_CLIENT_ID,
             settings.OS2MO_CLIENT_SECRET, wrapper=retry,
-            post_timeout=settings.utils["oauth2"]["cc_token_timeout"])
+            post_timeout=settings.OAUTH2_TOKEN_TIMEOUT)
 
 
 class OS2moImportJob(BackgroundJob):
