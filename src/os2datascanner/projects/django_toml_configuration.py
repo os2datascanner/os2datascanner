@@ -2,15 +2,16 @@
 Utility functions to support configuration through toml-files for Django.
 """
 
-import logging
 import os
 import sys
 
 from django.utils.translation import gettext_lazy as _
 
-from os2datascanner.utils.toml_configuration import get_3_layer_config
+from os2datascanner.utils.toml_configuration import (
+        TrivialLogger, get_3_layer_config)
 
-logger = logging.getLogger(__name__)
+
+logger = TrivialLogger(__name__)
 
 
 def _process_relative_path(placeholder, replacement_value, path_list):
@@ -23,26 +24,31 @@ def _set_constants(module, configuration):
     # NEVER print or log the config object, as it will expose secrets
     # Only ever print or log explicitly chosen (and safe!) settings!
     for key, value in configuration.items():
-        if key.isupper() and not key.startswith('_'):
+        if key.startswith("_"):
+            logger.info("skipping setting %s", key)
+        elif key.isupper():
             # NB! Never log the value for an unspecified key!
             if isinstance(value, list):
                 logger.debug("Converting list value to tuple for %s", key)
                 value = tuple(value)
-            logger.info("Adding setting: %s", key)
+            logger.debug("adding setting: %s", key)
             setattr(module, key, value)
+        else:
+            logger.error(
+                    'setting "%s" is not a valid Django setting', key)
 
 
 def _process_directory_configuration(configuration, placeholder, directory):
-    directories = configuration.get('dirs')
+    directories = configuration.pop("dirs", None)
     if not directories:
         logger.error(
-            "The configuration is missing the required list of directories."
+            "the configuration is missing the required list of directories."
         )
         sys.exit(1)
     for key, value in directories.items():
         if configuration.get(key):
             logger.error(
-                "The directory %s has already been configured" % key
+                "the directory %s has already been configured" % key
             )
             sys.exit(1)
         else:
@@ -53,13 +59,13 @@ def _process_directory_configuration(configuration, placeholder, directory):
 
 def _process_locales(configuration, placeholder, directory):
     # Set locale paths
-    path_list = configuration.get('_LOCALE_PATHS')
+    path_list = configuration.pop('_LOCALE_PATHS', None)
     if path_list:
         configuration['LOCALE_PATHS'] = [
             _process_relative_path(placeholder, directory, path) for path in path_list
         ]
     # Set languages and their localized names
-    language_list = configuration.get('_LANGUAGES')
+    language_list = configuration.pop('_LANGUAGES', None)
     if language_list:
         configuration['LANGUAGES'] = [
             (language[0], _(language[1])) for language in language_list
