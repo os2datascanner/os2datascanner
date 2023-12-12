@@ -39,7 +39,7 @@ def _set_constants(module, configuration):
 
 
 def _process_directory_configuration(configuration, placeholder, directory):
-    directories = configuration.get('dirs')
+    directories = configuration.pop("dirs", None)
     if not directories:
         logger.error(
             "the configuration is missing the required list of directories."
@@ -59,13 +59,13 @@ def _process_directory_configuration(configuration, placeholder, directory):
 
 def _process_locales(configuration, placeholder, directory):
     # Set locale paths
-    path_list = configuration.get('_LOCALE_PATHS')
+    path_list = configuration.pop('_LOCALE_PATHS', None)
     if path_list:
         configuration['LOCALE_PATHS'] = [
             _process_relative_path(placeholder, directory, path) for path in path_list
         ]
     # Set languages and their localized names
-    language_list = configuration.get('_LANGUAGES')
+    language_list = configuration.pop('_LANGUAGES', None)
     if language_list:
         configuration['LANGUAGES'] = [
             (language[0], _(language[1])) for language in language_list
