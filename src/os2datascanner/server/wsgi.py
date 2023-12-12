@@ -5,6 +5,7 @@ from pathlib import Path
 from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.model.core import Handle, Source, SourceManager
 from os2datascanner.engine2.rules.rule import Rule
+from os2datascanner.engine2.commands.utils import DemoSourceUtility
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.pipeline.explorer import (
         message_received_raw as explorer_mrr)
@@ -275,7 +276,7 @@ def parse_url_1(body):  # noqa: CCR001
         }
         return
 
-    source = Source.from_url(body["url"])
+    source = DemoSourceUtility.from_url(body["url"])
     if not source:
         yield "400 Bad Request"
         yield {
