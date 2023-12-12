@@ -26,6 +26,8 @@
 
 - The OAuth 2.0 timeout is now also enforced correctly for Keycloak and OS2mo.
 
+- The API server's `/parse-url/1` endpoint works correctly again.
+
 ## Version 3.21.2, 30th November 2023
 
 "St Andrew's Day"
