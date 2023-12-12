@@ -8,9 +8,11 @@ import sys
 
 from django.utils.translation import gettext_lazy as _
 
-from os2datascanner.utils.toml_configuration import get_3_layer_config
+from os2datascanner.utils.toml_configuration import (
+        TrivialLogger, get_3_layer_config)
 
-logger = logging.getLogger(__name__)
+
+logger = TrivialLogger(__name__)
 
 
 def _process_relative_path(placeholder, replacement_value, path_list):

@@ -2,12 +2,46 @@
 Utility functions to support configuration through toml-files.
 """
 
-import logging
 import os
 import sys
 import toml
+import logging
+from functools import partialmethod
 
-logger = logging.getLogger(__name__)
+from .system_utilities import time_now
+
+
+class TrivialLogger:
+    """A TrivialLogger is a simple implementation of the common log methods of
+    logging.Logger: it has no parent and always prints its messages to standard
+    error. (It's intended for use by the configuration infrastructure, which
+    can't use the logging package directly, as it isn't yet set up.)"""
+
+    def __init__(
+            self, name,
+            format_str="{timestamp}\t[{level_name}]\t{name}: {message}"):
+        self.name = name
+        self.format_str = format_str
+        self.level = (
+                int(rl)
+                if (rl := os.getenv("TL_LOG_LEVEL"))
+                else logging.INFO)
+
+    def log(self, level, message, *args, **kwargs):
+        if level >= self.level:
+            print(self.format_str.format(
+                    timestamp=time_now().isoformat(),
+                    name=self.name, message=message % args,
+                    level_name=logging.getLevelName(level)), file=sys.stderr)
+
+    debug = partialmethod(log, logging.DEBUG)
+    info = partialmethod(log, logging.INFO)
+    warning = partialmethod(log, logging.WARNING)
+    error = partialmethod(log, logging.ERROR)
+    critical = partialmethod(log, logging.CRITICAL)
+
+
+logger = TrivialLogger(__name__)
 
 
 def read_config(config_path):

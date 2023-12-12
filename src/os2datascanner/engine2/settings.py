@@ -1,10 +1,11 @@
 import logging
 from pathlib import Path
 
-from os2datascanner.utils.toml_configuration import get_3_layer_config
+from os2datascanner.utils.toml_configuration import (
+        TrivialLogger, get_3_layer_config)
 
 
-logger = logging.getLogger(__name__)
+logger = TrivialLogger(__name__)
 
 
 # NEVER print or log the config object, as it will expose secrets
