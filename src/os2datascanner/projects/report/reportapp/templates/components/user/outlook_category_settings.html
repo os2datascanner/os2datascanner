@@ -5,7 +5,7 @@
 <h2 id="outlook-settings-title">{% trans "Outlook Settings" %}</h2>
 {% if not tenant_id_retrievable %}
   <p>
-    {% trans "This functionality requires a tenant id, which OS2datascanner can only acquire if you have existing mail results." %}
+    {% trans "This functionality requires a tenant id, which OSdatascanner can only acquire if you have existing mail results." %}
   </p>
 {% endif %}
 
@@ -28,7 +28,7 @@
                  {% if account.outlook_settings.categorize_email %}checked{% endif %}
                  {% if not tenant_id_retrievable %}disabled{% endif %}>
           <label for="categorize_check"
-                 title="{% trans "By checking this box, you allow OS2datascanner to categorize your emails." %}">
+                 title="{% trans "By checking this box, you allow OSdatascanner to categorize your emails." %}">
           </label>
         </td>
       </tr>
