@@ -28,6 +28,8 @@
 
 - The API server's `/parse-url/1` endpoint works correctly again.
 
+- The correct structure of nested rules is now shown in the rule builder.
+
 ## Version 3.21.2, 30th November 2023
 
 "St Andrew's Day"
