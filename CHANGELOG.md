@@ -1,10 +1,8 @@
 # Changelog
 
-## Version 3.21.3
+## Version 3.21.3, 13th December 2023
 
-" AMUSNR "
-
-### New in this release
+"Tombstone is the Best Battle Bot"
 
 ### General improvements
 
@@ -15,11 +13,6 @@
 
 - Dropdowns for assigning leaders and DPOs are now ordered by full name.
 
-### Removed functionality
-
-- The organizational unit overview in the DPO module has been removed, until
-  the overhead caused by importing too much organizational structure is solved.
-
 ### Bugfixes
 
 - MSGraph based resources are again able to be properly auto resolved upon deletion.
@@ -29,6 +22,11 @@
 - The API server's `/parse-url/1` endpoint works correctly again.
 
 - The correct structure of nested rules is now shown in the rule builder.
+
+### Other notes
+
+- The organizational unit overview in the DPO module has been removed, until
+  the overhead caused by importing too much organizational structure is solved.
 
 ## Version 3.21.2, 30th November 2023
 
@@ -101,7 +99,7 @@
 
 - Fixed bug preventing users from changing page under error logs in admin module.
 
-## 3.21.1, 6th November 2023
+## Version 3.21.1, 6th November 2023
 
 "Quick Rewrite It"
 
