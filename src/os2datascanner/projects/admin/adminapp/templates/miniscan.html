@@ -17,11 +17,11 @@
     {% include "components/common/main.html" with active_tab="miniscan" %}
     <div class="content">
       <div class="content-header">
-        <h1>{% trans "OS2datascanner mini-scanner" %}</h1>
+        <h1>{% trans "OSdatascanner mini-scanner" %}</h1>
         <p>
           {% with limit=settings.MINISCAN_FILE_SIZE_LIMIT %}
             {% blocktranslate trimmed %}
-              The mini-scanner lets you execute any OS2datascanner rule on a single
+              The mini-scanner lets you execute any OSdatascanner rule on a single
               file, and returns the results directly to this page.
             {% endblocktranslate %}
             <br />

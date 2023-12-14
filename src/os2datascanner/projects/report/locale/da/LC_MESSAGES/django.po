@@ -273,9 +273,9 @@ msgstr "begrundelse"
 msgid "document reports"
 msgstr "dokument rapporter"
 
-#: reportapp/templates/components/common/header.html:37
-msgid "OS2datascanner version"
-msgstr "OS2datascanner version"
+#: reportapp/templates/components/common/header.html:38
+msgid "OSdatascanner version"
+msgstr "OSdatascanner version"
 
 #: reportapp/templates/components/common/support_button.html:10
 msgid ""
@@ -1018,8 +1018,8 @@ msgid "Click here"
 msgstr "Klik her"
 
 #: reportapp/templates/components/user/logout.html:5
-msgid "Thank you for using OS2datascanner."
-msgstr "Tak fordi du brugte OS2datascanner."
+msgid "Thank you for using OSdatascanner."
+msgstr "Tak fordi du brugte OSdatascanner."
 
 #: reportapp/templates/components/user/logout.html:6
 msgid "again"
@@ -1031,17 +1031,17 @@ msgstr "Outlook indstillinger"
 
 #: reportapp/templates/components/user/outlook_category_settings.html:8
 msgid ""
-"This functionality requires a tenant id, which OS2datascanner can only "
+"This functionality requires a tenant id, which OSdatascanner can only "
 "acquire if you have existing mail results."
 msgstr ""
-"Denne funktionalitet kræver et tenant id, som OS2datascanner kun kan "
+"Denne funktionalitet kræver et tenant id, som OSdatascanner kun kan "
 "erhverve, hvis du har eksisterende email resultater."
 
 #: reportapp/templates/components/user/outlook_category_settings.html:31
 msgid ""
-"By checking this box, you allow OS2datascanner to categorize your emails."
+"By checking this box, you allow OSdatascanner to categorize your emails."
 msgstr ""
-"Ved at sætte flueben i denne boks, tillader du OS2datascanner at "
+"Ved at sætte flueben i denne boks, tillader du OSdatascanner at "
 "kategorisere dine emails."
 
 #: reportapp/templates/components/user/outlook_category_settings.html:36

@@ -4,10 +4,14 @@
 
 "Don't Crash, Bandicoot"
 
+### New in this release
+
+- New logo and favicons, with name change from 'OS2datascanner' to 
+  'OSdatascanner'.
+
 ### General improvements
 
 - quickstart_dev commands brought up-to-date, relating dev-objects for ease of use.
-
 
 ## Version 3.21.3, 13th December 2023
 

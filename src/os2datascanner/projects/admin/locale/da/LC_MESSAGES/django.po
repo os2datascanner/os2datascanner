@@ -761,8 +761,8 @@ msgstr "opdatér OS2mo-konfiguration"
 
 #: adminapp/templates/components/common/main.html:11
 #: organizations/templates/organizations/base.html:45
-msgid "OS2datascanner version"
-msgstr "OS2datascanner version"
+msgid "OSdatascanner version"
+msgstr "OSdatascanner version"
 
 #: adminapp/templates/components/miniscanner/miniscan_results.html:4
 msgid "No file uploaded."
@@ -1536,8 +1536,8 @@ msgid "Click here"
 msgstr "Klik her"
 
 #: adminapp/templates/components/user/logout.html:13
-msgid "Thank you for using OS2datascanner."
-msgstr "Tak, fordi du brugte OS2datascanner."
+msgid "Thank you for using OSdatascanner."
+msgstr "Tak, fordi du brugte OSdatascanner."
 
 #: adminapp/templates/components/user/logout.html:15
 msgid "again"
@@ -1807,15 +1807,15 @@ msgstr ""
 "  %(site_name)s team\n"
 
 #: adminapp/templates/miniscan.html:20
-msgid "OS2datascanner mini-scanner"
-msgstr "OS2datascanner miniscanner"
+msgid "OSdatascanner mini-scanner"
+msgstr "OSdatascanner miniscanner"
 
 #: adminapp/templates/miniscan.html:23
 msgid ""
-"The mini-scanner lets you execute any OS2datascanner rule on a single file, "
+"The mini-scanner lets you execute any OSdatascanner rule on a single file, "
 "and returns the results directly to this page."
 msgstr ""
-"Med miniscanneren kan man afvikle en vilkårlig OS2datascanner-regel på én "
+"Med miniscanneren kan man afvikle en vilkårlig OSdatascanner-regel på én "
 "enkel fil. Resultaterne vises længere nede på denne side."
 
 #: adminapp/templates/miniscan.html:29 adminapp/templates/miniscan.html:54
