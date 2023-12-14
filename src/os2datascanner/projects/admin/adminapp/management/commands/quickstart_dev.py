@@ -19,6 +19,9 @@ from os2datascanner.projects.admin.adminapp.models.scannerjobs.webscanner import
 from os2datascanner.projects.admin.adminapp.models.rules.cprrule import (
     CPRRule,
 )
+from os2datascanner.projects.admin.organizations.models.account import (
+    Account,
+)
 from os2datascanner.projects.admin.organizations.models.organization import (
     Organization, OrganizationSerializer
 )
@@ -50,6 +53,15 @@ class Command(BaseCommand):
         web_name = "Local nginx"
         web_url = "http://nginx/"
 
+        self.stdout.write("Synchronizing Organization to Report module ...")
+        creation_dict = {"Organization": OrganizationSerializer(
+            Organization.objects.all(), many=True).data,
+                         }
+        event = BulkCreateEvent(creation_dict)
+        publish_events([event])
+        self.stdout.write(self.style.SUCCESS(f"Sent Organization create message!:"
+                                             f" \n {creation_dict}"))
+
         self.stdout.write("Creating superuser dev/dev!")
         user, created = User.objects.get_or_create(
             username=username,
@@ -64,14 +76,19 @@ class Command(BaseCommand):
         else:
             self.stdout.write("Superuser dev/dev already exists!")
 
-        self.stdout.write("Synchronizing Organization to Report module")
+        self.stdout.write("Creating & synchronizing corresponding dev Account")
         org = Organization.objects.first()
-        creation_dict = {"Organization": OrganizationSerializer(
-            Organization.objects.all(), many=True).data}
-        event = BulkCreateEvent(creation_dict)
-        publish_events([event])
-        self.stdout.write(self.style.SUCCESS(f"Sent Organization create message!:"
-                                             f" \n {creation_dict}"))
+        account, c = Account.objects.get_or_create(
+            username=username,
+            first_name="dev",
+            last_name="devsen",
+            organization=org,
+            is_superuser=True,
+        )
+        if c:
+            self.stdout.write(self.style.SUCCESS("Account dev created successfully!"))
+        else:
+            self.stdout.write("Account for dev already exists!")
 
         self.stdout.write("Creating file scanner for samba share")
         recurrence = Recurrence()

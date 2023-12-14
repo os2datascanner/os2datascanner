@@ -1,5 +1,14 @@
 # Changelog
 
+## Next Release
+
+"Don't Crash, Bandicoot"
+
+### General improvements
+
+- quickstart_dev commands brought up-to-date, relating dev-objects for ease of use.
+
+
 ## Version 3.21.3, 13th December 2023
 
 "Tombstone is the Best Battle Bot"
