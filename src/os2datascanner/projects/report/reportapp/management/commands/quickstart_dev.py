@@ -5,8 +5,6 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from os2datascanner.projects.report.organizations.models import Organization, Account
-
 
 class Command(BaseCommand):
     """Configure the report app as a dev environment. This includes:
@@ -24,29 +22,15 @@ class Command(BaseCommand):
             sys.exit(1)
 
         username = password = "dev"
-        email = "dev@example.org"
 
-        self.stdout.write("Creating superuser dev/dev!")
-        user, created = User.objects.get_or_create(
-            username=username,
-            email=email,
-            is_superuser=True,
-            is_staff=True,
-        )
-        if created:
+        self.stdout.write("Looking for superuser dev..")
+        try:
+            user = User.objects.get(username=username)
+            user.is_staff = True  # A bit funny, we should be superuser because of the account,
+            # but it doesn't set is_staff which is Django admin login.
             user.set_password(password)
             user.save()
             self.stdout.write(self.style.SUCCESS("Superuser dev/dev created successfully!"))
-        else:
-            self.stdout.write("Superuser dev/dev already exists!")
-
-        self.stdout.write("Creating a user profile!")
-        profile, created = Account.objects.update_or_create(
-            user=user, defaults={
-                'organization': Organization.objects.first(),
-                'username': user.username,
-                'first_name': user.first_name,
-                'last_name': user.last_name})
-
-        self.stdout.write(self.style.SUCCESS(
-            "Done! Remember to run the same cmd in the Admin module"))
+        except User.DoesNotExist:
+            self.stdout.write(self.style.WARNING("User does not exist! "
+                                                 "Did you run this command in the admin module?"))
