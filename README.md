@@ -1,3 +1,12 @@
+**THIS PROJECT HAVE BEEN DISCONTINUED AND THE CODEBASE IS ARCHIVED.**
+
+There is no organisation and development on this project in OS2.
+The project and responsibility have been handed over to the vendor Magenta.
+
+
+Original readme below:
+------
+
 This is the source code for [OS2datascanner](https://os2datascanner.magenta.dk). [Read
 the documentation online](https://os2datascanner.readthedocs.io/)
 
